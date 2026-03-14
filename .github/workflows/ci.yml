@@ -23,7 +23,7 @@ jobs:
         with:
           path: .
           compliance: strict
-          library-manager: submit
+          library-manager: false
 
   host-tests:
     runs-on: ubuntu-latest
