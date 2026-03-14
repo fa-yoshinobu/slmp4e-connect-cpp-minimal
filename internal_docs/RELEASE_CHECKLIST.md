@@ -1,5 +1,7 @@
 # Release Checklist
 
+Audience: library maintainers and release follow-up work.
+
 1. Run host tests locally or confirm GitHub Actions is green.
 2. Run `python scripts/run_socket_integration.py --compiler g++` locally if you want to verify the mock PLC normal and abnormal TCP paths before tagging.
 3. Check `CHANGELOG.md` and move important items under the release version.

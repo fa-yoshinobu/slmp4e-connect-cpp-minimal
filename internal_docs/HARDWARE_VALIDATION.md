@@ -1,19 +1,21 @@
 # Hardware Validation
 
+Audience: library maintainers and validation follow-up work.
+
 This file tracks both pending real-board coverage and dated validation records after the host-side and mock-PLC release checks.
 
 Treat this file as a validation backlog and library-side evidence log, not as the main bring-up guide.
 
 Use it together with:
 
-- [README.md](./README.md) for install steps and board entry points
-- [examples/README.md](./examples/README.md) to choose the sketch you want to validate
-- [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) when a board run fails
-- [hardware-validation issue template](./.github/ISSUE_TEMPLATE/hardware-validation.md) when you want to file a structured result
+- [../README.md](../README.md) for install steps and board entry points
+- [../examples/README.md](../examples/README.md) to choose the sketch you want to validate
+- [../TROUBLESHOOTING.md](../TROUBLESHOOTING.md) when a board run fails
+- [hardware-validation issue template](../.github/ISSUE_TEMPLATE/hardware-validation.md) when you want to file a structured result
 
 ## Validation Flow
 
-1. Pick the board and sketch from [examples/README.md](./examples/README.md).
+1. Pick the board and sketch from [../examples/README.md](../examples/README.md).
 2. Run the read-only path first before any write-oriented checks.
 3. Record board package version, network setup, PLC model, and local config changes.
 4. Save frame dumps and end codes for any failure or unexpected response.
@@ -35,7 +37,7 @@ Use it together with:
 | `wiznet_5500_evb_pico2` | `EthernetClient` | `examples/w5500_evb_pico2_read_words` | pending | compile target added with Arduino-Pico core, board runtime not yet verified |
 | `wiznet_6300_evb_pico2` | `WiFiClient` via `W6300lwIP` | `examples/w6300_evb_pico2_read_words` | pending | compile target added with Arduino-Pico core, board runtime not yet verified |
 | `nanorp2040connect` | `WiFiNINA` | ESP32-style session flow | pending | compile verified, board runtime not yet verified |
-| real Mitsubishi PLC | TCP | any supported sketch | partial | Atom Matrix `check` and `funcheck` recorded against Mitsubishi iQ-R `R08CPU` on 2026-03-14; mixed `writeBlock` returned `0xC05B`, and original Python comparison remains pending |
+| real Mitsubishi PLC | TCP | any supported sketch | partial | Atom Matrix `check` and `funcheck` recorded against Mitsubishi iQ-R `R08CPU` on 2026-03-14; mixed `writeBlock` returned `0xC05B`, and the same first-pass result was later confirmed against the original Python implementation |
 
 ## Console Comparison Snapshot
 
@@ -80,9 +82,10 @@ Use it together with:
   - `readBlock` / `writeBlock` with mixed word + bit blocks in one request
   - Returned PLC end code: `0xC05B` (`direct_g_hg_path_rejected`) during the mixed `writeBlock` request
   - Test payload attempted to write `D300..D301` plus packed `M200..M215` in the same `1406/0002` frame
-- Residual item:
-  - compare the same mixed `writeBlock` scenario against the original Python implementation and record whether it passes, fails with the same end code, or emits a different request frame
-  - use [PYTHON_COMPARISON_CHECKLIST.md](./PYTHON_COMPARISON_CHECKLIST.md) for the same-device comparison worksheet
+- Follow-up note:
+  - the same mixed `writeBlock` scenario was later compared against the original Python implementation
+  - the comparison result is summarized in [PYTHON_COMPARISON_CHECKLIST.md](./PYTHON_COMPARISON_CHECKLIST.md)
+  - both implementations sent the same first-pass mixed request shape and hit the same `0xC05B` PLC end code
 
 ### 2026-03-14: Atom Matrix `endurance 1000` against Mitsubishi iQ-R `R08CPU`
 

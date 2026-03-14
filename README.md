@@ -1,5 +1,7 @@
 # SLMP4E Connect C++ Minimal
 
+[![release](https://img.shields.io/github/v/release/fa-yoshinobu/slmp4e-connect-cpp-minimal?label=release)](https://github.com/fa-yoshinobu/slmp4e-connect-cpp-minimal/releases/latest) [![CI](https://img.shields.io/github/actions/workflow/status/fa-yoshinobu/slmp4e-connect-cpp-minimal/ci.yml?branch=main&label=CI&logo=github)](https://github.com/fa-yoshinobu/slmp4e-connect-cpp-minimal/actions/workflows/ci.yml) [![license](https://img.shields.io/github/license/fa-yoshinobu/slmp4e-connect-cpp-minimal?label=license)](./LICENSE) [![python](https://img.shields.io/badge/python-3.10%2B-blue)](#host-tests)
+
 This is the microcontroller-oriented C++ version of:
 
 - `slmp4e-connect-python`: <https://github.com/fa-yoshinobu/slmp4e-connect-python>
@@ -17,8 +19,7 @@ Release:
 
 - latest tagged release: [v0.2.1](https://github.com/fa-yoshinobu/slmp4e-connect-cpp-minimal/releases/tag/v0.2.1)
 - ready-to-install Arduino library archive: `slmp4e-connect-cpp-minimal-v0.2.1.zip`
-- publishing and distribution notes: [PUBLISHING.md](./PUBLISHING.md)
-- current hardware validation status: [HARDWARE_VALIDATION.md](./HARDWARE_VALIDATION.md)
+- real-board coverage is still being expanded; development-side validation currently includes an Atom Matrix run against Mitsubishi iQ-R `R08CPU`
 
 Target boards:
 
@@ -33,7 +34,6 @@ Use this repository in this order if you want the shortest path:
 1. Read [Install](#install).
 2. Pick a board or example from [Quick Start By Board](#quick-start-by-board) or [examples/README.md](./examples/README.md).
 3. Use [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) if bring-up fails.
-4. Check [HARDWARE_VALIDATION.md](./HARDWARE_VALIDATION.md) when you want to record real-board results.
 
 If you are looking for a specific kind of information:
 
@@ -44,9 +44,6 @@ If you are looking for a specific kind of information:
 | use the interactive debug consoles | [Example choice](#example-choice) |
 | debug connection, buffer, or protocol problems | [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) |
 | understand API compatibility expectations | [API_POLICY.md](./API_POLICY.md) and [CHANGELOG.md](./CHANGELOG.md) |
-| track real hardware coverage | [HARDWARE_VALIDATION.md](./HARDWARE_VALIDATION.md) |
-| compare the current C++ result with the original Python implementation | [PYTHON_COMPARISON_CHECKLIST.md](./PYTHON_COMPARISON_CHECKLIST.md) |
-| publish or cut a release | [PUBLISHING.md](./PUBLISHING.md) and [RELEASE_CHECKLIST.md](./RELEASE_CHECKLIST.md) |
 
 ## Install
 
@@ -194,8 +191,6 @@ For request/response inspection:
 - `src/slmp4e_arduino_transport.h`: adapter for Arduino `Client`
 - `src/slmp4e_utility.h`: optional reconnect helper
 - `library.json`: PlatformIO package manifest
-- `PUBLISHING.md`: Arduino Library Manager / PlatformIO Registry / GitHub metadata notes
-- `HARDWARE_VALIDATION.md`: current hardware validation backlog and target matrix
 - `TROUBLESHOOTING.md`: practical error and bring-up notes
 - `examples/README.md`: example sketch index by use case
 - `scripts/size_report.py`: PlatformIO size regression report generator
@@ -369,12 +364,8 @@ Current direction:
 
 - [examples/README.md](./examples/README.md): choose an example sketch by board and use case
 - [TROUBLESHOOTING.md](./TROUBLESHOOTING.md): practical bring-up and failure notes
-- [HARDWARE_VALIDATION.md](./HARDWARE_VALIDATION.md): real-board validation backlog and capture checklist
-- [PYTHON_COMPARISON_CHECKLIST.md](./PYTHON_COMPARISON_CHECKLIST.md): compare the original Python implementation with the current C++ real-PLC result
 - [API_POLICY.md](./API_POLICY.md): public API stability intent during the `0.x` phase
 - [CHANGELOG.md](./CHANGELOG.md): released and unreleased project changes
-- [PUBLISHING.md](./PUBLISHING.md): packaging and registry publication notes
-- [RELEASE_CHECKLIST.md](./RELEASE_CHECKLIST.md): manual release gate checklist
 
 ## Example Index
 
@@ -435,7 +426,7 @@ Only the network stack changes. The `slmp4e::Slmp4eClient` API stays the same.
 - Use `examples/esp32_c3_serial_console` if you want the same interactive debug console style on an ESP32-C3 board over Wi-Fi.
   Edit `examples/esp32_c3_serial_console/config.h` for Wi-Fi credentials and PLC host settings.
 - Use `examples/atom_matrix_serial_console` if you want the same Wi-Fi based interactive debug console on an M5Stack Atom Matrix (`ESP32-PICO-D4`) board.
-  Edit `examples/atom_matrix_serial_console/config.h` for Wi-Fi credentials and PLC host settings. Type `demo` to enter the Atom-specific mode where the front button increments `D0` and the 5x5 matrix mirrors `M0..M24`. The Atom Matrix console is now recorded as real-board connection-validated against Mitsubishi iQ-R `R08CPU`, with `check`, `funcheck`, `bench`, `endurance`, and `reconnect` results in [HARDWARE_VALIDATION.md](./HARDWARE_VALIDATION.md).
+  Edit `examples/atom_matrix_serial_console/config.h` for Wi-Fi credentials and PLC host settings. Type `demo` to enter the Atom-specific mode where the front button increments `D0` and the 5x5 matrix mirrors `M0..M24`.
 - Use `examples/rp2040_w5500_read_words` for RP2040 boards paired with a W5500 Ethernet module.
 - Use `examples/w5500_evb_pico2_read_words` for the RP2350-based W5500-EVB-Pico2 board with the onboard W5500 chip. It prints command help on `Serial`, supports interactive read/write debugging commands, and has `verifyw` / `verifyb` plus `judge ok|ng` for operator-validated write checks.
 - Use `examples/w6300_evb_pico2_read_words` for the RP2350-based W6300-EVB-Pico2 board with the onboard W6300 chip. It now exposes an interactive serial console for the full `Slmp4eClient` surface: direct access, one-shot helpers, random access, block access, password lock/unlock, target selection, and frame dumps over Arduino-Pico `W6300lwIP` and `WiFiClient`.

@@ -39,4 +39,3 @@ Suggested order:
 
 - [../README.md](../README.md): install, quick start, board-by-board overview, memory notes
 - [../TROUBLESHOOTING.md](../TROUBLESHOOTING.md): network, buffer, and frame-dump troubleshooting
-- [../HARDWARE_VALIDATION.md](../HARDWARE_VALIDATION.md): record real-board validation status and capture data

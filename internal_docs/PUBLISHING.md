@@ -1,5 +1,7 @@
 # Publishing Notes
 
+Audience: library maintainers and release follow-up work.
+
 ## Arduino Library Manager
 
 This repository is structured as an Arduino library:
