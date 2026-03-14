@@ -2,7 +2,10 @@
 
 ## Unreleased
 
-- no unreleased entries yet
+- add release/install guidance and shorter board-specific start paths in `README.md`
+- add `library.json` and publishing notes for PlatformIO Registry packaging
+- add hardware validation backlog documentation and a GitHub issue template
+- add Markdown link checks and Arduino library linting to CI
 
 ## 0.1.0
 

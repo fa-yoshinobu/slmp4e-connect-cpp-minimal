@@ -17,6 +17,8 @@ Release:
 
 - latest tagged release: [v0.1.0](https://github.com/fa-yoshinobu/slmp4e-connect-cpp-minimal/releases/tag/v0.1.0)
 - ready-to-install Arduino library archive: `slmp4e-connect-cpp-minimal-v0.1.0.zip`
+- publishing and distribution notes: [PUBLISHING.md](./PUBLISHING.md)
+- current hardware validation status: [HARDWARE_VALIDATION.md](./HARDWARE_VALIDATION.md)
 
 Target boards:
 
@@ -40,6 +42,7 @@ If you use PlatformIO:
 Notes:
 
 - this repository already contains `library.properties`, so the release zip has the layout Arduino expects
+- this repository also contains `library.json` for PlatformIO package metadata
 - if Arduino Library Manager does not list it yet, use the release zip path above
 
 ## Quick Start By Board
@@ -51,6 +54,33 @@ Notes:
 - RP2040 + W5500 + `EthernetClient`: start with `examples/rp2040_w5500_read_words`
 - Nano RP2040 Connect + `WiFiNINA`: use the same core API shape as the ESP32 examples, but pass `WiFiClient` from `WiFiNINA`
 - Pico W class boards: start from the RP2040 example and swap `EthernetClient` for the Wi-Fi client class provided by your core package
+
+## Fastest Start
+
+For the smallest bring-up path, wire up networking first and then copy one of these:
+
+- ESP32: `examples/esp32_read_words/esp32_read_words.ino`
+- RP2040 + W5500: `examples/rp2040_w5500_read_words/rp2040_w5500_read_words.ino`
+
+The minimal session shape is:
+
+```cpp
+#include <slmp4e_arduino_transport.h>
+
+WiFiClient tcp;
+slmp4e::ArduinoClientTransport transport(tcp);
+
+uint8_t tx_buffer[96];
+uint8_t rx_buffer[96];
+slmp4e::Slmp4eClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
+
+plc.connect("192.168.250.101", 1025);
+
+slmp4e::TypeNameInfo type_name = {};
+plc.readTypeName(type_name);
+```
+
+Use the example sketches for the surrounding Wi-Fi or Ethernet setup.
 
 Core protocol shape:
 
@@ -132,9 +162,13 @@ For request/response inspection:
 - `src/slmp4e_minimal.cpp`: protocol codec and request handling
 - `src/slmp4e_arduino_transport.h`: adapter for Arduino `Client`
 - `src/slmp4e_utility.h`: optional reconnect helper
+- `library.json`: PlatformIO package manifest
+- `PUBLISHING.md`: Arduino Library Manager / PlatformIO Registry / GitHub metadata notes
+- `HARDWARE_VALIDATION.md`: current hardware validation backlog and target matrix
 - `TROUBLESHOOTING.md`: practical error and bring-up notes
 - `examples/README.md`: example sketch index by use case
 - `scripts/size_report.py`: PlatformIO size regression report generator
+- `scripts/check_markdown_links.py`: local relative-link validator for Markdown docs
 - `scripts/size_baseline.json`: committed size baseline for CI comparison
 - `scripts/mock_plc_server.py`: local SLMP 4E mock PLC for desktop bring-up
 - `scripts/mock_plc_state.sample.json`: sample mock PLC memory image
