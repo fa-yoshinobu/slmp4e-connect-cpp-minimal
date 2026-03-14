@@ -13,10 +13,44 @@ GitHub:
 
 - this library: <https://github.com/fa-yoshinobu/slmp4e-connect-cpp-minimal>
 
+Release:
+
+- latest tagged release: [v0.1.0](https://github.com/fa-yoshinobu/slmp4e-connect-cpp-minimal/releases/tag/v0.1.0)
+- ready-to-install Arduino library archive: `slmp4e-connect-cpp-minimal-v0.1.0.zip`
+
 Target boards:
 
 - ESP32
 - RP2040
+
+## Install
+
+If you use Arduino IDE:
+
+1. Download `slmp4e-connect-cpp-minimal-v0.1.0.zip` from the release page.
+2. Open `Sketch -> Include Library -> Add .ZIP Library...`.
+3. Open `File -> Examples -> SLMP4E Connect C++ Minimal`.
+
+If you use PlatformIO:
+
+1. Download the release zip or clone this repository.
+2. Place it under your project `lib/slmp4e-connect-cpp-minimal/`, or keep it as a checked-out local library.
+3. Include `slmp4e_minimal.h` or `slmp4e_arduino_transport.h` from your application code.
+
+Notes:
+
+- this repository already contains `library.properties`, so the release zip has the layout Arduino expects
+- if Arduino Library Manager does not list it yet, use the release zip path above
+
+## Quick Start By Board
+
+- ESP32 + `WiFiClient`: start with `examples/esp32_read_words`
+- ESP32 + reconnect/password/session flow: start with `examples/esp32_password_read_loop`
+- ESP32 + random/block access: start with `examples/esp32_random_block`
+- ESP32 + dynamic bit walk: start with `examples/esp32_dynamic_bits`
+- RP2040 + W5500 + `EthernetClient`: start with `examples/rp2040_w5500_read_words`
+- Nano RP2040 Connect + `WiFiNINA`: use the same core API shape as the ESP32 examples, but pass `WiFiClient` from `WiFiNINA`
+- Pico W class boards: start from the RP2040 example and swap `EthernetClient` for the Wi-Fi client class provided by your core package
 
 Core protocol shape:
 
