@@ -15,8 +15,8 @@ GitHub:
 
 Release:
 
-- latest tagged release: [v0.1.0](https://github.com/fa-yoshinobu/slmp4e-connect-cpp-minimal/releases/tag/v0.1.0)
-- ready-to-install Arduino library archive: `slmp4e-connect-cpp-minimal-v0.1.0.zip`
+- latest tagged release: [v0.1.1](https://github.com/fa-yoshinobu/slmp4e-connect-cpp-minimal/releases/tag/v0.1.1)
+- ready-to-install Arduino library archive: `slmp4e-connect-cpp-minimal-v0.1.1.zip`
 - publishing and distribution notes: [PUBLISHING.md](./PUBLISHING.md)
 - current hardware validation status: [HARDWARE_VALIDATION.md](./HARDWARE_VALIDATION.md)
 
@@ -29,7 +29,7 @@ Target boards:
 
 If you use Arduino IDE:
 
-1. Download `slmp4e-connect-cpp-minimal-v0.1.0.zip` from the release page.
+1. Download `slmp4e-connect-cpp-minimal-v0.1.1.zip` from the release page.
 2. Open `Sketch -> Include Library -> Add .ZIP Library...`.
 3. Open `File -> Examples -> SLMP4E Connect C++ Minimal`.
 
@@ -459,5 +459,5 @@ On a `v*` tag, the workflow:
 You can generate release notes locally with:
 
 ```powershell
-python scripts\release_notes.py --changelog CHANGELOG.md --version 0.1.0 --output release-notes.md
+python scripts\release_notes.py --changelog CHANGELOG.md --version 0.1.1 --output release-notes.md
 ```
