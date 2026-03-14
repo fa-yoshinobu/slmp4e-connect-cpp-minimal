@@ -1,0 +1,1 @@
+# slmp4e-connect-cpp-minimal
