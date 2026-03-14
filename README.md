@@ -15,8 +15,8 @@ GitHub:
 
 Release:
 
-- latest tagged release: [v0.1.1](https://github.com/fa-yoshinobu/slmp4e-connect-cpp-minimal/releases/tag/v0.1.1)
-- ready-to-install Arduino library archive: `slmp4e-connect-cpp-minimal-v0.1.1.zip`
+- latest tagged release: [v0.2.0](https://github.com/fa-yoshinobu/slmp4e-connect-cpp-minimal/releases/tag/v0.2.0)
+- ready-to-install Arduino library archive: `slmp4e-connect-cpp-minimal-v0.2.0.zip`
 - publishing and distribution notes: [PUBLISHING.md](./PUBLISHING.md)
 - current hardware validation status: [HARDWARE_VALIDATION.md](./HARDWARE_VALIDATION.md)
 
@@ -26,11 +26,33 @@ Target boards:
 - RP2040
 - RP2350
 
+## Documentation Guide
+
+Use this repository in this order if you want the shortest path:
+
+1. Read [Install](#install).
+2. Pick a board or example from [Quick Start By Board](#quick-start-by-board) or [examples/README.md](./examples/README.md).
+3. Use [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) if bring-up fails.
+4. Check [HARDWARE_VALIDATION.md](./HARDWARE_VALIDATION.md) when you want to record real-board results.
+
+If you are looking for a specific kind of information:
+
+| Need | Read |
+|---|---|
+| install the library and open a first sketch | [Install](#install) and [Fastest Start](#fastest-start) |
+| choose the right example for a board or use case | [Quick Start By Board](#quick-start-by-board) and [examples/README.md](./examples/README.md) |
+| use the interactive debug consoles | [Example choice](#example-choice) |
+| debug connection, buffer, or protocol problems | [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) |
+| understand API compatibility expectations | [API_POLICY.md](./API_POLICY.md) and [CHANGELOG.md](./CHANGELOG.md) |
+| track real hardware coverage | [HARDWARE_VALIDATION.md](./HARDWARE_VALIDATION.md) |
+| compare the current C++ result with the original Python implementation | [PYTHON_COMPARISON_CHECKLIST.md](./PYTHON_COMPARISON_CHECKLIST.md) |
+| publish or cut a release | [PUBLISHING.md](./PUBLISHING.md) and [RELEASE_CHECKLIST.md](./RELEASE_CHECKLIST.md) |
+
 ## Install
 
 If you use Arduino IDE:
 
-1. Download `slmp4e-connect-cpp-minimal-v0.1.1.zip` from the release page.
+1. Download `slmp4e-connect-cpp-minimal-v0.2.0.zip` from the release page.
 2. Open `Sketch -> Include Library -> Add .ZIP Library...`.
 3. Open `File -> Examples -> SLMP4E Connect C++ Minimal`.
 
@@ -52,8 +74,11 @@ Notes:
 - ESP32 + reconnect/password/session flow: start with `examples/esp32_password_read_loop`
 - ESP32 + random/block access: start with `examples/esp32_random_block`
 - ESP32 + dynamic bit walk: start with `examples/esp32_dynamic_bits`
+- ESP32-C3 + `WiFiClient` interactive console: start with `examples/esp32_c3_serial_console`
+- Atom Matrix (ESP32-PICO-D4) + `WiFiClient` interactive console: start with `examples/atom_matrix_serial_console`
 - RP2040 + W5500 + `EthernetClient`: start with `examples/rp2040_w5500_read_words`
 - W5500-EVB-Pico2 + onboard W5500 + `EthernetClient`: start with `examples/w5500_evb_pico2_read_words`
+- W6300-EVB-Pico2 + onboard W6300 + `WiFiClient` via `W6300lwIP`: start with `examples/w6300_evb_pico2_read_words`
 - Nano RP2040 Connect + `WiFiNINA`: use the same core API shape as the ESP32 examples, but pass `WiFiClient` from `WiFiNINA`
 - Pico W class boards: start from the RP2040 example and swap `EthernetClient` for the Wi-Fi client class provided by your core package
 
@@ -62,8 +87,11 @@ Notes:
 For the smallest bring-up path, wire up networking first and then copy one of these:
 
 - ESP32: `examples/esp32_read_words/esp32_read_words.ino`
+- ESP32-C3: `examples/esp32_c3_serial_console/esp32_c3_serial_console.ino`
+- Atom Matrix: `examples/atom_matrix_serial_console/atom_matrix_serial_console.ino`
 - RP2040 + W5500: `examples/rp2040_w5500_read_words/rp2040_w5500_read_words.ino`
 - W5500-EVB-Pico2: `examples/w5500_evb_pico2_read_words/w5500_evb_pico2_read_words.ino`
+- W6300-EVB-Pico2: `examples/w6300_evb_pico2_read_words/w6300_evb_pico2_read_words.ino`
 
 The minimal session shape is:
 
@@ -183,8 +211,11 @@ For request/response inspection:
 - `examples/esp32_random_block`: ESP32 random/block example
 - `examples/esp32_dynamic_bits`: ESP32 dynamic `M100..M500` write example with odd-number filtering
 - `examples/esp32_password_read_loop`: ESP32 reconnect + password + periodic read example
+- `examples/esp32_c3_serial_console`: ESP32-C3 Wi-Fi example with a full interactive serial debug console and `config.h`
+- `examples/atom_matrix_serial_console`: Atom Matrix (ESP32-PICO-D4) Wi-Fi example with the same full interactive serial debug console shape and its own `config.h`
 - `examples/rp2040_w5500_read_words`: RP2040 + W5500 Ethernet example
 - `examples/w5500_evb_pico2_read_words`: W5500-EVB-Pico2 onboard Ethernet example with an interactive serial debug console and human-evaluated write verification
+- `examples/w6300_evb_pico2_read_words`: W6300-EVB-Pico2 onboard Ethernet example with a full interactive serial debug console for direct, one-shot, random, block, and password APIs over Arduino-Pico `W6300lwIP`
 - `tests/slmp4e_minimal_tests.cpp`: host-side mock transport tests
 
 ## Memory model
@@ -232,6 +263,19 @@ In this measurement, RAM stays flat because these APIs add code but not extra st
 
 The protocol core can be tested on a desktop compiler without Arduino by building `tests/slmp4e_minimal_tests.cpp`.
 
+If you want a single entry point for function-level automatic checks, run:
+
+```powershell
+& "$env:USERPROFILE\.platformio\penv\Scripts\python.exe" scripts\run_function_tests.py --compiler g++
+```
+
+This wrapper runs:
+
+- `tests/slmp4e_minimal_tests.cpp` for host-side function coverage
+- `scripts/run_socket_integration.py` for real-socket integration against the bundled mock PLC
+
+From VS Code you can also use `Terminal -> Run Task... -> Host: Function Tests`.
+
 ```powershell
 g++ -std=c++17 -Wall -Wextra -Isrc tests\slmp4e_minimal_tests.cpp src\slmp4e_minimal.cpp -o $env:TEMP\slmp4e_minimal_tests.exe
 & $env:TEMP\slmp4e_minimal_tests.exe
@@ -239,15 +283,19 @@ g++ -std=c++17 -Wall -Wextra -Isrc tests\slmp4e_minimal_tests.cpp src\slmp4e_min
 
 The host tests cover:
 
+- all direct device families through representative `readOneBit` / `writeOneBit` or `readOneWord` / `writeOneWord` paths
 - Python-compatibility golden request frames
 - real TCP socket integration against `scripts/mock_plc_server.py`
 - real TCP abnormal cases: PLC error, disconnect, timeout, malformed response
 - direct read and frame capture
 - `dword` and one-shot helpers
+- `dword` write helpers and random word/dword write encoding
 - random and block access
+- target-address and monitoring-timer header customization
 - PLC error decoding
 - password unlock request encoding
 - block write request encoding
+- invalid-argument and buffer boundary failures for random/block and `dword` paths
 - reconnect helper behavior
 - transport read failure handling
 - protocol failure handling
@@ -317,11 +365,16 @@ Current direction:
 - prefer additive changes over renames
 - document breaking changes in `CHANGELOG.md`
 
-Release preparation helpers:
+## Project Docs
 
-- [CHANGELOG.md](./CHANGELOG.md)
-- [RELEASE_CHECKLIST.md](./RELEASE_CHECKLIST.md)
-- [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)
+- [examples/README.md](./examples/README.md): choose an example sketch by board and use case
+- [TROUBLESHOOTING.md](./TROUBLESHOOTING.md): practical bring-up and failure notes
+- [HARDWARE_VALIDATION.md](./HARDWARE_VALIDATION.md): real-board validation backlog and capture checklist
+- [PYTHON_COMPARISON_CHECKLIST.md](./PYTHON_COMPARISON_CHECKLIST.md): compare the original Python implementation with the current C++ real-PLC result
+- [API_POLICY.md](./API_POLICY.md): public API stability intent during the `0.x` phase
+- [CHANGELOG.md](./CHANGELOG.md): released and unreleased project changes
+- [PUBLISHING.md](./PUBLISHING.md): packaging and registry publication notes
+- [RELEASE_CHECKLIST.md](./RELEASE_CHECKLIST.md): manual release gate checklist
 
 ## Example Index
 
@@ -379,9 +432,115 @@ Only the network stack changes. The `slmp4e::Slmp4eClient` API stays the same.
 - Use `examples/esp32_dynamic_bits` if you want a `loop()` example that walks `M100..M500` dynamically and only writes odd addresses.
 - Use `examples/esp32_password_read_loop` if you want reconnect, password unlock, `readTypeName()`, and periodic polling in one sketch.
   Edit `examples/esp32_password_read_loop/config.h` for Wi-Fi, PLC host, password, and poll settings.
+- Use `examples/esp32_c3_serial_console` if you want the same interactive debug console style on an ESP32-C3 board over Wi-Fi.
+  Edit `examples/esp32_c3_serial_console/config.h` for Wi-Fi credentials and PLC host settings.
+- Use `examples/atom_matrix_serial_console` if you want the same Wi-Fi based interactive debug console on an M5Stack Atom Matrix (`ESP32-PICO-D4`) board.
+  Edit `examples/atom_matrix_serial_console/config.h` for Wi-Fi credentials and PLC host settings. Type `demo` to enter the Atom-specific mode where the front button increments `D0` and the 5x5 matrix mirrors `M0..M24`. The Atom Matrix console is now recorded as real-board connection-validated against Mitsubishi iQ-R `R08CPU`, with `check`, `funcheck`, `bench`, `endurance`, and `reconnect` results in [HARDWARE_VALIDATION.md](./HARDWARE_VALIDATION.md).
 - Use `examples/rp2040_w5500_read_words` for RP2040 boards paired with a W5500 Ethernet module.
 - Use `examples/w5500_evb_pico2_read_words` for the RP2350-based W5500-EVB-Pico2 board with the onboard W5500 chip. It prints command help on `Serial`, supports interactive read/write debugging commands, and has `verifyw` / `verifyb` plus `judge ok|ng` for operator-validated write checks.
+- Use `examples/w6300_evb_pico2_read_words` for the RP2350-based W6300-EVB-Pico2 board with the onboard W6300 chip. It now exposes an interactive serial console for the full `Slmp4eClient` surface: direct access, one-shot helpers, random access, block access, password lock/unlock, target selection, and frame dumps over Arduino-Pico `W6300lwIP` and `WiFiClient`.
 - For Pico W, keep the RP2040 side but swap `EthernetClient` for the Wi-Fi client class provided by your core package.
+
+### Atom Matrix Demo Mode
+
+If you start with `examples/atom_matrix_serial_console`, type `demo` on `Serial` to enable the Atom Matrix hardware demo mode:
+
+```text
+demo
+demo off
+```
+
+While demo mode is on:
+
+- one press of the Atom front button increments `D0`
+- the 5x5 RGB matrix mirrors `M0..M24`
+- ON bits light green and OFF bits stay dark
+
+### W6300 Console Quick Commands
+
+If you start with `examples/w6300_evb_pico2_read_words`, these are good first commands to type on `Serial`:
+
+```text
+help
+status
+connect
+type
+row D100
+rw D100 4
+rb M100
+rbits M100 4
+rod D200
+rdw D200 2
+rr 2 D100 D101 1 D200
+rblk 1 D300 2 1 M200 1
+dump
+```
+
+For write-path checks:
+
+```text
+wow D120 123
+ww D120 123 456
+wb M100 1
+wbits M100 1 0 1 0
+wod D220 0x12345678
+wdw D220 0x12345678 100
+wrand 1 D120 123 1 D220 0x12345678
+wrandb 2 M100 1 Y20 0
+wblk 1 D300 2 10 20 1 M200 1 0x0005
+verifyw D120 123 456
+verifyb M100 1
+pending
+judge ok
+```
+
+For target, timing, and password-related checks:
+
+```text
+target
+target 0 255 0x03FF 0
+monitor
+monitor 16
+timeout 2000
+unlock 123456
+lock 123456
+close
+reinit
+```
+
+Notes:
+
+- `row` / `wow` are one-word helpers, and `rod` / `wod` are one-dword helpers.
+- `rr` / `wrand` / `wrandb` exercise random access APIs.
+- `rblk` / `wblk` exercise block access APIs; bit blocks use packed 16-bit words.
+- Start with read-only commands on a live PLC, then move to writes after confirming the target device range is safe.
+
+### Atom Matrix Console Footprint
+
+Measured with `pio run -e m5stack-atom-console` for the Atom Matrix interactive console example:
+
+- RAM: `49,208` bytes / `327,680` bytes (`15.0%`)
+- Flash: `781,649` bytes / `1,310,720` bytes (`59.6%`)
+
+This footprint includes the Wi-Fi based interactive serial console plus the Atom-specific `demo` mode that increments `D0` from the front button and mirrors `M0..M24` on the 5x5 RGB matrix.
+
+### ESP32-C3 Console Footprint
+
+Measured with `pio run -e esp32-c3-devkitm-1-console` for the ESP32-C3 interactive console example:
+
+- RAM: `40,284` bytes / `327,680` bytes (`12.3%`)
+- Flash: `753,570` bytes / `1,310,720` bytes (`57.5%`)
+
+This footprint includes the Wi-Fi based interactive serial console with direct, one-shot, random, block, password, target, and frame-dump commands enabled.
+
+### W6300 Console Footprint
+
+Measured with `pio run -e wiznet_6300_evb_pico2` for the W6300-EVB-Pico2 interactive console example:
+
+- RAM: `69,996` bytes / `524,288` bytes (`13.4%`)
+- Flash: `144,312` bytes / `2,093,056` bytes (`6.9%`)
+
+This footprint includes the fixed-IP W6300 interactive serial console with direct, one-shot, random, block, password, target, and frame-dump commands enabled.
 
 ## PlatformIO
 
@@ -393,8 +552,11 @@ Smoke-build environments are included in `platformio.ini`:
 - `esp32dev-session`
 - `esp32-s3-devkitc-1`
 - `esp32-c3-devkitm-1`
+- `esp32-c3-devkitm-1-console`
+- `m5stack-atom-console`
 - `pico`
 - `wiznet_5500_evb_pico2`
+- `wiznet_6300_evb_pico2`
 - `nanorp2040connect`
 
 Function-size probe environments are also included:
@@ -417,8 +579,11 @@ Build with:
 & "$env:USERPROFILE\.platformio\penv\Scripts\pio.exe" run -e esp32dev-session
 & "$env:USERPROFILE\.platformio\penv\Scripts\pio.exe" run -e esp32-s3-devkitc-1
 & "$env:USERPROFILE\.platformio\penv\Scripts\pio.exe" run -e esp32-c3-devkitm-1
+& "$env:USERPROFILE\.platformio\penv\Scripts\pio.exe" run -e esp32-c3-devkitm-1-console
+& "$env:USERPROFILE\.platformio\penv\Scripts\pio.exe" run -e m5stack-atom-console
 & "$env:USERPROFILE\.platformio\penv\Scripts\pio.exe" run -e pico
 & "$env:USERPROFILE\.platformio\penv\Scripts\pio.exe" run -e wiznet_5500_evb_pico2
+& "$env:USERPROFILE\.platformio\penv\Scripts\pio.exe" run -e wiznet_6300_evb_pico2
 & "$env:USERPROFILE\.platformio\penv\Scripts\pio.exe" run -e nanorp2040connect
 & "$env:USERPROFILE\.platformio\penv\Scripts\pio.exe" run -e esp32dev-size-debug
 & "$env:USERPROFILE\.platformio\penv\Scripts\pio.exe" run -e esp32dev-size-all
@@ -431,7 +596,13 @@ This build compiles:
 
 The `pico` environment uses `platformio/pico_w5500_smoke.cpp` and links `arduino-libraries/Ethernet` for a W5500-based RP2040 check.
 
+The `esp32-c3-devkitm-1-console` environment uses `platformio/esp32_c3_serial_console_smoke.cpp` and builds the Wi-Fi based interactive debug console example for ESP32-C3.
+
+The `m5stack-atom-console` environment uses `platformio/atom_matrix_serial_console_smoke.cpp` and builds the same Wi-Fi based interactive debug console for the M5Stack Atom Matrix (`ESP32-PICO-D4`).
+
 The `wiznet_5500_evb_pico2` environment uses `platformio/w5500_evb_pico2_smoke.cpp` and pulls the Arduino-Pico core through `maxgerhardt/platform-raspberrypi.git` so the RP2350 `wiznet_5500_evb_pico2` board definition and `EthernetCompat` support are available.
+
+The `wiznet_6300_evb_pico2` environment uses `platformio/w6300_evb_pico2_smoke.cpp` and assumes the same Arduino-Pico platform source exposes the RP2350 `wiznet_6300_evb_pico2` board definition plus `W6300lwIP`.
 
 The `nanorp2040connect` environment uses `platformio/nanorp2040connect_smoke.cpp` and links `arduino-libraries/WiFiNINA`.
 
@@ -468,5 +639,5 @@ On a `v*` tag, the workflow:
 You can generate release notes locally with:
 
 ```powershell
-python scripts\release_notes.py --changelog CHANGELOG.md --version 0.1.1 --output release-notes.md
+python scripts\release_notes.py --changelog CHANGELOG.md --version 0.2.0 --output release-notes.md
 ```

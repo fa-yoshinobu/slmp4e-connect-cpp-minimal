@@ -99,6 +99,8 @@ jobs:
           - esp32dev-random-block
           - esp32dev-dynamic-bits
           - esp32dev-session
+          - esp32-c3-devkitm-1-console
+          - m5stack-atom-console
           - pico
           - wiznet_5500_evb_pico2
           - nanorp2040connect

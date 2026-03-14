@@ -65,6 +65,9 @@ inline bool isUnsupportedDirectDevice(DeviceCode code) {
     switch (code) {
         case DeviceCode::G:
         case DeviceCode::HG:
+        case DeviceCode::LCC:
+        case DeviceCode::LCN:
+        case DeviceCode::LCS:
         case DeviceCode::LSTC:
         case DeviceCode::LSTS:
         case DeviceCode::LTC:

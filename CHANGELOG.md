@@ -2,9 +2,21 @@
 
 ## Unreleased
 
+## 0.2.0
+
+- add W6300-EVB-Pico2, ESP32-C3, and Atom Matrix interactive console examples with shared direct, one-shot, random, block, target, password, and frame-dump command coverage
+- add Atom Matrix hardware-specific demo, manual check, automated `funcheck`, `txlimit`, `bench`, `endurance`, and `reconnect` modes
+- add PlatformIO smoke targets for the new console examples and document board-specific footprints and startup paths
+- add host-side function test runner coverage for additional direct, dword, random, block, timeout, and target-setting API paths
+- mark `LCS`, `LCC`, and `LCN` unsupported in the minimal client to match observed real-board behavior
+- record real-board validation results for Atom Matrix against Mitsubishi iQ-R `R08CPU`, including reconnect, endurance, benchmark, and buffer-limit captures
+- add Python comparison worksheet documentation for the remaining mixed block-write investigation
 - add a `W5500-EVB-Pico2` example sketch and PlatformIO smoke target using Arduino-Pico `EthernetCompat`
 - add an interactive serial debug console to the `W5500-EVB-Pico2` example for ad-hoc PLC reads, writes, and frame dumps
 - add operator-validated write verification commands (`verifyw`, `verifyb`, `judge`) to the `W5500-EVB-Pico2` serial console
+- add an Atom Matrix (`ESP32-PICO-D4`) interactive Wi-Fi debug console example and PlatformIO smoke target
+- factor the ESP32 Wi-Fi interactive console so the same command surface can be reused across ESP32-C3 and Atom Matrix boards
+- add Atom Matrix `demo` mode for button-driven `D0` increments and `M0..M24` mirroring on the 5x5 RGB matrix
 - update GitHub Actions workflow dependencies to current major versions
 - replace the release publish action with GitHub CLI commands to avoid Node 20 deprecation warnings
 - verify required files are present in the release zip before uploading assets
