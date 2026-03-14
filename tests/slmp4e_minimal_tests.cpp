@@ -206,13 +206,14 @@ void assertDirectRequestHeader(
     const std::vector<uint8_t>& request,
     uint16_t command,
     uint16_t subcommand,
-    const slmp4e::DeviceAddress& device
+    const slmp4e::DeviceAddress& device,
+    uint16_t expected_points = 1U
 ) {
     assert(readLe16(request.data() + 15) == command);
     assert(readLe16(request.data() + 17) == subcommand);
     assert(readLe24(request.data() + 19) == device.number);
     assert(readLe16(request.data() + 23) == static_cast<uint16_t>(device.code));
-    assert(readLe16(request.data() + 25) == 1U);
+    assert(readLe16(request.data() + 25) == expected_points);
 }
 
 void testReadWordsAndFrames() {
@@ -351,8 +352,7 @@ void testWriteDWordsAndRandomWords() {
         transport.queueResponse(makeResponse(makeGenericRequest(0x1401, 0x0002), 0x0000, {}));
         const slmp4e::DeviceAddress device = slmp4e::dev::D(slmp4e::dev::dec(200));
         assert(plc.writeOneDWord(device, 0x12345678UL) == slmp4e::Error::Ok);
-        assertDirectRequestHeader(transport.lastWrite(), 0x1401, 0x0002, device);
-        assert(readLe16(transport.lastWrite().data() + 25) == 2U);
+        assertDirectRequestHeader(transport.lastWrite(), 0x1401, 0x0002, device, 2U);
         assert(readLe32(transport.lastWrite().data() + 27) == 0x12345678UL);
     }
 
@@ -366,8 +366,7 @@ void testWriteDWordsAndRandomWords() {
         const uint32_t values[] = {0x89ABCDEFUL, 0x01234567UL};
         const slmp4e::DeviceAddress device = slmp4e::dev::D(slmp4e::dev::dec(300));
         assert(plc.writeDWords(device, values, 2) == slmp4e::Error::Ok);
-        assertDirectRequestHeader(transport.lastWrite(), 0x1401, 0x0002, device);
-        assert(readLe16(transport.lastWrite().data() + 25) == 4U);
+        assertDirectRequestHeader(transport.lastWrite(), 0x1401, 0x0002, device, 4U);
         assert(readLe32(transport.lastWrite().data() + 27) == values[0]);
         assert(readLe32(transport.lastWrite().data() + 31) == values[1]);
     }

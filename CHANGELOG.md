@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 0.2.1
+
+- fix the host-side dword request header tests so `writeOneDWord()` and `writeDWords()` expect the correct transmitted word count
+
 ## 0.2.0
 
 - add W6300-EVB-Pico2, ESP32-C3, and Atom Matrix interactive console examples with shared direct, one-shot, random, block, target, password, and frame-dump command coverage
