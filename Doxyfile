@@ -1,0 +1,8 @@
+PROJECT_NAME           = "SLMP Connect C++ Minimal"
+OUTPUT_DIRECTORY       = publish/docs
+INPUT                  = src docs README.md
+RECURSIVE              = YES
+GENERATE_LATEX         = NO
+USE_MDFILE_AS_MAINPAGE = README.md
+HTML_OUTPUT            = .
+EXTRACT_ALL            = YES
