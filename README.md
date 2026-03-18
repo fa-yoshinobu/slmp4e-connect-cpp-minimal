@@ -1,4 +1,4 @@
-﻿# (Mitsubishi MELSEC) SLMP C++ Minimal
+# (Mitsubishi MELSEC) SLMP C++ Minimal
 
 [![Release](https://img.shields.io/github/v/release/fa-yoshinobu/plc-comm-slmp-cpp-minimal?label=release)](https://github.com/fa-yoshinobu/plc-comm-slmp-cpp-minimal/releases/latest)
 [![CI](https://img.shields.io/github/actions/workflow/status/fa-yoshinobu/plc-comm-slmp-cpp-minimal/ci.yml?branch=main&label=CI&logo=github)](https://github.com/fa-yoshinobu/plc-comm-slmp-cpp-minimal/actions/workflows/ci.yml)
@@ -7,7 +7,7 @@
 
 A lightweight, microcontroller-oriented C++ library for Mitsubishi SLMP (Seamless Message Protocol). Optimized for ESP32, RP2040, and RP2350 with zero dynamic allocation.
 
-## 噫 Key Features
+## Key Features
 
 - **Embedded Optimized**: No dynamic memory allocation (`malloc`/`new`). Predictable RAM usage.
 - **Async Support**: Built-in state machine for non-blocking communication.
@@ -15,7 +15,7 @@ A lightweight, microcontroller-oriented C++ library for Mitsubishi SLMP (Seamles
 - **Binary 3E/4E**: Supports both modern and legacy SLMP frames.
 - **CI-Ready**: Host-side G++ testing and size regression monitoring.
 
-## 逃 Quick Start
+## Quick Start
 
 ### Minimal Usage
 ```cpp
@@ -35,7 +35,7 @@ void setup() {
 }
 ```
 
-## 当 Documentation
+## Documentation
 
 Follows the workspace-wide hierarchical documentation policy:
 
@@ -44,7 +44,7 @@ Follows the workspace-wide hierarchical documentation policy:
 - [**QA Reports**](docs/validation/reports/): Formal evidence of communication with Mitsubishi hardware.
 - [**Developer Notes**](docs/maintainer/DEVELOPER_NOTES.md): Metrics, host-testing, and internal design.
 
-## 屏 Development & CI
+## Development & CI
 
 Quality is managed via `run_ci.bat`.
 
@@ -58,7 +58,7 @@ Quality is managed via `run_ci.bat`.
 run_ci.bat
 ```
 
-## 塘 License
+## License
 
 Distributed under the [MIT License](LICENSE).
 
