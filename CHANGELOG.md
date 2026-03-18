@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- add W6300-EVB-Pico2 console mode switching for TCP/UDP and SLMP 3E/4E from both serial commands and BOOTSEL button shortcuts
+
 ## 0.3.0
 
 - add support for SLMP 3E binary frames via `setFrameType()`

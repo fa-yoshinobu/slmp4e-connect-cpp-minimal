@@ -12,6 +12,10 @@
 #include <WiFiClient.h>
 #endif
 
+#if __has_include(<WiFiUdp.h>)
+#include <WiFiUdp.h>
+#endif
+
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
@@ -54,6 +58,9 @@ constexpr uint32_t kBenchReportIntervalMs = 3000;
 constexpr uint32_t kBenchDefaultCycles = 1000;
 constexpr size_t kBenchWordPoints = kMaxWordPoints;
 constexpr size_t kBenchBlockPoints = kMaxBlockPoints;
+constexpr uint32_t kSwitchDebounceMs = 30;
+constexpr uint32_t kSwitchShortPressMs = 450;
+constexpr uint32_t kSwitchLongPressMs = 1200;
 constexpr slmp::DeviceAddress kFuncheckOneWordDevice = {slmp::DeviceCode::D, 120};
 constexpr slmp::DeviceAddress kFuncheckWordArrayDevice = {slmp::DeviceCode::D, 130};
 constexpr slmp::DeviceAddress kFuncheckOneBitDevice = {slmp::DeviceCode::M, 120};
@@ -126,6 +133,18 @@ enum class BenchMode : uint8_t {
     Rw,
     Ww,
     Block,
+};
+
+enum class StreamMode : uint8_t {
+    None = 0,
+    Words,
+    DWords,
+    Bits,
+};
+
+enum class TransportMode : uint8_t {
+    Tcp = 0,
+    Udp,
 };
 
 struct BenchSummary {
@@ -209,6 +228,11 @@ struct ReconnectSession {
     uint16_t last_end_code = 0;
 };
 
+struct ConsoleLinkState {
+    TransportMode transport_mode = TransportMode::Tcp;
+    slmp::FrameType frame_type = slmp::FrameType::Frame4E;
+};
+
 const DeviceSpec kDeviceSpecs[] = {
     {"SM", slmp::DeviceCode::SM, false},
     {"SD", slmp::DeviceCode::SD, false},
@@ -255,15 +279,112 @@ const DeviceSpec kDeviceSpecs[] = {
 
 Wiznet6300lwIP Ethernet(kEthernetCsPin);
 WiFiClient tcp_client;
-slmp::ArduinoClientTransport transport(tcp_client);
+slmp::ArduinoClientTransport tcp_transport(tcp_client);
+#if SLMP_ENABLE_UDP_TRANSPORT
+WiFiUDP udp_client;
+slmp::ArduinoUdpTransport udp_transport(udp_client);
+#endif
+ConsoleLinkState console_link = {};
+
+class ConsoleTransportRouter : public slmp::ITransport {
+  public:
+    ConsoleTransportRouter(
+        slmp::ArduinoClientTransport& tcp_transport,
+#if SLMP_ENABLE_UDP_TRANSPORT
+        slmp::ArduinoUdpTransport& udp_transport,
+#endif
+        ConsoleLinkState& link_state
+    )
+        : tcp_transport_(tcp_transport)
+#if SLMP_ENABLE_UDP_TRANSPORT
+        , udp_transport_(udp_transport)
+#endif
+        , link_state_(link_state) {}
+
+    bool connect(const char* host, uint16_t port) override {
+        return activeTransport().connect(host, port);
+    }
+
+    void close() override {
+        tcp_transport_.close();
+#if SLMP_ENABLE_UDP_TRANSPORT
+        udp_transport_.close();
+#endif
+    }
+
+    bool connected() const override {
+        return activeTransport().connected();
+    }
+
+    bool writeAll(const uint8_t* data, size_t length) override {
+        return activeTransport().writeAll(data, length);
+    }
+
+    bool readExact(uint8_t* data, size_t length, uint32_t timeout_ms) override {
+        return activeTransport().readExact(data, length, timeout_ms);
+    }
+
+    size_t write(const uint8_t* data, size_t length) override {
+        return activeTransport().write(data, length);
+    }
+
+    size_t read(uint8_t* data, size_t length) override {
+        return activeTransport().read(data, length);
+    }
+
+    size_t available() override {
+        return activeTransport().available();
+    }
+
+  private:
+    slmp::ITransport& activeTransport() {
+        if (link_state_.transport_mode == TransportMode::Udp) {
+#if SLMP_ENABLE_UDP_TRANSPORT
+            return udp_transport_;
+#else
+            return tcp_transport_;
+#endif
+        }
+        return tcp_transport_;
+    }
+
+    const slmp::ITransport& activeTransport() const {
+        if (link_state_.transport_mode == TransportMode::Udp) {
+#if SLMP_ENABLE_UDP_TRANSPORT
+            return udp_transport_;
+#else
+            return tcp_transport_;
+#endif
+        }
+        return tcp_transport_;
+    }
+
+    slmp::ArduinoClientTransport& tcp_transport_;
+#if SLMP_ENABLE_UDP_TRANSPORT
+    slmp::ArduinoUdpTransport& udp_transport_;
+#endif
+    ConsoleLinkState& link_state_;
+};
 
 uint8_t tx_buffer[kTxBufferSize];
 uint8_t rx_buffer[kRxBufferSize];
-slmp::SlmpClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
+ConsoleTransportRouter transport_router(
+    tcp_transport
+#if SLMP_ENABLE_UDP_TRANSPORT
+    , udp_transport
+#endif
+    , console_link
+);
+slmp::SlmpClient plc(transport_router, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
 
 char serial_line[kSerialLineCapacity] = {};
 size_t serial_line_length = 0;
 bool ethernet_ready = false;
+bool led_ready = false;
+bool switch_raw_pressed = false;
+bool switch_stable_pressed = false;
+uint32_t switch_last_change_ms = 0;
+uint32_t switch_press_started_ms = 0;
 VerificationRecord verification = {};
 EnduranceSession endurance = {};
 ReconnectSession reconnect = {};
@@ -276,6 +397,12 @@ uint16_t bench_word_values[kBenchWordPoints] = {};
 uint16_t bench_word_readback[kBenchWordPoints] = {};
 uint16_t bench_block_values[kBenchBlockPoints] = {};
 uint16_t bench_block_readback[kBenchBlockPoints] = {};
+uint16_t stream_word_values[kTxLimitWriteWordsMaxCount + 1U] = {};
+uint16_t stream_word_readback[kTxLimitWriteWordsMaxCount + 1U] = {};
+uint32_t stream_dword_values[kTxLimitWriteDWordsMaxCount + 1U] = {};
+uint32_t stream_dword_readback[kTxLimitWriteDWordsMaxCount + 1U] = {};
+bool stream_bit_values[kTxLimitWriteBitsMaxCount + 1U] = {};
+bool stream_bit_readback[kTxLimitWriteBitsMaxCount + 1U] = {};
 
 void stopEndurance(bool print_summary, bool failed);
 void stopReconnect(bool print_summary);
@@ -423,6 +550,31 @@ bool bitArraysEqual(const bool* lhs, const bool* rhs, size_t count) {
     }
     return true;
 }
+
+const char* transportModeText(TransportMode mode) {
+    switch (mode) {
+        case TransportMode::Tcp:
+            return "tcp";
+        case TransportMode::Udp:
+            return "udp";
+    }
+    return "tcp";
+}
+
+const char* frameTypeText(slmp::FrameType frame_type) {
+    switch (frame_type) {
+        case slmp::FrameType::Frame3E:
+            return "3e";
+        case slmp::FrameType::Frame4E:
+            return "4e";
+    }
+    return "4e";
+}
+
+void applyLedState();
+void pollBoardSwitch();
+void setTransportMode(TransportMode mode, bool reconnect_after_change);
+void setFrameTypeMode(slmp::FrameType frame_type);
 
 uint16_t readFrameLe16(const uint8_t* bytes) {
     if (bytes == nullptr) {
@@ -681,9 +833,51 @@ bool connectPlc(bool verbose) {
         return false;
     }
     if (verbose) {
+        Serial.print("transport=");
+        Serial.print(transportModeText(console_link.transport_mode));
+        Serial.print(" frame=");
+        Serial.println(frameTypeText(console_link.frame_type));
         Serial.println("plc connected");
     }
     return true;
+}
+
+void setTransportMode(TransportMode mode, bool reconnect_after_change) {
+    if (console_link.transport_mode == mode) {
+        Serial.print("transport=");
+        Serial.println(transportModeText(console_link.transport_mode));
+        return;
+    }
+
+    const bool was_connected = plc.connected();
+    if (was_connected) {
+        plc.close();
+    }
+
+    console_link.transport_mode = mode;
+    Serial.print("transport=");
+    Serial.println(transportModeText(console_link.transport_mode));
+
+    if (reconnect_after_change && was_connected) {
+        (void)connectPlc(true);
+    }
+}
+
+void setFrameTypeMode(slmp::FrameType frame_type) {
+    if (console_link.frame_type == frame_type) {
+        Serial.print("frame=");
+        Serial.println(frameTypeText(console_link.frame_type));
+        return;
+    }
+
+    console_link.frame_type = frame_type;
+    plc.setFrameType(frame_type);
+    Serial.print("frame=");
+    Serial.println(frameTypeText(console_link.frame_type));
+
+    if (plc.connected()) {
+        Serial.println("frame change will apply to the next request");
+    }
 }
 
 void closePlc() {
@@ -697,6 +891,90 @@ void reinitializeEthernet() {
     (void)bringUpEthernet();
 }
 
+void applyLedState() {
+#ifdef LED_BUILTIN
+    if (!led_ready) {
+        return;
+    }
+
+    const bool connected = plc.connected();
+    bool led_on = false;
+    if (!connected) {
+        led_on = false;
+    } else if (console_link.transport_mode == TransportMode::Udp) {
+        led_on = ((millis() / 250U) % 2U) != 0U;
+    } else {
+        led_on = true;
+    }
+
+    if (plc.isBusy()) {
+        led_on = ((millis() / 100U) % 2U) != 0U;
+    }
+
+    digitalWrite(LED_BUILTIN, led_on ? HIGH : LOW);
+#endif
+}
+
+bool boardSwitchPressed() {
+    return static_cast<bool>(BOOTSEL);
+}
+
+void handleBoardSwitchShortPress() {
+    if (plc.connected()) {
+        closePlc();
+    } else {
+        (void)connectPlc(true);
+    }
+}
+
+void handleBoardSwitchLongPress() {
+    if (console_link.transport_mode == TransportMode::Tcp) {
+        setTransportMode(TransportMode::Udp, true);
+    } else {
+        setTransportMode(TransportMode::Tcp, true);
+    }
+}
+
+void handleBoardSwitchVeryLongPress() {
+    if (console_link.frame_type == slmp::FrameType::Frame4E) {
+        setFrameTypeMode(slmp::FrameType::Frame3E);
+    } else {
+        setFrameTypeMode(slmp::FrameType::Frame4E);
+    }
+}
+
+void pollBoardSwitch() {
+    const bool raw_pressed = boardSwitchPressed();
+    if (raw_pressed != switch_raw_pressed) {
+        switch_raw_pressed = raw_pressed;
+        switch_last_change_ms = millis();
+    }
+
+    if (millis() - switch_last_change_ms < kSwitchDebounceMs) {
+        return;
+    }
+
+    if (switch_stable_pressed == switch_raw_pressed) {
+        return;
+    }
+
+    switch_stable_pressed = switch_raw_pressed;
+    if (switch_stable_pressed) {
+        switch_press_started_ms = millis();
+        return;
+    }
+
+    const uint32_t held_ms = millis() - switch_press_started_ms;
+    if (held_ms < kSwitchShortPressMs) {
+        handleBoardSwitchShortPress();
+    } else if (held_ms < kSwitchLongPressMs) {
+        handleBoardSwitchLongPress();
+    } else if (held_ms < kSwitchLongPressMs * 2U) {
+        handleBoardSwitchVeryLongPress();
+    }
+    switch_press_started_ms = 0;
+}
+
 void printStatus() {
     Serial.print("local ip=");
     Serial.println(Ethernet.localIP());
@@ -708,6 +986,10 @@ void printStatus() {
     Serial.println(Ethernet.dnsIP());
     Serial.print("ethernet_connected=");
     Serial.println(Ethernet.connected() ? "yes" : "no");
+    Serial.print("transport=");
+    Serial.println(transportModeText(console_link.transport_mode));
+    Serial.print("frame=");
+    Serial.println(frameTypeText(console_link.frame_type));
     Serial.print("plc_connected=");
     Serial.println(plc.connected() ? "yes" : "no");
     Serial.print("tx_buffer_bytes=");
@@ -2466,6 +2748,89 @@ void runTxlimitProbe() {
     Serial.println(block_ok ? "ok" : "fail");
 }
 
+bool runTxlimitSweepWriteWords() {
+    fillTxlimitWords(txlimit_word_values, kTxLimitWriteWordsMaxCount + 1U, 1000U);
+    uint16_t last_ok_count = 0;
+    size_t last_request_bytes = 0;
+    slmp::Error last_error = slmp::Error::Ok;
+
+    for (uint16_t count = 1; count <= static_cast<uint16_t>(kTxLimitWriteWordsMaxCount + 1U); ++count) {
+        const slmp::Error error = plc.writeWords(kTxLimitWordDevice, txlimit_word_values, count);
+        if (error != slmp::Error::Ok) {
+            last_error = error;
+            break;
+        }
+        last_ok_count = count;
+        last_request_bytes = plc.lastRequestFrameLength();
+    }
+
+    if (last_ok_count > 0) {
+        clearWordRangeSilently(kTxLimitWordDevice, last_ok_count);
+    }
+
+    Serial.print("txlimit sweep words last_ok=");
+    Serial.print(last_ok_count);
+    Serial.print(" first_fail=");
+    Serial.print(static_cast<uint32_t>(last_ok_count) + 1U);
+    Serial.print(" error=");
+    Serial.print(slmp::errorString(last_error));
+    Serial.print(" request_bytes=");
+    Serial.println(last_request_bytes);
+    return last_ok_count == kTxLimitWriteWordsMaxCount && last_error == slmp::Error::BufferTooSmall;
+}
+
+bool runTxlimitSweepWordBlock() {
+    fillTxlimitWords(txlimit_block_values, kTxLimitWriteBlockWordMaxPoints + 1U, 3000U);
+    uint16_t last_ok_count = 0;
+    size_t last_request_bytes = 0;
+    slmp::Error last_error = slmp::Error::Ok;
+
+    for (uint16_t count = 1; count <= static_cast<uint16_t>(kTxLimitWriteBlockWordMaxPoints + 1U); ++count) {
+        const slmp::DeviceBlockWrite block = {
+            kTxLimitBlockWordDevice,
+            txlimit_block_values,
+            count
+        };
+        const slmp::Error error = plc.writeBlock(&block, 1, nullptr, 0);
+        if (error != slmp::Error::Ok) {
+            last_error = error;
+            break;
+        }
+        last_ok_count = count;
+        last_request_bytes = plc.lastRequestFrameLength();
+    }
+
+    if (last_ok_count > 0) {
+        clearWordRangeSilently(kTxLimitBlockWordDevice, last_ok_count);
+    }
+
+    Serial.print("txlimit sweep block last_ok=");
+    Serial.print(last_ok_count);
+    Serial.print(" first_fail=");
+    Serial.print(static_cast<uint32_t>(last_ok_count) + 1U);
+    Serial.print(" error=");
+    Serial.print(slmp::errorString(last_error));
+    Serial.print(" request_bytes=");
+    Serial.println(last_request_bytes);
+    return last_ok_count == kTxLimitWriteBlockWordMaxPoints && last_error == slmp::Error::BufferTooSmall;
+}
+
+void runTxlimitSweep() {
+    stopEndurance(false, false);
+    stopReconnect(false);
+    if (!connectPlc(false)) {
+        Serial.println("txlimit sweep failed: plc not connected");
+        return;
+    }
+    printTxlimitSummary();
+    const bool words_ok = runTxlimitSweepWriteWords();
+    const bool block_ok = runTxlimitSweepWordBlock();
+    Serial.print("txlimit sweep summary: words=");
+    Serial.print(words_ok ? "ok" : "fail");
+    Serial.print(" block=");
+    Serial.println(block_ok ? "ok" : "fail");
+}
+
 void txlimitCommand(char* tokens[], int token_count) {
     if (token_count == 1) {
         printTxlimitSummary();
@@ -2481,8 +2846,41 @@ void txlimitCommand(char* tokens[], int token_count) {
         runTxlimitProbe();
         return;
     }
+    if (strcmp(tokens[1], "SWEEP") == 0 || strcmp(tokens[1], "RAMP") == 0 || strcmp(tokens[1], "SCAN") == 0) {
+        if (token_count == 2 || strcmp(tokens[2], "ALL") == 0) {
+            runTxlimitSweep();
+            return;
+        }
+        if (strcmp(tokens[2], "WORDS") == 0 || strcmp(tokens[2], "WORD") == 0 || strcmp(tokens[2], "WRITEWORDS") == 0) {
+            stopEndurance(false, false);
+            stopReconnect(false);
+            if (!connectPlc(false)) {
+                Serial.println("txlimit sweep words failed: plc not connected");
+                return;
+            }
+            printTxlimitSummary();
+            const bool ok = runTxlimitSweepWriteWords();
+            Serial.print("txlimit sweep words result=");
+            Serial.println(ok ? "ok" : "fail");
+            return;
+        }
+        if (strcmp(tokens[2], "BLOCK") == 0 || strcmp(tokens[2], "WRITEBLOCK") == 0) {
+            stopEndurance(false, false);
+            stopReconnect(false);
+            if (!connectPlc(false)) {
+                Serial.println("txlimit sweep block failed: plc not connected");
+                return;
+            }
+            printTxlimitSummary();
+            const bool ok = runTxlimitSweepWordBlock();
+            Serial.print("txlimit sweep block result=");
+            Serial.println(ok ? "ok" : "fail");
+            return;
+        }
+    }
 
-    Serial.println("txlimit usage: txlimit [calc|probe]");
+    Serial.println("txlimit usage: txlimit [calc|probe|sweep]");
+    Serial.println("  txlimit sweep [all|words|block]");
 }
 
 void printHelp() {
@@ -2490,13 +2888,16 @@ void printHelp() {
     Serial.println("  help");
     Serial.println("  status");
     Serial.println("  connect | close | reinit | type | dump");
+    Serial.println("  transport [tcp|udp|list]");
+    Serial.println("  frame [3e|4e|list]");
     Serial.println("  target [network station module_io multidrop]");
     Serial.println("  monitor [value]");
     Serial.println("  timeout <ms>");
     Serial.println("  funcheck [all|direct|api|list]");
     Serial.println("  endurance [start [cycles]|status|stop|list]");
     Serial.println("  reconnect [start [cycles]|status|stop|list]");
-    Serial.println("  txlimit [calc|probe]");
+    Serial.println("  txlimit [calc|probe|sweep]");
+    Serial.println("  txlimit sweep [all|words|block]");
     Serial.println("  bench [row|wow|pair|rw|ww|block] [cycles]");
     Serial.println("  bench list");
     Serial.println("  rw <device> [points]");
@@ -2534,11 +2935,82 @@ void printHelp() {
     Serial.println("  endurance 1000");
     Serial.println("  reconnect");
     Serial.println("  txlimit probe");
+    Serial.println("  txlimit sweep all");
     Serial.println("  bench");
     Serial.println("  bench row 1000");
     Serial.println("  bench block 300");
+    Serial.println("  transport udp");
+    Serial.println("  frame 3e");
     Serial.println("hex-address devices: X, Y, B, W, SB, SW, DX, DY");
     Serial.println("bit block points use packed 16-bit words");
+}
+
+void printTransportList() {
+    Serial.println("transport modes:");
+    Serial.println("  transport tcp");
+#if SLMP_ENABLE_UDP_TRANSPORT
+    Serial.println("  transport udp");
+#else
+    Serial.println("  transport udp (not compiled)");
+#endif
+}
+
+void printFrameList() {
+    Serial.println("frame modes:");
+    Serial.println("  frame 4e");
+    Serial.println("  frame 3e");
+}
+
+void transportCommand(char* tokens[], int token_count) {
+    if (token_count == 1) {
+        Serial.print("transport=");
+        Serial.println(transportModeText(console_link.transport_mode));
+        return;
+    }
+
+    uppercaseInPlace(tokens[1]);
+    if (strcmp(tokens[1], "LIST") == 0) {
+        printTransportList();
+        return;
+    }
+    if (strcmp(tokens[1], "TCP") == 0) {
+        setTransportMode(TransportMode::Tcp, true);
+        return;
+    }
+    if (strcmp(tokens[1], "UDP") == 0) {
+#if SLMP_ENABLE_UDP_TRANSPORT
+        setTransportMode(TransportMode::Udp, true);
+#else
+        Serial.println("transport udp is not available in this build");
+#endif
+        return;
+    }
+
+    Serial.println("transport usage: transport [tcp|udp|list]");
+}
+
+void frameCommand(char* tokens[], int token_count) {
+    if (token_count == 1) {
+        Serial.print("frame=");
+        Serial.println(frameTypeText(console_link.frame_type));
+        return;
+    }
+
+    uppercaseInPlace(tokens[1]);
+    if (strcmp(tokens[1], "LIST") == 0) {
+        printFrameList();
+        return;
+    }
+    if (strcmp(tokens[1], "3E") == 0) {
+        setFrameTypeMode(slmp::FrameType::Frame3E);
+        return;
+    }
+    if (strcmp(tokens[1], "4E") == 0) {
+        setFrameTypeMode(slmp::FrameType::Frame4E);
+        return;
+    }
+
+    Serial.println("frame usage: frame [3e|4e|list]");
 }
 
 void printTypeName() {
@@ -3650,6 +4122,10 @@ void handleCommand(char* line) {
         reinitializeEthernet();
     } else if (strcmp(tokens[0], "TYPE") == 0) {
         printTypeName();
+    } else if (strcmp(tokens[0], "TRANSPORT") == 0) {
+        transportCommand(tokens, token_count);
+    } else if (strcmp(tokens[0], "FRAME") == 0) {
+        frameCommand(tokens, token_count);
     } else if (strcmp(tokens[0], "TARGET") == 0) {
         targetCommand(tokens, token_count);
     } else if (strcmp(tokens[0], "MONITOR") == 0 || strcmp(tokens[0], "MON") == 0) {
@@ -3742,15 +4218,27 @@ void setup() {
     }
 
     Serial.println("SLMP W6300-EVB-Pico2 serial debug console");
+    plc.setFrameType(console_link.frame_type);
     plc.setTimeoutMs(2000);
+
+#ifdef LED_BUILTIN
+    pinMode(LED_BUILTIN, OUTPUT);
+    led_ready = true;
+#endif
 
     (void)bringUpEthernet();
     printHelp();
+    Serial.print("transport=");
+    Serial.println(transportModeText(console_link.transport_mode));
+    Serial.print("frame=");
+    Serial.println(frameTypeText(console_link.frame_type));
     runStartupDemo();
     printPrompt();
 }
 
 void loop() {
+    pollBoardSwitch();
+    applyLedState();
     pollEnduranceTest();
     pollReconnectTest();
     while (Serial.available() > 0) {

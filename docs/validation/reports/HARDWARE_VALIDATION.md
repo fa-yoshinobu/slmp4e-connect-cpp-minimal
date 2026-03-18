@@ -26,7 +26,7 @@ Use it together with:
 | Target | Transport | Bring-up sketch | Status | Notes |
 |---|---|---|---|---|
 | `m5stack-atom` | `WiFiClient` | `examples/atom_matrix_serial_console` | validated | real-board `check`, `funcheck`, `endurance 1000`, `bench pair 1000`, `bench block 300`, and `reconnect` recorded on 2026-03-14 against Mitsubishi iQ-R `R08CPU`; direct path passed, API path passed except mixed `writeBlock`, durability finished 1000/1000, pair benchmark averaged 18 ms per cycle, block benchmark averaged 17 ms per cycle, and reconnect recovered twice after transport errors |
-| `wiznet_6300_evb_pico2` | `WiFiClient` via `W6300lwIP` | `examples/w6300_evb_pico2_serial_console` | pending | compile target kept as the primary Ethernet interactive console for RP2350 validation |
+| `wiznet_6300_evb_pico2` | `WiFiClient` / `WiFiUDP` via `W6300lwIP` | `examples/w6300_evb_pico2_serial_console` | partial | serial console now exposes `transport tcp|udp`, `frame 3e|4e`, and `txlimit sweep [all|words|block]` probing plus BOOTSEL shortcuts; build verified on 2026-03-19, real-board capture still pending |
 | real Mitsubishi PLC | TCP | any supported sketch | partial | Atom Matrix `check` and `funcheck` recorded against Mitsubishi iQ-R `R08CPU` on 2026-03-14; mixed `writeBlock` returned `0xC05B`, and the same first-pass result was later confirmed against the original Python implementation |
 
 ## Console Comparison Snapshot
@@ -34,7 +34,7 @@ Use it together with:
 | Target | Transport | `bench` command | `endurance` command | Latest recorded result | Notes |
 |---|---|---|---|---|---|
 | `m5stack-atom` | `WiFiClient` | yes | yes | `bench pair 1000`: `avg_cycle_ms=18`, `avg_req_ms=9`, `req_per_sec=110`, `max_ms=68`, `elapsed_ms=18161`; `bench block 300`: `avg_cycle_ms=17`, `avg_req_ms=8`, `req_per_sec=110`, `max_ms=45`, `elapsed_ms=5414`; `endurance 1000`: `ok=1000`, `fail=0`, `avg_ms=276`, `max_ms=366`, `elapsed_ms=296813`; `reconnect` peer-reset run: `attempts=188`, `fail=14`, `recoveries=2`, `max_consecutive_failures=10`, `elapsed_ms=66133`; `reconnect` PLC-reset run: `attempts=149`, `fail=5`, `recoveries=2`, `max_consecutive_failures=3`, `elapsed_ms=55260`; `reconnect` Wi-Fi power-off run: `attempts=214`, `fail=18`, `recoveries=1`, `max_consecutive_failures=18`, `elapsed_ms=190516` | real-board `check`, `funcheck`, `bench`, `endurance`, and `reconnect` recorded on 2026-03-14 |
-| `wiznet_6300_evb_pico2` | `WiFiClient` via `W6300lwIP` | yes | no | pending | `bench` command compiled and ready; no real-board benchmark or durability numbers recorded yet |
+| `wiznet_6300_evb_pico2` | `WiFiClient` / `WiFiUDP` via `W6300lwIP` | yes | no | build verified | `bench` command compiled and ready; no real-board benchmark or durability numbers recorded yet; serial transport/frame switching is now available from the console |
 
 ## Recorded Results
 
@@ -162,6 +162,20 @@ Use it together with:
   - `last_req_bytes=29`
   - `last_resp_bytes=47`
 - Interpretation: the Atom Matrix sustained about `110` block write+read request pairs per second against the recorded Mitsubishi iQ-R `R08CPU` setup, with slightly lower average cycle time than the recorded `pair` run
+
+### 2026-03-19: W6300 `txlimit sweep` console and CLI verification
+
+- Target: `wiznet_6300_evb_pico2` with `examples/w6300_evb_pico2_serial_console`
+- PLC connection: not exercised in this validation pass
+- New command path: `txlimit sweep [all|words|block]`
+- PC-side runner: `scripts/w6300_console_cli.py`
+- Verification performed:
+  - `python -m py_compile scripts/w6300_console_cli.py`
+  - `python .\scripts\w6300_console_cli.py --help`
+  - `python -m platformio run -e wiznet_6300_evb_pico2`
+- Result:
+  - Console and CLI compiled successfully
+  - The sweep command is available for runtime upper-bound testing once a PLC is connected
 
 ### 2026-03-14: Atom Matrix `reconnect` against Mitsubishi iQ-R `R08CPU`
 

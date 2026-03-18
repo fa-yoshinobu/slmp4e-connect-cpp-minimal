@@ -41,6 +41,7 @@ void setup() {
 Follows the workspace-wide hierarchical documentation policy:
 
 - [**Setup Guide**](docs/user/SETUP_GUIDE.md): Installation for Arduino/PlatformIO and hardware setup.
+- [**PC Console CLI**](scripts/w6300_console_cli.py): PC-side serial command runner and auto-inspection sequence for the W6300 console.
 - [**Usage Guide**](docs/user/USAGE_GUIDE.md): Detailed API reference, Sync vs Async, and memory model.
 - [**QA Reports**](docs/validation/reports/): Formal evidence of communication with Mitsubishi hardware.
 - [**Developer Notes**](docs/maintainer/DEVELOPER_NOTES.md): Metrics, host-testing, and internal design.
