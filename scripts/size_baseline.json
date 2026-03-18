@@ -1,6 +1,6 @@
 {
   "envs": {
-    "esp32dev-size-base": {
+    "size-probe-base": {
       "label": "baseline (`readTypeName`)",
       "flash_used": 742721,
       "flash_total": 1310720,
@@ -9,7 +9,7 @@
       "allowed_flash_growth": 512,
       "allowed_ram_growth": 32
     },
-    "esp32dev-size-direct": {
+    "size-probe-direct": {
       "label": "direct read/write + dword/one-shot",
       "flash_used": 744789,
       "flash_total": 1310720,
@@ -18,7 +18,7 @@
       "allowed_flash_growth": 512,
       "allowed_ram_growth": 32
     },
-    "esp32dev-size-password": {
+    "size-probe-password": {
       "label": "password",
       "flash_used": 743037,
       "flash_total": 1310720,
@@ -27,7 +27,7 @@
       "allowed_flash_growth": 512,
       "allowed_ram_growth": 32
     },
-    "esp32dev-size-endcode": {
+    "size-probe-endcode": {
       "label": "end code text",
       "flash_used": 743449,
       "flash_total": 1310720,
@@ -36,7 +36,7 @@
       "allowed_flash_growth": 512,
       "allowed_ram_growth": 32
     },
-    "esp32dev-size-debug": {
+    "size-probe-debug": {
       "label": "frame hex dump",
       "flash_used": 743105,
       "flash_total": 1310720,
@@ -45,7 +45,7 @@
       "allowed_flash_growth": 512,
       "allowed_ram_growth": 32
     },
-    "esp32dev-size-random": {
+    "size-probe-random": {
       "label": "random read/write",
       "flash_used": 744161,
       "flash_total": 1310720,
@@ -54,7 +54,7 @@
       "allowed_flash_growth": 512,
       "allowed_ram_growth": 32
     },
-    "esp32dev-size-block": {
+    "size-probe-block": {
       "label": "block read/write",
       "flash_used": 744113,
       "flash_total": 1310720,
@@ -63,7 +63,7 @@
       "allowed_flash_growth": 512,
       "allowed_ram_growth": 32
     },
-    "esp32dev-size-all": {
+    "size-probe-all": {
       "label": "all above",
       "flash_used": 748789,
       "flash_total": 1310720,
