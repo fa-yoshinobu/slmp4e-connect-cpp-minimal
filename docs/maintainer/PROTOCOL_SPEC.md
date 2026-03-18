@@ -40,7 +40,7 @@ Currently implemented commands:
 - **Decimal Devices (D, M, etc.)**: Encoded as standard numeric offsets.
 - **Hexadecimal Devices (X, Y, B, W, etc.)**: Encoded using hex base.
 - **Special Cases**:
-  - `F` device is mapped to `slmp4e::DeviceCode::FDevice` to avoid conflicts with Arduino's `F()` macro.
+  - `F` device is mapped to `slmp::DeviceCode::FDevice` to avoid conflicts with Arduino's `F()` macro.
 
 ## 4. Transport Abstraction
 

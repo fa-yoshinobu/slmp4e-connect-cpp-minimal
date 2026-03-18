@@ -2,14 +2,15 @@
 
 This file tracks the remaining tasks and issues for the SLMP C++ Minimal library.
 
-## 1. Protocol Implementation
-- [ ] **3E Frame Full Support**: Expand validation for 3E frame communication across different Mitsubishi CPUs.
-- [ ] **Memory Management**: Optimize memory usage for constrained embedded devices (ESP32/Arduino).
+## 1. Validation and Platform Coverage
+- [ ] **3E Validation Expansion**: Extend the current 3E verification beyond the existing simulator-focused coverage to additional PLC targets.
+- [ ] **UDP Transport Validation**: Validate `ArduinoUdpTransport` on real boards and capture the binary-size impact of `SLMP_ENABLE_UDP_TRANSPORT`.
+- [ ] **Board Matrix**: Confirm representative ESP32 / RP2040 / RP2350 builds with the current `slmp::SlmpClient` API.
 
-## 2. Testing & Validation
-- [ ] **PlatformIO Unit Tests**: Implement on-device unit tests using the PlatformIO test runner.
-- [ ] **CI Integration**: Setup a GitHub Action to verify builds for different boards.
+## 2. Testing and CI
+- [ ] **PlatformIO Test Flow**: Add on-device tests for the transport layer and representative read/write paths.
+- [ ] **Board CI**: Add CI coverage for the board matrix and size-sensitive builds.
 
-## 3. Documentation & Maintenance
-- [ ] **User API Guide**: Create a clear `docs/user/API_GUIDE.md` with minimal code snippets.
-- [ ] **Library Packaging**: Update `library.json` to exclude maintainer and validation folders from the distribution.
+## 3. Packaging and Documentation
+- [ ] **Library Export Rules**: Update `library.json` / `library.properties` so repo-only docs and `TODO.md` are excluded from distribution packages.
+- [ ] **User Guide Refresh**: Update the user docs to explain the canonical `slmp::SlmpClient` name and optional UDP transport.

@@ -1,4 +1,4 @@
-#include "slmp4e_minimal.h"
+#include "slmp_minimal.h"
 
 #include <string.h>
 
@@ -12,7 +12,7 @@ static uint32_t millis() {
 }
 #endif
 
-namespace slmp4e {
+namespace slmp {
 
 static uint32_t getTimeMs() {
     return millis();
@@ -70,6 +70,18 @@ inline uint16_t readLe16(const uint8_t* data) {
 inline uint32_t readLe32(const uint8_t* data) {
     return static_cast<uint32_t>(data[0]) | (static_cast<uint32_t>(data[1]) << 8) |
            (static_cast<uint32_t>(data[2]) << 16) | (static_cast<uint32_t>(data[3]) << 24);
+}
+
+inline uint32_t floatToBits(float value) {
+    uint32_t bits = 0;
+    memcpy(&bits, &value, sizeof(bits));
+    return bits;
+}
+
+inline float bitsToFloat(uint32_t bits) {
+    float value = 0.0f;
+    memcpy(&value, &bits, sizeof(value));
+    return value;
 }
 
 inline size_t packedBitBytes(size_t bit_count) {
@@ -199,7 +211,7 @@ inline Error encodeRemotePasswordPayload(
 
 }  // namespace
 
-Slmp4eClient::Slmp4eClient(
+SlmpClient::SlmpClient(
     ITransport& transport,
     uint8_t* tx_buffer,
     size_t tx_capacity,
@@ -225,11 +237,11 @@ Slmp4eClient::Slmp4eClient(
       last_activity_ms_(0),
       async_ctx_{} {}
 
-bool Slmp4eClient::isBusy() const {
+bool SlmpClient::isBusy() const {
     return state_ != State::Idle;
 }
 
-bool Slmp4eClient::connect(const char* host, uint16_t port) {
+bool SlmpClient::connect(const char* host, uint16_t port) {
     if (host == nullptr || port == 0) {
         setError(Error::InvalidArgument);
         return false;
@@ -242,71 +254,71 @@ bool Slmp4eClient::connect(const char* host, uint16_t port) {
     return true;
 }
 
-void Slmp4eClient::close() {
+void SlmpClient::close() {
     transport_.close();
 }
 
-bool Slmp4eClient::connected() const {
+bool SlmpClient::connected() const {
     return transport_.connected();
 }
 
-void Slmp4eClient::setTarget(const TargetAddress& target) {
+void SlmpClient::setTarget(const TargetAddress& target) {
     target_ = target;
 }
 
-const TargetAddress& Slmp4eClient::target() const {
+const TargetAddress& SlmpClient::target() const {
     return target_;
 }
 
-void Slmp4eClient::setFrameType(FrameType frame_type) {
+void SlmpClient::setFrameType(FrameType frame_type) {
     frame_type_ = frame_type;
 }
 
-FrameType Slmp4eClient::frameType() const {
+FrameType SlmpClient::frameType() const {
     return frame_type_;
 }
 
-void Slmp4eClient::setMonitoringTimer(uint16_t monitoring_timer) {
+void SlmpClient::setMonitoringTimer(uint16_t monitoring_timer) {
     monitoring_timer_ = monitoring_timer;
 }
 
-uint16_t Slmp4eClient::monitoringTimer() const {
+uint16_t SlmpClient::monitoringTimer() const {
     return monitoring_timer_;
 }
 
-void Slmp4eClient::setTimeoutMs(uint32_t timeout_ms) {
+void SlmpClient::setTimeoutMs(uint32_t timeout_ms) {
     timeout_ms_ = timeout_ms;
 }
 
-uint32_t Slmp4eClient::timeoutMs() const {
+uint32_t SlmpClient::timeoutMs() const {
     return timeout_ms_;
 }
 
-Error Slmp4eClient::lastError() const {
+Error SlmpClient::lastError() const {
     return last_error_;
 }
 
-uint16_t Slmp4eClient::lastEndCode() const {
+uint16_t SlmpClient::lastEndCode() const {
     return last_end_code_;
 }
 
-const uint8_t* Slmp4eClient::lastRequestFrame() const {
+const uint8_t* SlmpClient::lastRequestFrame() const {
     return tx_buffer_;
 }
 
-size_t Slmp4eClient::lastRequestFrameLength() const {
+size_t SlmpClient::lastRequestFrameLength() const {
     return last_request_length_;
 }
 
-const uint8_t* Slmp4eClient::lastResponseFrame() const {
+const uint8_t* SlmpClient::lastResponseFrame() const {
     return rx_buffer_;
 }
 
-size_t Slmp4eClient::lastResponseFrameLength() const {
+size_t SlmpClient::lastResponseFrameLength() const {
     return last_response_length_;
 }
 
-Error Slmp4eClient::startAsync(AsyncContext::Type type, size_t payload_length, uint32_t now_ms) {
+Error SlmpClient::startAsync(AsyncContext::Type type, size_t payload_length, uint32_t now_ms) {
     if (isBusy()) {
         setError(Error::Busy);
         return last_error_;
@@ -331,12 +343,14 @@ Error Slmp4eClient::startAsync(AsyncContext::Type type, size_t payload_length, u
             break;
         case AsyncContext::Type::ReadWords:
         case AsyncContext::Type::ReadDWords:
+        case AsyncContext::Type::ReadFloat32s:
         case AsyncContext::Type::ReadBits:
             command = kCommandDeviceRead;
             subcommand = (type == AsyncContext::Type::ReadBits) ? kSubcommandBit : kSubcommandWord;
             break;
         case AsyncContext::Type::WriteWords:
         case AsyncContext::Type::WriteDWords:
+        case AsyncContext::Type::WriteFloat32s:
         case AsyncContext::Type::WriteBits:
             command = kCommandDeviceWrite;
             subcommand = (type == AsyncContext::Type::WriteBits) ? kSubcommandBit : kSubcommandWord;
@@ -418,7 +432,7 @@ Error Slmp4eClient::startAsync(AsyncContext::Type type, size_t payload_length, u
     return last_error_;
 }
 
-void Slmp4eClient::update(uint32_t now_ms) {
+void SlmpClient::update(uint32_t now_ms) {
     if (state_ == State::Idle) return;
 
     if (now_ms - last_activity_ms_ >= timeout_ms_) {
@@ -497,7 +511,7 @@ void Slmp4eClient::update(uint32_t now_ms) {
     }
 }
 
-void Slmp4eClient::completeAsync() {
+void SlmpClient::completeAsync() {
     size_t response_prefix_size = (frame_type_ == FrameType::Frame4E) ? kResponsePrefixSize4E : kResponsePrefixSize3E;
     uint16_t end_code = readLe16(rx_buffer_ + response_prefix_size);
     if (end_code != 0) {
@@ -545,6 +559,18 @@ void Slmp4eClient::completeAsync() {
             }
             for (uint16_t i = 0; i < points; ++i) {
                 values[i] = readLe32(response_data + (static_cast<size_t>(i) * 4U));
+            }
+            break;
+        }
+        case AsyncContext::Type::ReadFloat32s: {
+            float* values = static_cast<float*>(async_ctx_.data.common.values);
+            uint16_t points = async_ctx_.data.common.points;
+            if (response_length != static_cast<size_t>(points) * 4U) {
+                setError(Error::ProtocolError);
+                return;
+            }
+            for (uint16_t i = 0; i < points; ++i) {
+                values[i] = bitsToFloat(readLe32(response_data + (static_cast<size_t>(i) * 4U)));
             }
             break;
         }
@@ -617,7 +643,7 @@ void Slmp4eClient::completeAsync() {
     setError(Error::Ok);
 }
 
-Error Slmp4eClient::beginReadTypeName(TypeNameInfo& out, uint32_t now_ms) {
+Error SlmpClient::beginReadTypeName(TypeNameInfo& out, uint32_t now_ms) {
     out.model[0] = '\0';
     out.model_code = 0;
     out.has_model_code = false;
@@ -625,7 +651,7 @@ Error Slmp4eClient::beginReadTypeName(TypeNameInfo& out, uint32_t now_ms) {
     return startAsync(AsyncContext::Type::ReadTypeName, 0, now_ms);
 }
 
-Error Slmp4eClient::readTypeName(TypeNameInfo& out) {
+Error SlmpClient::readTypeName(TypeNameInfo& out) {
     Error err = beginReadTypeName(out, getTimeMs());
     if (err != Error::Ok) return err;
     while (isBusy()) {
@@ -634,7 +660,7 @@ Error Slmp4eClient::readTypeName(TypeNameInfo& out) {
     return last_error_;
 }
 
-Error Slmp4eClient::beginReadWords(
+Error SlmpClient::beginReadWords(
     const DeviceAddress& device,
     uint16_t points,
     uint16_t* values,
@@ -665,7 +691,7 @@ Error Slmp4eClient::beginReadWords(
     return startAsync(AsyncContext::Type::ReadWords, 8, now_ms);
 }
 
-Error Slmp4eClient::readWords(
+Error SlmpClient::readWords(
     const DeviceAddress& device,
     uint16_t points,
     uint16_t* values,
@@ -679,7 +705,7 @@ Error Slmp4eClient::readWords(
     return last_error_;
 }
 
-Error Slmp4eClient::beginWriteWords(
+Error SlmpClient::beginWriteWords(
     const DeviceAddress& device,
     const uint16_t* values,
     size_t count,
@@ -712,7 +738,7 @@ Error Slmp4eClient::beginWriteWords(
     return startAsync(AsyncContext::Type::WriteWords, payload_length, now_ms);
 }
 
-Error Slmp4eClient::writeWords(const DeviceAddress& device, const uint16_t* values, size_t count) {
+Error SlmpClient::writeWords(const DeviceAddress& device, const uint16_t* values, size_t count) {
     Error err = beginWriteWords(device, values, count, getTimeMs());
     if (err != Error::Ok) return err;
     while (isBusy()) {
@@ -721,7 +747,7 @@ Error Slmp4eClient::writeWords(const DeviceAddress& device, const uint16_t* valu
     return last_error_;
 }
 
-Error Slmp4eClient::beginReadBits(
+Error SlmpClient::beginReadBits(
     const DeviceAddress& device,
     uint16_t points,
     bool* values,
@@ -752,7 +778,7 @@ Error Slmp4eClient::beginReadBits(
     return startAsync(AsyncContext::Type::ReadBits, 8, now_ms);
 }
 
-Error Slmp4eClient::readBits(const DeviceAddress& device, uint16_t points, bool* values, size_t value_capacity) {
+Error SlmpClient::readBits(const DeviceAddress& device, uint16_t points, bool* values, size_t value_capacity) {
     Error err = beginReadBits(device, points, values, value_capacity, getTimeMs());
     if (err != Error::Ok) return err;
     while (isBusy()) {
@@ -761,7 +787,7 @@ Error Slmp4eClient::readBits(const DeviceAddress& device, uint16_t points, bool*
     return last_error_;
 }
 
-Error Slmp4eClient::beginWriteBits(
+Error SlmpClient::beginWriteBits(
     const DeviceAddress& device,
     const bool* values,
     size_t count,
@@ -801,7 +827,7 @@ Error Slmp4eClient::beginWriteBits(
     return startAsync(AsyncContext::Type::WriteBits, payload_length, now_ms);
 }
 
-Error Slmp4eClient::writeBits(const DeviceAddress& device, const bool* values, size_t count) {
+Error SlmpClient::writeBits(const DeviceAddress& device, const bool* values, size_t count) {
     Error err = beginWriteBits(device, values, count, getTimeMs());
     if (err != Error::Ok) return err;
     while (isBusy()) {
@@ -810,7 +836,7 @@ Error Slmp4eClient::writeBits(const DeviceAddress& device, const bool* values, s
     return last_error_;
 }
 
-Error Slmp4eClient::beginReadDWords(
+Error SlmpClient::beginReadDWords(
     const DeviceAddress& device,
     uint16_t points,
     uint32_t* values,
@@ -841,7 +867,7 @@ Error Slmp4eClient::beginReadDWords(
     return startAsync(AsyncContext::Type::ReadDWords, 8, now_ms);
 }
 
-Error Slmp4eClient::readDWords(
+Error SlmpClient::readDWords(
     const DeviceAddress& device,
     uint16_t points,
     uint32_t* values,
@@ -855,7 +881,7 @@ Error Slmp4eClient::readDWords(
     return last_error_;
 }
 
-Error Slmp4eClient::beginWriteDWords(
+Error SlmpClient::beginWriteDWords(
     const DeviceAddress& device,
     const uint32_t* values,
     size_t count,
@@ -888,7 +914,7 @@ Error Slmp4eClient::beginWriteDWords(
     return startAsync(AsyncContext::Type::WriteDWords, payload_length, now_ms);
 }
 
-Error Slmp4eClient::writeDWords(const DeviceAddress& device, const uint32_t* values, size_t count) {
+Error SlmpClient::writeDWords(const DeviceAddress& device, const uint32_t* values, size_t count) {
     Error err = beginWriteDWords(device, values, count, getTimeMs());
     if (err != Error::Ok) return err;
     while (isBusy()) {
@@ -897,31 +923,126 @@ Error Slmp4eClient::writeDWords(const DeviceAddress& device, const uint32_t* val
     return last_error_;
 }
 
-Error Slmp4eClient::readOneWord(const DeviceAddress& device, uint16_t& value) {
+Error SlmpClient::beginReadFloat32s(
+    const DeviceAddress& device,
+    uint16_t points,
+    float* values,
+    size_t value_capacity,
+    uint32_t now_ms
+) {
+    if (values == nullptr || points == 0 || value_capacity < points || points > 0x7FFFU) {
+        setError(Error::InvalidArgument);
+        return last_error_;
+    }
+    if (isUnsupportedDirectDevice(device.code)) {
+        setError(Error::UnsupportedDevice);
+        return last_error_;
+    }
+    if (tx_capacity_ < 8) {
+        setError(Error::BufferTooSmall);
+        return last_error_;
+    }
+
+    if (encodeDeviceSpec(device, tx_buffer_, tx_capacity_) == 0) {
+        setError(Error::BufferTooSmall);
+        return last_error_;
+    }
+    writeLe16(tx_buffer_ + 6, static_cast<uint16_t>(points * 2U));
+
+    async_ctx_.data.common.values = values;
+    async_ctx_.data.common.points = points;
+    return startAsync(AsyncContext::Type::ReadFloat32s, 8, now_ms);
+}
+
+Error SlmpClient::readFloat32s(
+    const DeviceAddress& device,
+    uint16_t points,
+    float* values,
+    size_t value_capacity
+) {
+    Error err = beginReadFloat32s(device, points, values, value_capacity, getTimeMs());
+    if (err != Error::Ok) return err;
+    while (isBusy()) {
+        update(getTimeMs());
+    }
+    return last_error_;
+}
+
+Error SlmpClient::beginWriteFloat32s(
+    const DeviceAddress& device,
+    const float* values,
+    size_t count,
+    uint32_t now_ms
+) {
+    if (values == nullptr || count == 0 || count > 0x7FFFU) {
+        setError(Error::InvalidArgument);
+        return last_error_;
+    }
+    if (isUnsupportedDirectDevice(device.code)) {
+        setError(Error::UnsupportedDevice);
+        return last_error_;
+    }
+
+    size_t payload_length = 8U + (count * 4U);
+    if (tx_capacity_ < payload_length) {
+        setError(Error::BufferTooSmall);
+        return last_error_;
+    }
+
+    if (encodeDeviceSpec(device, tx_buffer_, tx_capacity_) == 0) {
+        setError(Error::BufferTooSmall);
+        return last_error_;
+    }
+    writeLe16(tx_buffer_ + 6, static_cast<uint16_t>(count * 2U));
+    for (size_t i = 0; i < count; ++i) {
+        writeLe32(tx_buffer_ + 8 + (i * 4U), floatToBits(values[i]));
+    }
+
+    return startAsync(AsyncContext::Type::WriteFloat32s, payload_length, now_ms);
+}
+
+Error SlmpClient::writeFloat32s(const DeviceAddress& device, const float* values, size_t count) {
+    Error err = beginWriteFloat32s(device, values, count, getTimeMs());
+    if (err != Error::Ok) return err;
+    while (isBusy()) {
+        update(getTimeMs());
+    }
+    return last_error_;
+}
+
+Error SlmpClient::readOneWord(const DeviceAddress& device, uint16_t& value) {
     return readWords(device, 1, &value, 1);
 }
 
-Error Slmp4eClient::writeOneWord(const DeviceAddress& device, uint16_t value) {
+Error SlmpClient::writeOneWord(const DeviceAddress& device, uint16_t value) {
     return writeWords(device, &value, 1);
 }
 
-Error Slmp4eClient::readOneBit(const DeviceAddress& device, bool& value) {
+Error SlmpClient::readOneBit(const DeviceAddress& device, bool& value) {
     return readBits(device, 1, &value, 1);
 }
 
-Error Slmp4eClient::writeOneBit(const DeviceAddress& device, bool value) {
+Error SlmpClient::writeOneBit(const DeviceAddress& device, bool value) {
     return writeBits(device, &value, 1);
 }
 
-Error Slmp4eClient::readOneDWord(const DeviceAddress& device, uint32_t& value) {
+Error SlmpClient::readOneDWord(const DeviceAddress& device, uint32_t& value) {
     return readDWords(device, 1, &value, 1);
 }
 
-Error Slmp4eClient::writeOneDWord(const DeviceAddress& device, uint32_t value) {
+Error SlmpClient::writeOneDWord(const DeviceAddress& device, uint32_t value) {
     return writeDWords(device, &value, 1);
 }
 
-Error Slmp4eClient::beginReadRandom(
+Error SlmpClient::readOneFloat32(const DeviceAddress& device, float& value) {
+    return readFloat32s(device, 1, &value, 1);
+}
+
+Error SlmpClient::writeOneFloat32(const DeviceAddress& device, float value) {
+    return writeFloat32s(device, &value, 1);
+}
+
+Error SlmpClient::beginReadRandom(
     const DeviceAddress* word_devices,
     size_t word_count,
     uint16_t* word_values,
@@ -987,7 +1108,7 @@ Error Slmp4eClient::beginReadRandom(
     return startAsync(AsyncContext::Type::ReadRandom, payload_length, now_ms);
 }
 
-Error Slmp4eClient::readRandom(
+Error SlmpClient::readRandom(
     const DeviceAddress* word_devices,
     size_t word_count,
     uint16_t* word_values,
@@ -1015,7 +1136,7 @@ Error Slmp4eClient::readRandom(
     return last_error_;
 }
 
-Error Slmp4eClient::beginWriteRandomWords(
+Error SlmpClient::beginWriteRandomWords(
     const DeviceAddress* word_devices,
     const uint16_t* word_values,
     size_t word_count,
@@ -1077,7 +1198,7 @@ Error Slmp4eClient::beginWriteRandomWords(
     return startAsync(AsyncContext::Type::WriteRandomWords, payload_length, now_ms);
 }
 
-Error Slmp4eClient::writeRandomWords(
+Error SlmpClient::writeRandomWords(
     const DeviceAddress* word_devices,
     const uint16_t* word_values,
     size_t word_count,
@@ -1101,7 +1222,7 @@ Error Slmp4eClient::writeRandomWords(
     return last_error_;
 }
 
-Error Slmp4eClient::beginWriteRandomBits(
+Error SlmpClient::beginWriteRandomBits(
     const DeviceAddress* bit_devices,
     const bool* bit_values,
     size_t bit_count,
@@ -1141,7 +1262,7 @@ Error Slmp4eClient::beginWriteRandomBits(
     return startAsync(AsyncContext::Type::WriteRandomBits, payload_length, now_ms);
 }
 
-Error Slmp4eClient::writeRandomBits(const DeviceAddress* bit_devices, const bool* bit_values, size_t bit_count) {
+Error SlmpClient::writeRandomBits(const DeviceAddress* bit_devices, const bool* bit_values, size_t bit_count) {
     Error err = beginWriteRandomBits(bit_devices, bit_values, bit_count, getTimeMs());
     if (err != Error::Ok) return err;
     while (isBusy()) {
@@ -1150,7 +1271,7 @@ Error Slmp4eClient::writeRandomBits(const DeviceAddress* bit_devices, const bool
     return last_error_;
 }
 
-Error Slmp4eClient::beginReadBlock(
+Error SlmpClient::beginReadBlock(
     const DeviceBlockRead* word_blocks,
     size_t word_block_count,
     const DeviceBlockRead* bit_blocks,
@@ -1223,7 +1344,7 @@ Error Slmp4eClient::beginReadBlock(
     return startAsync(AsyncContext::Type::ReadBlock, payload_length, now_ms);
 }
 
-Error Slmp4eClient::readBlock(
+Error SlmpClient::readBlock(
     const DeviceBlockRead* word_blocks,
     size_t word_block_count,
     const DeviceBlockRead* bit_blocks,
@@ -1251,7 +1372,7 @@ Error Slmp4eClient::readBlock(
     return last_error_;
 }
 
-Error Slmp4eClient::beginWriteBlock(
+Error SlmpClient::beginWriteBlock(
     const DeviceBlockWrite* word_blocks,
     size_t word_block_count,
     const DeviceBlockWrite* bit_blocks,
@@ -1323,7 +1444,7 @@ Error Slmp4eClient::beginWriteBlock(
     return startAsync(AsyncContext::Type::WriteBlock, payload_length, now_ms);
 }
 
-Error Slmp4eClient::writeBlock(
+Error SlmpClient::writeBlock(
     const DeviceBlockWrite* word_blocks,
     size_t word_block_count,
     const DeviceBlockWrite* bit_blocks,
@@ -1337,7 +1458,7 @@ Error Slmp4eClient::writeBlock(
     return last_error_;
 }
 
-Error Slmp4eClient::beginRemotePasswordUnlock(const char* password, uint32_t now_ms) {
+Error SlmpClient::beginRemotePasswordUnlock(const char* password, uint32_t now_ms) {
     size_t payload_length = 0;
     Error encode_error = encodeRemotePasswordPayload(password, tx_buffer_, tx_capacity_, payload_length);
     if (encode_error != Error::Ok) {
@@ -1348,7 +1469,7 @@ Error Slmp4eClient::beginRemotePasswordUnlock(const char* password, uint32_t now
     return startAsync(AsyncContext::Type::PasswordUnlock, payload_length, now_ms);
 }
 
-Error Slmp4eClient::remotePasswordUnlock(const char* password) {
+Error SlmpClient::remotePasswordUnlock(const char* password) {
     Error err = beginRemotePasswordUnlock(password, getTimeMs());
     if (err != Error::Ok) return err;
     while (isBusy()) {
@@ -1357,7 +1478,7 @@ Error Slmp4eClient::remotePasswordUnlock(const char* password) {
     return last_error_;
 }
 
-Error Slmp4eClient::beginRemotePasswordLock(const char* password, uint32_t now_ms) {
+Error SlmpClient::beginRemotePasswordLock(const char* password, uint32_t now_ms) {
     size_t payload_length = 0;
     Error encode_error = encodeRemotePasswordPayload(password, tx_buffer_, tx_capacity_, payload_length);
     if (encode_error != Error::Ok) {
@@ -1368,7 +1489,7 @@ Error Slmp4eClient::beginRemotePasswordLock(const char* password, uint32_t now_m
     return startAsync(AsyncContext::Type::PasswordLock, payload_length, now_ms);
 }
 
-Error Slmp4eClient::remotePasswordLock(const char* password) {
+Error SlmpClient::remotePasswordLock(const char* password) {
     Error err = beginRemotePasswordLock(password, getTimeMs());
     if (err != Error::Ok) return err;
     while (isBusy()) {
@@ -1377,7 +1498,7 @@ Error Slmp4eClient::remotePasswordLock(const char* password) {
     return last_error_;
 }
 
-void Slmp4eClient::setError(Error error, uint16_t end_code) {
+void SlmpClient::setError(Error error, uint16_t end_code) {
     last_error_ = error;
     last_end_code_ = end_code;
 }
@@ -1479,4 +1600,4 @@ size_t formatHexBytes(const uint8_t* data, size_t length, char* out, size_t out_
     return required;
 }
 
-}  // namespace slmp4e
+}  // namespace slmp

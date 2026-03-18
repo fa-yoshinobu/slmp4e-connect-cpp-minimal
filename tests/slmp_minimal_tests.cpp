@@ -7,8 +7,8 @@
 #include <string>
 #include <vector>
 
-#include "slmp4e_minimal.h"
-#include "slmp4e_utility.h"
+#include "slmp_minimal.h"
+#include "slmp_utility.h"
 #include "python_golden_frames.h"
 
 namespace {
@@ -83,7 +83,7 @@ void assertBytesEqual(const std::vector<uint8_t>& actual, const uint8_t* expecte
     assert(std::memcmp(actual.data(), expected, expected_size) == 0);
 }
 
-class MockTransport : public slmp4e::ITransport {
+class MockTransport : public slmp::ITransport {
   public:
     bool connect(const char* host, uint16_t port) override {
         if (!connect_results_.empty()) {
@@ -193,54 +193,54 @@ class MockTransport : public slmp4e::ITransport {
 
 struct DirectFunctionCase {
     const char* name;
-    slmp4e::DeviceCode code;
+    slmp::DeviceCode code;
     uint32_t number;
     bool bit_access;
     bool supported;
 };
 
 const DirectFunctionCase kDirectFunctionCases[] = {
-    {"SM", slmp4e::DeviceCode::SM, 100, true, true},
-    {"SD", slmp4e::DeviceCode::SD, 100, false, true},
-    {"X", slmp4e::DeviceCode::X, 0x10, true, true},
-    {"Y", slmp4e::DeviceCode::Y, 0x10, true, true},
-    {"M", slmp4e::DeviceCode::M, 100, true, true},
-    {"L", slmp4e::DeviceCode::L, 100, true, true},
-    {"F", slmp4e::DeviceCode::F, 100, true, true},
-    {"V", slmp4e::DeviceCode::V, 100, true, true},
-    {"B", slmp4e::DeviceCode::B, 0x100, true, true},
-    {"D", slmp4e::DeviceCode::D, 100, false, true},
-    {"W", slmp4e::DeviceCode::W, 0x100, false, true},
-    {"TS", slmp4e::DeviceCode::TS, 100, true, true},
-    {"TC", slmp4e::DeviceCode::TC, 100, true, true},
-    {"TN", slmp4e::DeviceCode::TN, 100, false, true},
-    {"LTS", slmp4e::DeviceCode::LTS, 100, true, false},
-    {"LTC", slmp4e::DeviceCode::LTC, 100, true, false},
-    {"LTN", slmp4e::DeviceCode::LTN, 100, false, false},
-    {"STS", slmp4e::DeviceCode::STS, 100, true, true},
-    {"STC", slmp4e::DeviceCode::STC, 100, true, true},
-    {"STN", slmp4e::DeviceCode::STN, 100, false, true},
-    {"LSTS", slmp4e::DeviceCode::LSTS, 100, true, false},
-    {"LSTC", slmp4e::DeviceCode::LSTC, 100, true, false},
-    {"LSTN", slmp4e::DeviceCode::LSTN, 100, false, false},
-    {"CS", slmp4e::DeviceCode::CS, 100, true, true},
-    {"CC", slmp4e::DeviceCode::CC, 100, true, true},
-    {"CN", slmp4e::DeviceCode::CN, 100, false, true},
-    {"LCS", slmp4e::DeviceCode::LCS, 100, true, false},
-    {"LCC", slmp4e::DeviceCode::LCC, 100, true, false},
-    {"LCN", slmp4e::DeviceCode::LCN, 100, false, false},
-    {"SB", slmp4e::DeviceCode::SB, 0x100, true, true},
-    {"SW", slmp4e::DeviceCode::SW, 0x100, false, true},
-    {"S", slmp4e::DeviceCode::S, 100, true, false},
-    {"DX", slmp4e::DeviceCode::DX, 0x10, true, true},
-    {"DY", slmp4e::DeviceCode::DY, 0x10, true, true},
-    {"Z", slmp4e::DeviceCode::Z, 100, false, false},
-    {"LZ", slmp4e::DeviceCode::LZ, 100, false, false},
-    {"R", slmp4e::DeviceCode::R, 200, false, true},
-    {"ZR", slmp4e::DeviceCode::ZR, 300, false, true},
-    {"RD", slmp4e::DeviceCode::RD, 100, false, false},
-    {"G", slmp4e::DeviceCode::G, 100, false, false},
-    {"HG", slmp4e::DeviceCode::HG, 100, false, false},
+    {"SM", slmp::DeviceCode::SM, 100, true, true},
+    {"SD", slmp::DeviceCode::SD, 100, false, true},
+    {"X", slmp::DeviceCode::X, 0x10, true, true},
+    {"Y", slmp::DeviceCode::Y, 0x10, true, true},
+    {"M", slmp::DeviceCode::M, 100, true, true},
+    {"L", slmp::DeviceCode::L, 100, true, true},
+    {"F", slmp::DeviceCode::F, 100, true, true},
+    {"V", slmp::DeviceCode::V, 100, true, true},
+    {"B", slmp::DeviceCode::B, 0x100, true, true},
+    {"D", slmp::DeviceCode::D, 100, false, true},
+    {"W", slmp::DeviceCode::W, 0x100, false, true},
+    {"TS", slmp::DeviceCode::TS, 100, true, true},
+    {"TC", slmp::DeviceCode::TC, 100, true, true},
+    {"TN", slmp::DeviceCode::TN, 100, false, true},
+    {"LTS", slmp::DeviceCode::LTS, 100, true, false},
+    {"LTC", slmp::DeviceCode::LTC, 100, true, false},
+    {"LTN", slmp::DeviceCode::LTN, 100, false, false},
+    {"STS", slmp::DeviceCode::STS, 100, true, true},
+    {"STC", slmp::DeviceCode::STC, 100, true, true},
+    {"STN", slmp::DeviceCode::STN, 100, false, true},
+    {"LSTS", slmp::DeviceCode::LSTS, 100, true, false},
+    {"LSTC", slmp::DeviceCode::LSTC, 100, true, false},
+    {"LSTN", slmp::DeviceCode::LSTN, 100, false, false},
+    {"CS", slmp::DeviceCode::CS, 100, true, true},
+    {"CC", slmp::DeviceCode::CC, 100, true, true},
+    {"CN", slmp::DeviceCode::CN, 100, false, true},
+    {"LCS", slmp::DeviceCode::LCS, 100, true, false},
+    {"LCC", slmp::DeviceCode::LCC, 100, true, false},
+    {"LCN", slmp::DeviceCode::LCN, 100, false, false},
+    {"SB", slmp::DeviceCode::SB, 0x100, true, true},
+    {"SW", slmp::DeviceCode::SW, 0x100, false, true},
+    {"S", slmp::DeviceCode::S, 100, true, false},
+    {"DX", slmp::DeviceCode::DX, 0x10, true, true},
+    {"DY", slmp::DeviceCode::DY, 0x10, true, true},
+    {"Z", slmp::DeviceCode::Z, 100, false, false},
+    {"LZ", slmp::DeviceCode::LZ, 100, false, false},
+    {"R", slmp::DeviceCode::R, 200, false, true},
+    {"ZR", slmp::DeviceCode::ZR, 300, false, true},
+    {"RD", slmp::DeviceCode::RD, 100, false, false},
+    {"G", slmp::DeviceCode::G, 100, false, false},
+    {"HG", slmp::DeviceCode::HG, 100, false, false},
 };
 
 std::vector<uint8_t> makeGenericRequest(uint16_t command, uint16_t subcommand) {
@@ -255,7 +255,7 @@ void assertDirectRequestHeader(
     const std::vector<uint8_t>& request,
     uint16_t command,
     uint16_t subcommand,
-    const slmp4e::DeviceAddress& device,
+    const slmp::DeviceAddress& device,
     uint16_t expected_points = 1U
 ) {
     assert(readLe16(request.data() + 15) == command);
@@ -269,7 +269,7 @@ void testReadWordsAndFrames() {
     MockTransport transport;
     uint8_t tx_buffer[128] = {};
     uint8_t rx_buffer[128] = {};
-    slmp4e::Slmp4eClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
+    slmp::SlmpClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
 
     const std::vector<uint8_t> provisional_request = {
         0x54, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x03, 0x00, 0x0E, 0x00, 0x10, 0x00,
@@ -278,7 +278,7 @@ void testReadWordsAndFrames() {
     transport.queueResponse(makeResponse(provisional_request, 0x0000, {0x34, 0x12, 0x78, 0x56}));
 
     uint16_t words[2] = {};
-    assert(plc.readWords(slmp4e::dev::D(slmp4e::dev::dec(100)), 2, words, 2) == slmp4e::Error::Ok);
+    assert(plc.readWords(slmp::dev::D(slmp::dev::dec(100)), 2, words, 2) == slmp::Error::Ok);
     assert(words[0] == 0x1234U);
     assert(words[1] == 0x5678U);
     assert(plc.lastRequestFrameLength() == 27U);
@@ -289,41 +289,41 @@ void testReadWordsAndFrames() {
     assert(plc.lastResponseFrame() == rx_buffer);
 
     char hex[64] = {};
-    assert(slmp4e::formatHexBytes(transport.lastWrite().data(), 4, hex, sizeof(hex)) == 11U);
+    assert(slmp::formatHexBytes(transport.lastWrite().data(), 4, hex, sizeof(hex)) == 11U);
     assert(std::string(hex) == "54 00 00 00");
 }
 
 void testAllDirectDeviceFamilies() {
     for (const DirectFunctionCase& test_case : kDirectFunctionCases) {
-        const slmp4e::DeviceAddress device = {test_case.code, test_case.number};
+        const slmp::DeviceAddress device = {test_case.code, test_case.number};
 
         {
             MockTransport transport;
             uint8_t tx_buffer[128] = {};
             uint8_t rx_buffer[128] = {};
-            slmp4e::Slmp4eClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
+            slmp::SlmpClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
 
             if (test_case.bit_access) {
                 transport.queueResponse(makeResponse(makeGenericRequest(0x0401, 0x0003), 0x0000, {0x10}));
                 bool value = false;
-                const slmp4e::Error error = plc.readOneBit(device, value);
+                const slmp::Error error = plc.readOneBit(device, value);
                 if (!test_case.supported) {
-                    assert(error == slmp4e::Error::UnsupportedDevice);
+                    assert(error == slmp::Error::UnsupportedDevice);
                     assert(transport.lastWrite().empty());
                 } else {
-                    assert(error == slmp4e::Error::Ok);
+                    assert(error == slmp::Error::Ok);
                     assert(value);
                     assertDirectRequestHeader(transport.lastWrite(), 0x0401, 0x0003, device);
                 }
             } else {
                 transport.queueResponse(makeResponse(makeGenericRequest(0x0401, 0x0002), 0x0000, {0x34, 0x12}));
                 uint16_t value = 0;
-                const slmp4e::Error error = plc.readOneWord(device, value);
+                const slmp::Error error = plc.readOneWord(device, value);
                 if (!test_case.supported) {
-                    assert(error == slmp4e::Error::UnsupportedDevice);
+                    assert(error == slmp::Error::UnsupportedDevice);
                     assert(transport.lastWrite().empty());
                 } else {
-                    assert(error == slmp4e::Error::Ok);
+                    assert(error == slmp::Error::Ok);
                     assert(value == 0x1234U);
                     assertDirectRequestHeader(transport.lastWrite(), 0x0401, 0x0002, device);
                 }
@@ -334,27 +334,27 @@ void testAllDirectDeviceFamilies() {
             MockTransport transport;
             uint8_t tx_buffer[128] = {};
             uint8_t rx_buffer[128] = {};
-            slmp4e::Slmp4eClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
+            slmp::SlmpClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
 
             if (test_case.bit_access) {
                 transport.queueResponse(makeResponse(makeGenericRequest(0x1401, 0x0003), 0x0000, {}));
-                const slmp4e::Error error = plc.writeOneBit(device, true);
+                const slmp::Error error = plc.writeOneBit(device, true);
                 if (!test_case.supported) {
-                    assert(error == slmp4e::Error::UnsupportedDevice);
+                    assert(error == slmp::Error::UnsupportedDevice);
                     assert(transport.lastWrite().empty());
                 } else {
-                    assert(error == slmp4e::Error::Ok);
+                    assert(error == slmp::Error::Ok);
                     assertDirectRequestHeader(transport.lastWrite(), 0x1401, 0x0003, device);
                     assert(transport.lastWrite()[27] == 0x10U);
                 }
             } else {
                 transport.queueResponse(makeResponse(makeGenericRequest(0x1401, 0x0002), 0x0000, {}));
-                const slmp4e::Error error = plc.writeOneWord(device, 0x1234U);
+                const slmp::Error error = plc.writeOneWord(device, 0x1234U);
                 if (!test_case.supported) {
-                    assert(error == slmp4e::Error::UnsupportedDevice);
+                    assert(error == slmp::Error::UnsupportedDevice);
                     assert(transport.lastWrite().empty());
                 } else {
-                    assert(error == slmp4e::Error::Ok);
+                    assert(error == slmp::Error::Ok);
                     assertDirectRequestHeader(transport.lastWrite(), 0x1401, 0x0002, device);
                     assert(readLe16(transport.lastWrite().data() + 27) == 0x1234U);
                 }
@@ -367,7 +367,7 @@ void testDWordAndOneShotHelpers() {
     MockTransport transport;
     uint8_t tx_buffer[128] = {};
     uint8_t rx_buffer[128] = {};
-    slmp4e::Slmp4eClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
+    slmp::SlmpClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
 
     const std::vector<uint8_t> provisional_request = {
         0x54, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x03, 0x00, 0x0E, 0x00, 0x10, 0x00,
@@ -376,7 +376,7 @@ void testDWordAndOneShotHelpers() {
     transport.queueResponse(makeResponse(provisional_request, 0x0000, {0x78, 0x56, 0x34, 0x12}));
 
     uint32_t dword = 0;
-    assert(plc.readOneDWord(slmp4e::dev::D(slmp4e::dev::dec(200)), dword) == slmp4e::Error::Ok);
+    assert(plc.readOneDWord(slmp::dev::D(slmp::dev::dec(200)), dword) == slmp::Error::Ok);
     assert(dword == 0x12345678UL);
 
     std::vector<uint8_t> second_request = provisional_request;
@@ -386,7 +386,7 @@ void testDWordAndOneShotHelpers() {
     second_request[17] = 0x03;
     second_request[18] = 0x00;
     transport.queueResponse(makeResponse(second_request, 0x0000, {}));
-    assert(plc.writeOneBit(slmp4e::dev::M(slmp4e::dev::dec(101)), true) == slmp4e::Error::Ok);
+    assert(plc.writeOneBit(slmp::dev::M(slmp::dev::dec(101)), true) == slmp::Error::Ok);
     assert(readLe16(transport.lastWrite().data() + 15) == 0x1401U);
     assert(readLe16(transport.lastWrite().data() + 17) == 0x0003U);
 }
@@ -396,11 +396,11 @@ void testWriteDWordsAndRandomWords() {
         MockTransport transport;
         uint8_t tx_buffer[128] = {};
         uint8_t rx_buffer[128] = {};
-        slmp4e::Slmp4eClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
+        slmp::SlmpClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
 
         transport.queueResponse(makeResponse(makeGenericRequest(0x1401, 0x0002), 0x0000, {}));
-        const slmp4e::DeviceAddress device = slmp4e::dev::D(slmp4e::dev::dec(200));
-        assert(plc.writeOneDWord(device, 0x12345678UL) == slmp4e::Error::Ok);
+        const slmp::DeviceAddress device = slmp::dev::D(slmp::dev::dec(200));
+        assert(plc.writeOneDWord(device, 0x12345678UL) == slmp::Error::Ok);
         assertDirectRequestHeader(transport.lastWrite(), 0x1401, 0x0002, device, 2U);
         assert(readLe32(transport.lastWrite().data() + 27) == 0x12345678UL);
     }
@@ -409,12 +409,12 @@ void testWriteDWordsAndRandomWords() {
         MockTransport transport;
         uint8_t tx_buffer[128] = {};
         uint8_t rx_buffer[128] = {};
-        slmp4e::Slmp4eClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
+        slmp::SlmpClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
 
         transport.queueResponse(makeResponse(makeGenericRequest(0x1401, 0x0002), 0x0000, {}));
         const uint32_t values[] = {0x89ABCDEFUL, 0x01234567UL};
-        const slmp4e::DeviceAddress device = slmp4e::dev::D(slmp4e::dev::dec(300));
-        assert(plc.writeDWords(device, values, 2) == slmp4e::Error::Ok);
+        const slmp::DeviceAddress device = slmp::dev::D(slmp::dev::dec(300));
+        assert(plc.writeDWords(device, values, 2) == slmp::Error::Ok);
         assertDirectRequestHeader(transport.lastWrite(), 0x1401, 0x0002, device, 4U);
         assert(readLe32(transport.lastWrite().data() + 27) == values[0]);
         assert(readLe32(transport.lastWrite().data() + 31) == values[1]);
@@ -424,28 +424,62 @@ void testWriteDWordsAndRandomWords() {
         MockTransport transport;
         uint8_t tx_buffer[128] = {};
         uint8_t rx_buffer[128] = {};
-        slmp4e::Slmp4eClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
+        slmp::SlmpClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
 
         transport.queueResponse(makeResponse(makeGenericRequest(0x1402, 0x0002), 0x0000, {}));
-        const slmp4e::DeviceAddress word_devices[] = {
-            slmp4e::dev::D(slmp4e::dev::dec(120)),
+        const slmp::DeviceAddress word_devices[] = {
+            slmp::dev::D(slmp::dev::dec(120)),
         };
         const uint16_t word_values[] = {0x1111U};
-        const slmp4e::DeviceAddress dword_devices[] = {
-            slmp4e::dev::ZR(slmp4e::dev::dec(300)),
+        const slmp::DeviceAddress dword_devices[] = {
+            slmp::dev::ZR(slmp::dev::dec(300)),
         };
         const uint32_t dword_values[] = {0x12345678UL};
-        assert(plc.writeRandomWords(word_devices, word_values, 1, dword_devices, dword_values, 1) == slmp4e::Error::Ok);
+        assert(plc.writeRandomWords(word_devices, word_values, 1, dword_devices, dword_values, 1) == slmp::Error::Ok);
         assert(readLe16(transport.lastWrite().data() + 15) == 0x1402U);
         assert(readLe16(transport.lastWrite().data() + 17) == 0x0002U);
         assert(transport.lastWrite()[19] == 1U);
         assert(transport.lastWrite()[20] == 1U);
         assert(readLe24(transport.lastWrite().data() + 21) == 120U);
-        assert(readLe16(transport.lastWrite().data() + 25) == static_cast<uint16_t>(slmp4e::DeviceCode::D));
+        assert(readLe16(transport.lastWrite().data() + 25) == static_cast<uint16_t>(slmp::DeviceCode::D));
         assert(readLe16(transport.lastWrite().data() + 27) == word_values[0]);
         assert(readLe24(transport.lastWrite().data() + 29) == 300U);
-        assert(readLe16(transport.lastWrite().data() + 33) == static_cast<uint16_t>(slmp4e::DeviceCode::ZR));
+        assert(readLe16(transport.lastWrite().data() + 33) == static_cast<uint16_t>(slmp::DeviceCode::ZR));
         assert(readLe32(transport.lastWrite().data() + 35) == dword_values[0]);
+    }
+}
+
+void testFloat32Helpers() {
+    {
+        MockTransport transport;
+        uint8_t tx_buffer[128] = {};
+        uint8_t rx_buffer[128] = {};
+        slmp::SlmpClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
+
+        const std::vector<uint8_t> provisional_request = {
+            0x54, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x03, 0x00, 0x0E, 0x00, 0x10, 0x00,
+            0x01, 0x04, 0x02, 0x00, 0xC8, 0x00, 0x00, 0x00, 0xA8, 0x00, 0x02, 0x00
+        };
+        transport.queueResponse(makeResponse(provisional_request, 0x0000, {0x00, 0x00, 0xC0, 0x3F}));
+
+        float value = 0.0f;
+        assert(plc.readOneFloat32(slmp::dev::D(slmp::dev::dec(200)), value) == slmp::Error::Ok);
+        uint32_t bits = 0;
+        std::memcpy(&bits, &value, sizeof(bits));
+        assert(bits == 0x3FC00000UL);
+    }
+
+    {
+        MockTransport transport;
+        uint8_t tx_buffer[128] = {};
+        uint8_t rx_buffer[128] = {};
+        slmp::SlmpClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
+
+        transport.queueResponse(makeResponse(makeGenericRequest(0x1401, 0x0002), 0x0000, {}));
+        const slmp::DeviceAddress device = slmp::dev::D(slmp::dev::dec(200));
+        assert(plc.writeOneFloat32(device, 1.5f) == slmp::Error::Ok);
+        assertDirectRequestHeader(transport.lastWrite(), 0x1401, 0x0002, device, 2U);
+        assert(readLe32(transport.lastWrite().data() + 27) == 0x3FC00000UL);
     }
 }
 
@@ -453,7 +487,7 @@ void testRandomAndBlock() {
     MockTransport transport;
     uint8_t tx_buffer[256] = {};
     uint8_t rx_buffer[256] = {};
-    slmp4e::Slmp4eClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
+    slmp::SlmpClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
 
     std::vector<uint8_t> random_payload = {0x11, 0x11, 0x22, 0x22};
     appendLe32(random_payload, 0x12345678UL);
@@ -463,16 +497,16 @@ void testRandomAndBlock() {
     };
     transport.queueResponse(makeResponse(serial0_request, 0x0000, random_payload));
 
-    const slmp4e::DeviceAddress random_words[] = {
-        slmp4e::dev::D(slmp4e::dev::dec(100)),
-        slmp4e::dev::D(slmp4e::dev::dec(101)),
+    const slmp::DeviceAddress random_words[] = {
+        slmp::dev::D(slmp::dev::dec(100)),
+        slmp::dev::D(slmp::dev::dec(101)),
     };
-    const slmp4e::DeviceAddress random_dwords[] = {
-        slmp4e::dev::D(slmp4e::dev::dec(200)),
+    const slmp::DeviceAddress random_dwords[] = {
+        slmp::dev::D(slmp::dev::dec(200)),
     };
     uint16_t word_values[2] = {};
     uint32_t dword_values[1] = {};
-    assert(plc.readRandom(random_words, 2, word_values, 2, random_dwords, 1, dword_values, 1) == slmp4e::Error::Ok);
+    assert(plc.readRandom(random_words, 2, word_values, 2, random_dwords, 1, dword_values, 1) == slmp::Error::Ok);
     assert(word_values[0] == 0x1111U);
     assert(word_values[1] == 0x2222U);
     assert(dword_values[0] == 0x12345678UL);
@@ -485,15 +519,15 @@ void testRandomAndBlock() {
     serial1_request[16] = 0x04;
     transport.queueResponse(makeResponse(serial1_request, 0x0000, block_payload));
 
-    const slmp4e::DeviceBlockRead word_blocks[] = {
-        slmp4e::dev::blockRead(slmp4e::dev::D(slmp4e::dev::dec(300)), 2),
+    const slmp::DeviceBlockRead word_blocks[] = {
+        slmp::dev::blockRead(slmp::dev::D(slmp::dev::dec(300)), 2),
     };
-    const slmp4e::DeviceBlockRead bit_blocks[] = {
-        slmp4e::dev::blockRead(slmp4e::dev::M(slmp4e::dev::dec(200)), 1),
+    const slmp::DeviceBlockRead bit_blocks[] = {
+        slmp::dev::blockRead(slmp::dev::M(slmp::dev::dec(200)), 1),
     };
     uint16_t block_words[2] = {};
     uint16_t block_bits[1] = {};
-    assert(plc.readBlock(word_blocks, 1, bit_blocks, 1, block_words, 2, block_bits, 1) == slmp4e::Error::Ok);
+    assert(plc.readBlock(word_blocks, 1, bit_blocks, 1, block_words, 2, block_bits, 1) == slmp::Error::Ok);
     assert(block_words[0] == 0x1234U);
     assert(block_words[1] == 0x5678U);
     assert(block_bits[0] == 0x0005U);
@@ -504,9 +538,9 @@ void testTargetAndMonitoringTimerHeaders() {
     MockTransport transport;
     uint8_t tx_buffer[128] = {};
     uint8_t rx_buffer[128] = {};
-    slmp4e::Slmp4eClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
+    slmp::SlmpClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
 
-    slmp4e::TargetAddress target = {};
+    slmp::TargetAddress target = {};
     target.network = 0x12;
     target.station = 0x34;
     target.module_io = 0x0567;
@@ -526,8 +560,8 @@ void testTargetAndMonitoringTimerHeaders() {
         'Q', '0', '3', 'U', 'D', 'V', 'C', 'P', 'U', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 0x34, 0x12
     }));
 
-    slmp4e::TypeNameInfo type_name = {};
-    assert(plc.readTypeName(type_name) == slmp4e::Error::Ok);
+    slmp::TypeNameInfo type_name = {};
+    assert(plc.readTypeName(type_name) == slmp::Error::Ok);
     assert(transport.lastWrite()[6] == target.network);
     assert(transport.lastWrite()[7] == target.station);
     assert(readLe16(transport.lastWrite().data() + 8) == target.module_io);
@@ -539,7 +573,7 @@ void testPlcErrorAndStrings() {
     MockTransport transport;
     uint8_t tx_buffer[128] = {};
     uint8_t rx_buffer[128] = {};
-    slmp4e::Slmp4eClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
+    slmp::SlmpClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
 
     const std::vector<uint8_t> provisional_request = {
         0x54, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x03, 0x00, 0x0E, 0x00, 0x10, 0x00,
@@ -548,25 +582,25 @@ void testPlcErrorAndStrings() {
     transport.queueResponse(makeResponse(provisional_request, 0x4031, {}));
 
     uint16_t value = 0;
-    assert(plc.readOneWord(slmp4e::dev::D(slmp4e::dev::dec(100)), value) == slmp4e::Error::PlcError);
+    assert(plc.readOneWord(slmp::dev::D(slmp::dev::dec(100)), value) == slmp::Error::PlcError);
     assert(plc.lastEndCode() == 0x4031U);
-    assert(std::string(slmp4e::errorString(plc.lastError())) == "plc_error");
-    assert(std::string(slmp4e::endCodeString(plc.lastEndCode())) == "range_or_allocation_mismatch");
-    assert(std::string(slmp4e::endCodeString(0xDEADU)) == "unknown_plc_end_code");
+    assert(std::string(slmp::errorString(plc.lastError())) == "plc_error");
+    assert(std::string(slmp::endCodeString(plc.lastEndCode())) == "range_or_allocation_mismatch");
+    assert(std::string(slmp::endCodeString(0xDEADU)) == "unknown_plc_end_code");
 }
 
 void testPasswordAndWriteBlock() {
     MockTransport transport;
     uint8_t tx_buffer[256] = {};
     uint8_t rx_buffer[256] = {};
-    slmp4e::Slmp4eClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
+    slmp::SlmpClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
 
     const std::vector<uint8_t> unlock_request = {
         0x54, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x03, 0x00, 0x0F, 0x00, 0x10, 0x00,
         0x30, 0x16, 0x00, 0x00
     };
     transport.queueResponse(makeResponse(unlock_request, 0x0000, {}));
-    assert(plc.remotePasswordUnlock("secret1") == slmp4e::Error::Ok);
+    assert(plc.remotePasswordUnlock("secret1") == slmp::Error::Ok);
     assert(readLe16(transport.lastWrite().data() + 15) == 0x1630U);
     assert(readLe16(transport.lastWrite().data() + 19) == 7U);
     assert(std::memcmp(transport.lastWrite().data() + 21, "secret1", 7) == 0);
@@ -578,10 +612,10 @@ void testPasswordAndWriteBlock() {
     transport.queueResponse(makeResponse(block_request, 0x0000, {}));
 
     const uint16_t block_values[] = {0x1234, 0x5678};
-    const slmp4e::DeviceBlockWrite word_blocks[] = {
-        slmp4e::dev::blockWrite(slmp4e::dev::D(slmp4e::dev::dec(400)), block_values, 2),
+    const slmp::DeviceBlockWrite word_blocks[] = {
+        slmp::dev::blockWrite(slmp::dev::D(slmp::dev::dec(400)), block_values, 2),
     };
-    assert(plc.writeBlock(word_blocks, 1, nullptr, 0) == slmp4e::Error::Ok);
+    assert(plc.writeBlock(word_blocks, 1, nullptr, 0) == slmp::Error::Ok);
     assert(readLe16(transport.lastWrite().data() + 15) == 0x1406U);
 }
 
@@ -590,57 +624,57 @@ void testValidationAndBoundaryFailures() {
         MockTransport transport;
         uint8_t tx_buffer[64] = {};
         uint8_t rx_buffer[64] = {};
-        slmp4e::Slmp4eClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
+        slmp::SlmpClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
 
-        assert(plc.writeRandomWords(nullptr, nullptr, 0, nullptr, nullptr, 0) == slmp4e::Error::InvalidArgument);
+        assert(plc.writeRandomWords(nullptr, nullptr, 0, nullptr, nullptr, 0) == slmp::Error::InvalidArgument);
     }
 
     {
         MockTransport transport;
         uint8_t tx_buffer[20] = {};
         uint8_t rx_buffer[64] = {};
-        slmp4e::Slmp4eClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
+        slmp::SlmpClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
 
-        const slmp4e::DeviceAddress word_devices[] = {slmp4e::dev::D(slmp4e::dev::dec(120))};
+        const slmp::DeviceAddress word_devices[] = {slmp::dev::D(slmp::dev::dec(120))};
         const uint16_t word_values[] = {0x1111U};
-        const slmp4e::DeviceAddress dword_devices[] = {slmp4e::dev::D(slmp4e::dev::dec(200))};
+        const slmp::DeviceAddress dword_devices[] = {slmp::dev::D(slmp::dev::dec(200))};
         const uint32_t dword_values[] = {0x12345678UL};
-        assert(plc.writeRandomWords(word_devices, word_values, 1, dword_devices, dword_values, 1) == slmp4e::Error::BufferTooSmall);
+        assert(plc.writeRandomWords(word_devices, word_values, 1, dword_devices, dword_values, 1) == slmp::Error::BufferTooSmall);
     }
 
     {
         MockTransport transport;
         uint8_t tx_buffer[64] = {};
         uint8_t rx_buffer[64] = {};
-        slmp4e::Slmp4eClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
+        slmp::SlmpClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
 
         uint32_t dwords[1] = {};
-        assert(plc.readDWords(slmp4e::dev::D(slmp4e::dev::dec(200)), 0, dwords, 1) == slmp4e::Error::InvalidArgument);
+        assert(plc.readDWords(slmp::dev::D(slmp::dev::dec(200)), 0, dwords, 1) == slmp::Error::InvalidArgument);
     }
 
     {
         MockTransport transport;
         uint8_t tx_buffer[64] = {};
         uint8_t rx_buffer[64] = {};
-        slmp4e::Slmp4eClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
+        slmp::SlmpClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
 
-        const slmp4e::DeviceBlockRead word_blocks[] = {
-            slmp4e::dev::blockRead(slmp4e::dev::D(slmp4e::dev::dec(300)), 2),
+        const slmp::DeviceBlockRead word_blocks[] = {
+            slmp::dev::blockRead(slmp::dev::D(slmp::dev::dec(300)), 2),
         };
         uint16_t too_small_word_values[1] = {};
-        assert(plc.readBlock(word_blocks, 1, nullptr, 0, too_small_word_values, 1, nullptr, 0) == slmp4e::Error::InvalidArgument);
+        assert(plc.readBlock(word_blocks, 1, nullptr, 0, too_small_word_values, 1, nullptr, 0) == slmp::Error::InvalidArgument);
     }
 
     {
         MockTransport transport;
         uint8_t tx_buffer[64] = {};
         uint8_t rx_buffer[64] = {};
-        slmp4e::Slmp4eClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
+        slmp::SlmpClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
 
-        const slmp4e::DeviceBlockWrite invalid_word_blocks[] = {
-            {{slmp4e::DeviceCode::D, 400}, nullptr, 2},
+        const slmp::DeviceBlockWrite invalid_word_blocks[] = {
+            {{slmp::DeviceCode::D, 400}, nullptr, 2},
         };
-        assert(plc.writeBlock(invalid_word_blocks, 1, nullptr, 0) == slmp4e::Error::InvalidArgument);
+        assert(plc.writeBlock(invalid_word_blocks, 1, nullptr, 0) == slmp::Error::InvalidArgument);
     }
 }
 
@@ -648,17 +682,17 @@ void testTransportFailuresAndReconnectHelper() {
     MockTransport transport;
     uint8_t tx_buffer[128] = {};
     uint8_t rx_buffer[128] = {};
-    slmp4e::Slmp4eClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
+    slmp::SlmpClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
 
     transport.close();
     transport.queueConnectResult(false);
     transport.queueConnectResult(true);
 
-    slmp4e::ReconnectHelper reconnect(
+    slmp::ReconnectHelper reconnect(
         plc,
         "192.168.250.101",
         1025,
-        slmp4e::ReconnectOptions{1000}
+        slmp::ReconnectOptions{1000}
     );
 
     assert(!reconnect.ensureConnected(0));
@@ -669,9 +703,9 @@ void testTransportFailuresAndReconnectHelper() {
     assert(!reconnect.consumeConnectedEdge());
 
     transport.setFailNextRead();
-    slmp4e::TypeNameInfo type_name = {};
-    assert(plc.readTypeName(type_name) == slmp4e::Error::TransportError);
-    assert(plc.lastError() == slmp4e::Error::TransportError);
+    slmp::TypeNameInfo type_name = {};
+    assert(plc.readTypeName(type_name) == slmp::Error::TransportError);
+    assert(plc.lastError() == slmp::Error::TransportError);
 
     transport.queueConnectResult(true);
     reconnect.forceReconnect(1200);
@@ -684,13 +718,13 @@ void testPythonCompatibilityGoldenFrames() {
         MockTransport transport;
         uint8_t tx_buffer[128] = {};
         uint8_t rx_buffer[128] = {};
-        slmp4e::Slmp4eClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
+        slmp::SlmpClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
 
         transport.queueResponse(makeResponse(std::vector<uint8_t>(python_golden::kReadTypeNameRequest, python_golden::kReadTypeNameRequest + python_golden::size(python_golden::kReadTypeNameRequest)), 0x0000, {
             'Q', '0', '3', 'U', 'D', 'V', 'C', 'P', 'U', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 0x34, 0x12
         }));
-        slmp4e::TypeNameInfo type_name = {};
-        assert(plc.readTypeName(type_name) == slmp4e::Error::Ok);
+        slmp::TypeNameInfo type_name = {};
+        assert(plc.readTypeName(type_name) == slmp::Error::Ok);
         assertBytesEqual(
             transport.lastWrite(),
             python_golden::kReadTypeNameRequest,
@@ -702,7 +736,7 @@ void testPythonCompatibilityGoldenFrames() {
         MockTransport transport;
         uint8_t tx_buffer[128] = {};
         uint8_t rx_buffer[128] = {};
-        slmp4e::Slmp4eClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
+        slmp::SlmpClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
 
         transport.queueResponse(makeResponse(
             std::vector<uint8_t>(
@@ -713,7 +747,7 @@ void testPythonCompatibilityGoldenFrames() {
             {0x34, 0x12, 0x78, 0x56}
         ));
         uint16_t words[2] = {};
-        assert(plc.readWords(slmp4e::dev::D(slmp4e::dev::dec(100)), 2, words, 2) == slmp4e::Error::Ok);
+        assert(plc.readWords(slmp::dev::D(slmp::dev::dec(100)), 2, words, 2) == slmp::Error::Ok);
         assertBytesEqual(
             transport.lastWrite(),
             python_golden::kReadWordsD1002Request,
@@ -725,7 +759,7 @@ void testPythonCompatibilityGoldenFrames() {
         MockTransport transport;
         uint8_t tx_buffer[128] = {};
         uint8_t rx_buffer[128] = {};
-        slmp4e::Slmp4eClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
+        slmp::SlmpClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
 
         transport.queueResponse(makeResponse(
             std::vector<uint8_t>(
@@ -735,7 +769,7 @@ void testPythonCompatibilityGoldenFrames() {
             0x0000,
             {}
         ));
-        assert(plc.writeOneBit(slmp4e::dev::M(slmp4e::dev::dec(101)), true) == slmp4e::Error::Ok);
+        assert(plc.writeOneBit(slmp::dev::M(slmp::dev::dec(101)), true) == slmp::Error::Ok);
         assertBytesEqual(
             transport.lastWrite(),
             python_golden::kWriteBitsM101TrueRequest,
@@ -747,7 +781,7 @@ void testPythonCompatibilityGoldenFrames() {
         MockTransport transport;
         uint8_t tx_buffer[256] = {};
         uint8_t rx_buffer[256] = {};
-        slmp4e::Slmp4eClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
+        slmp::SlmpClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
 
         transport.queueResponse(makeResponse(
             std::vector<uint8_t>(
@@ -757,16 +791,16 @@ void testPythonCompatibilityGoldenFrames() {
             0x0000,
             {0x11, 0x11, 0x22, 0x22, 0x78, 0x56, 0x34, 0x12}
         ));
-        const slmp4e::DeviceAddress random_words[] = {
-            slmp4e::dev::D(slmp4e::dev::dec(100)),
-            slmp4e::dev::D(slmp4e::dev::dec(101)),
+        const slmp::DeviceAddress random_words[] = {
+            slmp::dev::D(slmp::dev::dec(100)),
+            slmp::dev::D(slmp::dev::dec(101)),
         };
-        const slmp4e::DeviceAddress random_dwords[] = {
-            slmp4e::dev::D(slmp4e::dev::dec(200)),
+        const slmp::DeviceAddress random_dwords[] = {
+            slmp::dev::D(slmp::dev::dec(200)),
         };
         uint16_t word_values[2] = {};
         uint32_t dword_values[1] = {};
-        assert(plc.readRandom(random_words, 2, word_values, 2, random_dwords, 1, dword_values, 1) == slmp4e::Error::Ok);
+        assert(plc.readRandom(random_words, 2, word_values, 2, random_dwords, 1, dword_values, 1) == slmp::Error::Ok);
         assertBytesEqual(
             transport.lastWrite(),
             python_golden::kReadRandomRequest,
@@ -778,7 +812,7 @@ void testPythonCompatibilityGoldenFrames() {
         MockTransport transport;
         uint8_t tx_buffer[256] = {};
         uint8_t rx_buffer[256] = {};
-        slmp4e::Slmp4eClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
+        slmp::SlmpClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
 
         transport.queueResponse(makeResponse(
             std::vector<uint8_t>(
@@ -788,12 +822,12 @@ void testPythonCompatibilityGoldenFrames() {
             0x0000,
             {}
         ));
-        const slmp4e::DeviceAddress random_bits[] = {
-            slmp4e::dev::M(slmp4e::dev::dec(100)),
-            slmp4e::dev::Y(slmp4e::dev::hex(0x20)),
+        const slmp::DeviceAddress random_bits[] = {
+            slmp::dev::M(slmp::dev::dec(100)),
+            slmp::dev::Y(slmp::dev::hex(0x20)),
         };
         const bool bit_values[] = {true, false};
-        assert(plc.writeRandomBits(random_bits, bit_values, 2) == slmp4e::Error::Ok);
+        assert(plc.writeRandomBits(random_bits, bit_values, 2) == slmp::Error::Ok);
         assertBytesEqual(
             transport.lastWrite(),
             python_golden::kWriteRandomBitsRequest,
@@ -805,7 +839,7 @@ void testPythonCompatibilityGoldenFrames() {
         MockTransport transport;
         uint8_t tx_buffer[256] = {};
         uint8_t rx_buffer[256] = {};
-        slmp4e::Slmp4eClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
+        slmp::SlmpClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
 
         transport.queueResponse(makeResponse(
             std::vector<uint8_t>(
@@ -815,15 +849,15 @@ void testPythonCompatibilityGoldenFrames() {
             0x0000,
             {0x34, 0x12, 0x78, 0x56, 0x05, 0x00}
         ));
-        const slmp4e::DeviceBlockRead word_blocks[] = {
-            slmp4e::dev::blockRead(slmp4e::dev::D(slmp4e::dev::dec(300)), 2),
+        const slmp::DeviceBlockRead word_blocks[] = {
+            slmp::dev::blockRead(slmp::dev::D(slmp::dev::dec(300)), 2),
         };
-        const slmp4e::DeviceBlockRead bit_blocks[] = {
-            slmp4e::dev::blockRead(slmp4e::dev::M(slmp4e::dev::dec(200)), 1),
+        const slmp::DeviceBlockRead bit_blocks[] = {
+            slmp::dev::blockRead(slmp::dev::M(slmp::dev::dec(200)), 1),
         };
         uint16_t block_words[2] = {};
         uint16_t block_bits[1] = {};
-        assert(plc.readBlock(word_blocks, 1, bit_blocks, 1, block_words, 2, block_bits, 1) == slmp4e::Error::Ok);
+        assert(plc.readBlock(word_blocks, 1, bit_blocks, 1, block_words, 2, block_bits, 1) == slmp::Error::Ok);
         assertBytesEqual(
             transport.lastWrite(),
             python_golden::kReadBlockRequest,
@@ -835,7 +869,7 @@ void testPythonCompatibilityGoldenFrames() {
         MockTransport transport;
         uint8_t tx_buffer[128] = {};
         uint8_t rx_buffer[128] = {};
-        slmp4e::Slmp4eClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
+        slmp::SlmpClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
 
         transport.queueResponse(makeResponse(
             std::vector<uint8_t>(
@@ -845,7 +879,7 @@ void testPythonCompatibilityGoldenFrames() {
             0x0000,
             {}
         ));
-        assert(plc.remotePasswordUnlock("secret1") == slmp4e::Error::Ok);
+        assert(plc.remotePasswordUnlock("secret1") == slmp::Error::Ok);
         assertBytesEqual(
             transport.lastWrite(),
             python_golden::kRemoteUnlockRequest,
@@ -859,63 +893,63 @@ void testProtocolFailures() {
         MockTransport transport;
         uint8_t tx_buffer[64] = {};
         uint8_t rx_buffer[64] = {};
-        slmp4e::Slmp4eClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
+        slmp::SlmpClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
 
         transport.queueResponse({
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x03, 0x00, 0x02, 0x00, 0x00, 0x00
         });
-        slmp4e::TypeNameInfo type_name = {};
-        assert(plc.readTypeName(type_name) == slmp4e::Error::ProtocolError);
+        slmp::TypeNameInfo type_name = {};
+        assert(plc.readTypeName(type_name) == slmp::Error::ProtocolError);
     }
 
     {
         MockTransport transport;
         uint8_t tx_buffer[64] = {};
         uint8_t rx_buffer[64] = {};
-        slmp4e::Slmp4eClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
+        slmp::SlmpClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
 
         transport.queueResponse({
             0xD4, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x03, 0x00, 0x02, 0x00, 0x00, 0x00
         });
-        slmp4e::TypeNameInfo type_name = {};
-        assert(plc.readTypeName(type_name) == slmp4e::Error::ProtocolError);
+        slmp::TypeNameInfo type_name = {};
+        assert(plc.readTypeName(type_name) == slmp::Error::ProtocolError);
     }
 
     {
         MockTransport transport;
         uint8_t tx_buffer[64] = {};
         uint8_t rx_buffer[64] = {};
-        slmp4e::Slmp4eClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
+        slmp::SlmpClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
 
         transport.queueResponse({
             0xD4, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x03, 0x00, 0x01, 0x00, 0x00
         });
-        slmp4e::TypeNameInfo type_name = {};
-        assert(plc.readTypeName(type_name) == slmp4e::Error::ProtocolError);
+        slmp::TypeNameInfo type_name = {};
+        assert(plc.readTypeName(type_name) == slmp::Error::ProtocolError);
     }
 
     {
         MockTransport transport;
         uint8_t tx_buffer[64] = {};
         uint8_t rx_buffer[14] = {};
-        slmp4e::Slmp4eClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
+        slmp::SlmpClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
 
         transport.queueResponse({
             0xD4, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x03, 0x00, 0x14, 0x00
         });
-        slmp4e::TypeNameInfo type_name = {};
-        assert(plc.readTypeName(type_name) == slmp4e::Error::BufferTooSmall);
+        slmp::TypeNameInfo type_name = {};
+        assert(plc.readTypeName(type_name) == slmp::Error::BufferTooSmall);
     }
 
     {
         MockTransport transport;
         uint8_t tx_buffer[64] = {};
         uint8_t rx_buffer[64] = {};
-        slmp4e::Slmp4eClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
+        slmp::SlmpClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
 
         transport.setFailNextWrite();
-        slmp4e::TypeNameInfo type_name = {};
-        assert(plc.readTypeName(type_name) == slmp4e::Error::TransportError);
+        slmp::TypeNameInfo type_name = {};
+        assert(plc.readTypeName(type_name) == slmp::Error::TransportError);
     }
 }
 
@@ -924,7 +958,7 @@ void testPayloadValidationFailures() {
         MockTransport transport;
         uint8_t tx_buffer[64] = {};
         uint8_t rx_buffer[64] = {};
-        slmp4e::Slmp4eClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
+        slmp::SlmpClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
 
         const std::vector<uint8_t> request = {
             0x54, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x03, 0x00, 0x0C, 0x00, 0x10, 0x00,
@@ -932,14 +966,14 @@ void testPayloadValidationFailures() {
         };
         transport.queueResponse(makeResponse(request, 0x0000, {0x34, 0x12}));
         uint16_t words[2] = {};
-        assert(plc.readWords(slmp4e::dev::D(slmp4e::dev::dec(100)), 2, words, 2) == slmp4e::Error::ProtocolError);
+        assert(plc.readWords(slmp::dev::D(slmp::dev::dec(100)), 2, words, 2) == slmp::Error::ProtocolError);
     }
 
     {
         MockTransport transport;
         uint8_t tx_buffer[64] = {};
         uint8_t rx_buffer[64] = {};
-        slmp4e::Slmp4eClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
+        slmp::SlmpClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
 
         const std::vector<uint8_t> request = {
             0x54, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x03, 0x00, 0x0C, 0x00, 0x10, 0x00,
@@ -947,7 +981,7 @@ void testPayloadValidationFailures() {
         };
         transport.queueResponse(makeResponse(request, 0x0000, {}));
         bool value = false;
-        assert(plc.readOneBit(slmp4e::dev::M(slmp4e::dev::dec(100)), value) == slmp4e::Error::ProtocolError);
+        assert(plc.readOneBit(slmp::dev::M(slmp::dev::dec(100)), value) == slmp::Error::ProtocolError);
     }
 }
 
@@ -955,7 +989,7 @@ void testAsyncApi() {
     MockTransport transport;
     uint8_t tx_buffer[128] = {};
     uint8_t rx_buffer[128] = {};
-    slmp4e::Slmp4eClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
+    slmp::SlmpClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
 
     const std::vector<uint8_t> provisional_request = {
         0x54, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x03, 0x00, 0x0E, 0x00, 0x10, 0x00,
@@ -965,7 +999,7 @@ void testAsyncApi() {
 
     uint16_t words[2] = {};
     uint32_t now = 1000;
-    assert(plc.beginReadWords(slmp4e::dev::D(slmp4e::dev::dec(100)), 2, words, 2, now) == slmp4e::Error::Ok);
+    assert(plc.beginReadWords(slmp::dev::D(slmp::dev::dec(100)), 2, words, 2, now) == slmp::Error::Ok);
     assert(plc.isBusy());
 
     // Progress state machine
@@ -976,19 +1010,45 @@ void testAsyncApi() {
     plc.update(now); // Receives body
     assert(!plc.isBusy());
 
-    assert(plc.lastError() == slmp4e::Error::Ok);
+    assert(plc.lastError() == slmp::Error::Ok);
     assert(words[0] == 0x1234U);
     assert(words[1] == 0x5678U);
+}
+
+void testAsyncFloat32Api() {
+    MockTransport transport;
+    uint8_t tx_buffer[128] = {};
+    uint8_t rx_buffer[128] = {};
+    slmp::SlmpClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
+
+    const std::vector<uint8_t> provisional_request = {
+        0x54, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x03, 0x00, 0x0E, 0x00, 0x10, 0x00,
+        0x01, 0x04, 0x02, 0x00, 0x64, 0x00, 0x00, 0x00, 0xA8, 0x00, 0x02, 0x00
+    };
+    transport.queueResponse(makeResponse(provisional_request, 0x0000, {0x00, 0x00, 0xC0, 0x3F}));
+
+    float value = 0.0f;
+    uint32_t now = 1000;
+    assert(plc.beginReadFloat32s(slmp::dev::D(slmp::dev::dec(100)), 1, &value, 1, now) == slmp::Error::Ok);
+    assert(plc.isBusy());
+    plc.update(now);
+    plc.update(now);
+    plc.update(now);
+    assert(!plc.isBusy());
+
+    uint32_t bits = 0;
+    std::memcpy(&bits, &value, sizeof(bits));
+    assert(bits == 0x3FC00000UL);
 }
 
 void testFrame3E() {
     MockTransport transport;
     uint8_t tx_buffer[128] = {};
     uint8_t rx_buffer[128] = {};
-    slmp4e::Slmp4eClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
+    slmp::SlmpClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
 
-    plc.setFrameType(slmp4e::FrameType::Frame3E);
-    assert(plc.frameType() == slmp4e::FrameType::Frame3E);
+    plc.setFrameType(slmp::FrameType::Frame3E);
+    assert(plc.frameType() == slmp::FrameType::Frame3E);
 
     const std::vector<uint8_t> expected_request = {
         0x50, 0x00, 0x00, 0xFF, 0xFF, 0x03, 0x00, 0x0E, 0x00, 0x10, 0x00, 0x01, 0x04, 0x02, 0x00,
@@ -997,7 +1057,7 @@ void testFrame3E() {
     transport.queueResponse(makeResponse3E(expected_request, 0x0000, {0x34, 0x12, 0x78, 0x56}));
 
     uint16_t words[2] = {};
-    assert(plc.readWords(slmp4e::dev::D(slmp4e::dev::dec(100)), 2, words, 2) == slmp4e::Error::Ok);
+    assert(plc.readWords(slmp::dev::D(slmp::dev::dec(100)), 2, words, 2) == slmp::Error::Ok);
     assert(words[0] == 0x1234U);
     assert(words[1] == 0x5678U);
     assert(plc.lastRequestFrameLength() == 23U);
@@ -1014,9 +1074,11 @@ void testFrame3E() {
 int main() {
     testReadWordsAndFrames();
     testAsyncApi();
+    testAsyncFloat32Api();
     testFrame3E();
     testAllDirectDeviceFamilies();
     testDWordAndOneShotHelpers();
+    testFloat32Helpers();
     testWriteDWordsAndRandomWords();
     testRandomAndBlock();
     testTargetAndMonitoringTimerHeaders();
@@ -1027,6 +1089,6 @@ int main() {
     testPythonCompatibilityGoldenFrames();
     testProtocolFailures();
     testPayloadValidationFailures();
-    std::puts("slmp4e_minimal_tests: ok");
+    std::puts("slmp_minimal_tests: ok");
     return 0;
 }

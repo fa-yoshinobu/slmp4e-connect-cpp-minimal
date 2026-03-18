@@ -29,7 +29,7 @@ def parse_args() -> argparse.Namespace:
 
 
 def build_and_run_unit_tests(project_dir: Path, compiler: str) -> None:
-    exe_name = "slmp4e_minimal_tests.exe" if os.name == "nt" else "slmp4e_minimal_tests"
+    exe_name = "slmp_minimal_tests.exe" if os.name == "nt" else "slmp_minimal_tests"
     output_path = Path(tempfile.gettempdir()) / exe_name
     build_cmd = [
         compiler,
@@ -37,8 +37,8 @@ def build_and_run_unit_tests(project_dir: Path, compiler: str) -> None:
         "-Wall",
         "-Wextra",
         "-Isrc",
-        "tests/slmp4e_minimal_tests.cpp",
-        "src/slmp4e_minimal.cpp",
+        "tests/slmp_minimal_tests.cpp",
+        "src/slmp_minimal.cpp",
         "-o",
         str(output_path),
     ]

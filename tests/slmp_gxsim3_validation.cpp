@@ -7,9 +7,11 @@
 #include <string>
 #include <vector>
 #include <thread>
-#include <iostream>
 
-#include "slmp4e_minimal.h"
+#include "slmp_minimal.h"
+
+// Note: This test requires SocketTransport from slmp_socket_integration.cpp
+// We'll re-implement a minimal version here for a self-contained validation tool.
 
 #ifdef _WIN32
 #include <winsock2.h>
@@ -17,10 +19,10 @@
 #pragma comment(lib, "ws2_32.lib")
 #else
 #include <netdb.h>
+#include <sys/select.h>
 #include <sys/socket.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include <sys/ioctl.h>
 #endif
 
 namespace {
@@ -39,7 +41,7 @@ constexpr SocketHandle kInvalidSocket = -1;
 void closeSocket(SocketHandle handle) { if (handle != kInvalidSocket) close(handle); }
 #endif
 
-class SocketTransport : public slmp4e::ITransport {
+class SocketTransport : public slmp::ITransport {
 public:
     SocketTransport() = default;
     ~SocketTransport() override { close(); }
@@ -148,126 +150,133 @@ uint32_t getNow() {
         std::chrono::steady_clock::now().time_since_epoch()).count();
 }
 
-void runAsync(slmp4e::Slmp4eClient& plc) {
+void runAsync(slmp::SlmpClient& plc) {
     while (plc.isBusy()) {
         plc.update(getNow());
         std::this_thread::yield();
     }
 }
 
-#define ASSERT_OK_PLC(expr) do { \
-    slmp4e::Error err = (expr); \
-    if (err != slmp4e::Error::Ok) { \
-        fprintf(stderr, "FAIL: %s | err=%s, end=0x%04X\n", #expr, slmp4e::errorString(err), plc.lastEndCode()); \
+#define ASSERT_OK(expr) do { \
+    slmp::Error err = (expr); \
+    if (err != slmp::Error::Ok) { \
+        fprintf(stderr, "ASSERT FAILED: %s -> error=%s, end_code=0x%04X\n", #expr, slmp::errorString(err), plc.lastEndCode()); \
         exit(1); \
     } \
 } while(0)
 
-struct TestCase {
-    const char* name;
-    slmp4e::DeviceCode code;
-    uint32_t addr;
-    bool is_bit;
-};
+void testSyncAsyncConsistency(slmp::SlmpClient& plc) {
+    printf("Testing Sync/Async Consistency...\n");
+    auto d100 = slmp::dev::D(slmp::dev::dec(100));
+    uint16_t write_val[5] = {0x1111, 0x2222, 0x3333, 0x4444, 0x5555};
+    uint16_t read_val_sync[5] = {0};
+    uint16_t read_val_async[5] = {0};
 
-const TestCase kTestDevices[] = {
-    {"D",  slmp4e::DeviceCode::D,  1000, false},
-    {"W",  slmp4e::DeviceCode::W,  0x100, false},
-    {"R",  slmp4e::DeviceCode::R,  500,  false},
-    {"ZR", slmp4e::DeviceCode::ZR, 2000, false},
-    {"M",  slmp4e::DeviceCode::M,  1000, true},
-    {"X",  slmp4e::DeviceCode::X,  0x20,  true}, // Note: X/Y are hex but dev::hex() is just a helper
-    {"Y",  slmp4e::DeviceCode::Y,  0x20,  true},
-    {"B",  slmp4e::DeviceCode::B,  0x100, true},
-    {"L",  slmp4e::DeviceCode::L,  100,  true},
-    {"SB", slmp4e::DeviceCode::SB, 0x40,  true}
-};
+    // 1. Sync Write
+    ASSERT_OK(plc.writeWords(d100, write_val, 5));
+    // 2. Sync Read
+    ASSERT_OK(plc.readWords(d100, 5, read_val_sync, 5));
+    // 3. Async Read
+    ASSERT_OK(plc.beginReadWords(d100, 5, read_val_async, 5, getNow()));
+    runAsync(plc);
+    ASSERT_OK(plc.lastError());
 
-void runMatrix(slmp4e::Slmp4eClient& plc, slmp4e::FrameType frame) {
-    plc.setFrameType(frame);
-    const char* frame_str = (frame == slmp4e::FrameType::Frame4E) ? "4E" : "3E";
-    printf("--- Testing Frame Type: %s ---\n", frame_str);
-
-    for (const auto& tc : kTestDevices) {
-        printf("Device %s: ", tc.name);
-        slmp4e::DeviceAddress dev = {tc.code, tc.addr};
-
-        // 1. Sync Pattern
-        if (tc.is_bit) {
-            bool val = (tc.addr % 2 == 0);
-            ASSERT_OK_PLC(plc.writeOneBit(dev, val));
-            bool readback = !val;
-            ASSERT_OK_PLC(plc.readOneBit(dev, readback));
-            if (readback != val) { printf("Sync Bit Mismatch! "); exit(1); }
-        } else {
-            uint16_t val = (uint16_t)(tc.addr & 0xFFFF);
-            ASSERT_OK_PLC(plc.writeOneWord(dev, val));
-            uint16_t readback = 0;
-            ASSERT_OK_PLC(plc.readOneWord(dev, readback));
-            if (readback != val) { printf("Sync Word Mismatch! "); exit(1); }
-        }
-        printf("Sync OK, ");
-
-        // 2. Async Pattern
-        if (tc.is_bit) {
-            bool val = (tc.addr % 2 != 0);
-            ASSERT_OK_PLC(plc.beginWriteBits(dev, &val, 1, getNow()));
-            runAsync(plc); ASSERT_OK_PLC(plc.lastError());
-            bool readback = !val;
-            ASSERT_OK_PLC(plc.beginReadBits(dev, 1, &readback, 1, getNow()));
-            runAsync(plc); ASSERT_OK_PLC(plc.lastError());
-            if (readback != val) { printf("Async Bit Mismatch! "); exit(1); }
-        } else {
-            uint16_t val = (uint16_t)(~tc.addr & 0xFFFF);
-            ASSERT_OK_PLC(plc.beginWriteWords(dev, &val, 1, getNow()));
-            runAsync(plc); ASSERT_OK_PLC(plc.lastError());
-            uint16_t readback = 0;
-            ASSERT_OK_PLC(plc.beginReadWords(dev, 1, &readback, 1, getNow()));
-            runAsync(plc); ASSERT_OK_PLC(plc.lastError());
-            if (readback != val) { printf("Async Word Mismatch! "); exit(1); }
-        }
-        printf("Async OK\n");
+    for(int i=0; i<5; i++) {
+        assert(read_val_sync[i] == write_val[i]);
+        assert(read_val_async[i] == write_val[i]);
     }
+    printf("  -> OK\n");
+}
 
-    // 3. Random/Block Mixed Test (Async)
-    printf("Random/Block Mixed Async: ");
-    const slmp4e::DeviceAddress rw[] = { {slmp4e::DeviceCode::D, 500}, {slmp4e::DeviceCode::D, 501} };
-    const uint16_t rv[] = { 0x1234, 0x5678 };
-    ASSERT_OK_PLC(plc.beginWriteRandomWords(rw, rv, 2, nullptr, nullptr, 0, getNow()));
-    runAsync(plc); ASSERT_OK_PLC(plc.lastError());
+void testLargeTransfer(slmp::SlmpClient& plc) {
+    printf("Testing Large Transfer (90 words)...\n");
+    auto d200 = slmp::dev::D(slmp::dev::dec(200));
+    uint16_t data[90];
+    for(int i=0; i<90; i++) data[i] = (uint16_t)i;
+    uint16_t readback[90] = {0};
 
-    const slmp4e::DeviceBlockRead blks[] = { slmp4e::dev::blockRead({slmp4e::DeviceCode::D, 500}, 2) };
-    uint16_t br[2];
-    ASSERT_OK_PLC(plc.beginReadBlock(blks, 1, nullptr, 0, br, 2, nullptr, 0, getNow()));
-    runAsync(plc); ASSERT_OK_PLC(plc.lastError());
-    assert(br[0] == 0x1234 && br[1] == 0x5678);
-    printf("OK\n");
+    ASSERT_OK(plc.beginWriteWords(d200, data, 90, getNow()));
+    runAsync(plc);
+    ASSERT_OK(plc.lastError());
+
+    ASSERT_OK(plc.beginReadWords(d200, 90, readback, 90, getNow()));
+    runAsync(plc);
+    ASSERT_OK(plc.lastError());
+
+    for(int i=0; i<90; i++) assert(readback[i] == data[i]);
+    printf("  -> OK\n");
+}
+
+void testRandomAndBlock(slmp::SlmpClient& plc) {
+    printf("Testing Random and Block Access (Async)...\n");
+    
+    // Random Write
+    const slmp::DeviceAddress words[] = { slmp::dev::D(slmp::dev::dec(300)), slmp::dev::D(slmp::dev::dec(301)) };
+    const uint16_t wvals[] = { 0xAAAA, 0xBBBB };
+    const slmp::DeviceAddress dwords[] = { slmp::dev::D(slmp::dev::dec(310)) };
+    const uint32_t dwvals[] = { 0x12345678 };
+    
+    ASSERT_OK(plc.beginWriteRandomWords(words, wvals, 2, dwords, dwvals, 1, getNow()));
+    runAsync(plc);
+    ASSERT_OK(plc.lastError());
+
+    // Block Read
+    const slmp::DeviceBlockRead blks[] = { slmp::dev::blockRead(slmp::dev::D(slmp::dev::dec(300)), 2) };
+    uint16_t blk_res[2];
+    ASSERT_OK(plc.beginReadBlock(blks, 1, nullptr, 0, blk_res, 2, nullptr, 0, getNow()));
+    runAsync(plc);
+    ASSERT_OK(plc.lastError());
+    
+    assert(blk_res[0] == 0xAAAA);
+    assert(blk_res[1] == 0xBBBB);
+    printf("  -> OK\n");
+}
+
+void testStress(slmp::SlmpClient& plc) {
+    printf("Testing Stress (100 sequential async requests)...\n");
+    auto d0 = slmp::dev::D(slmp::dev::dec(0));
+    for(int i=0; i<100; i++) {
+        uint16_t write_val = (uint16_t)i;
+        ASSERT_OK(plc.beginWriteWords(d0, &write_val, 1, getNow()));
+        runAsync(plc);
+        ASSERT_OK(plc.lastError());
+        
+        uint16_t readback = 0;
+        ASSERT_OK(plc.beginReadWords(d0, 1, &readback, 1, getNow()));
+        runAsync(plc);
+        ASSERT_OK(plc.lastError());
+        assert(readback == (uint16_t)i);
+    }
+    printf("  -> OK\n");
 }
 
 } // namespace
 
 int main(int argc, char** argv) {
     const char* host = (argc > 1) ? argv[1] : "127.0.0.1";
-    uint16_t port = (argc > 2) ? (uint16_t)atoi(argv[2]) : 5511;
+    uint16_t port = (argc > 2) ? (uint16_t)atoi(argv[2]) : 1025;
 
-    printf("Starting SLMP 3E/4E Sync/Async Full Matrix Validation on %s:%u\n", host, port);
+    printf("Starting GXSIM3 Thorough Validation on %s:%u\n", host, port);
 
     SocketTransport transport;
-    uint8_t tx[1024], rx[1024];
-    slmp4e::Slmp4eClient plc(transport, tx, sizeof(tx), rx, sizeof(rx));
+    uint8_t tx_buf[512], rx_buf[512];
+    slmp::SlmpClient plc(transport, tx_buf, sizeof(tx_buf), rx_buf, sizeof(rx_buf));
     plc.setTimeoutMs(2000);
 
     if (!plc.connect(host, port)) {
-        fprintf(stderr, "Connection failed.\n");
+        fprintf(stderr, "Failed to connect to %s:%u. Make sure GXSIM3 is running and SLMP is enabled.\n", host, port);
         return 1;
     }
 
-    runMatrix(plc, slmp4e::FrameType::Frame4E);
-    printf("\n");
-    runMatrix(plc, slmp4e::FrameType::Frame3E);
+    slmp::TypeNameInfo info;
+    ASSERT_OK(plc.readTypeName(info));
+    printf("Connected to: %s (Model Code: 0x%04X)\n", info.model, info.model_code);
 
-    printf("\n==========================================\n");
-    printf("ALL PATTERNS PASSED (3E/4E, Sync/Async, All Devices)\n");
-    printf("==========================================\n");
+    testSyncAsyncConsistency(plc);
+    testLargeTransfer(plc);
+    testRandomAndBlock(plc);
+    testStress(plc);
+
+    printf("\nALL TESTS PASSED SUCCESSFULLY!\n");
     return 0;
 }

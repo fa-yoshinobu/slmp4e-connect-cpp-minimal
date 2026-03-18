@@ -1,7 +1,7 @@
 {
-  "name": "slmp4e-connect-cpp-minimal",
+  "name": "slmp-connect-cpp-minimal",
   "version": "0.3.0",
-  "description": "Compact SLMP 4E binary client for Arduino-compatible ESP32, RP2040, and RP2350 targets.",
+  "description": "Compact SLMP binary client for Arduino-compatible ESP32, RP2040, and RP2350 targets.",
   "keywords": [
     "slmp",
     "melsec",
@@ -31,8 +31,8 @@
     "raspberrypi"
   ],
   "headers": [
-    "slmp4e_minimal.h",
-    "slmp4e_arduino_transport.h"
+    "slmp_minimal.h",
+    "slmp_arduino_transport.h"
   ],
   "export": {
     "exclude": [

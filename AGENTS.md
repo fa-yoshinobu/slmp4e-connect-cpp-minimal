@@ -29,3 +29,22 @@ This repository is part of the PLC Communication Workspace and follows the globa
 - **Issue Tracking**: Log remaining tasks in `TODO.md`.
 - **Change Tracking**: Update `CHANGELOG.md` for every fix or feature.
 - **QA Requirement**: Every hardware-related fix must include an evidence report in `docs/validation/reports/`.
+
+## 5. API Naming Policy
+
+Detailed naming policy lives in `docs/maintainer/API_UNIFICATION_POLICY.md`.
+
+Public API rules:
+
+- The canonical protocol client class name is `slmp::SlmpClient`.
+- If a separate string-address facade is ever added, reserve `slmp::SlmpDeviceClient` for that layer instead of renaming the protocol client.
+- Keep the explicit embedded API: `readWords`, `writeWords`, `readRandom`, `readBlock`, and related typed names.
+- Keep 32-bit helpers explicit as `readDWords`, `writeDWords`, `readOneDWord`, `writeOneDWord`, `readFloat32s`, `writeFloat32s`, `readOneFloat32`, and `writeOneFloat32`.
+- Keep async state-machine naming as `begin` + sync method name, plus `update` and `isBusy`.
+- Do not add a generic `read()` or `write()` facade.
+
+Transport naming rules:
+
+- Transport helper names must include the transport kind, for example `ArduinoClientTransport` and `ArduinoUdpTransport`.
+- Optional UDP transport must remain separately gateable so TCP-only builds avoid unnecessary code and includes.
+- 32-bit codec helpers should include both type and word order, for example `packUInt32LowWordFirst` or `unpackFloat32LowWordFirst`.

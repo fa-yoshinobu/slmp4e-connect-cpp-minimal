@@ -1,12 +1,12 @@
-#ifndef SLMP4E_TESTS_PYTHON_GOLDEN_FRAMES_H
-#define SLMP4E_TESTS_PYTHON_GOLDEN_FRAMES_H
+#ifndef SLMP_TESTS_PYTHON_GOLDEN_FRAMES_H
+#define SLMP_TESTS_PYTHON_GOLDEN_FRAMES_H
 
 #include <stddef.h>
 #include <stdint.h>
 
 namespace python_golden {
 
-// Generated from the local slmp4e-connect-python implementation using
+// Generated from the local slmp-connect-python implementation using
 // PLCSeries.IQR, default target, monitoring_timer=0x0010, and serial=0.
 
 static constexpr uint8_t kReadTypeNameRequest[] = {

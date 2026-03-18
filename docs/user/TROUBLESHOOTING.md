@@ -74,8 +74,8 @@ Examples:
 
 Typed helpers make this harder to mix up:
 
-- `slmp4e::dev::Y(slmp4e::dev::hex(0x20))`
-- `slmp4e::dev::D(slmp4e::dev::dec(100))`
+- `slmp::dev::Y(slmp::dev::hex(0x20))`
+- `slmp::dev::D(slmp::dev::dec(100))`
 
 ## Connecting to GX Simulator 3 (GX Works3)
 

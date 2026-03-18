@@ -2,11 +2,11 @@
 
 Audience: library maintainers and validation follow-up work.
 
-This file consolidates the earlier root-level `PYTHON_COMPARISON_CHECKLIST.md` and `slmp4e_connect_python_comparison_checklist.md` into one developer-facing note.
+This file consolidates the earlier root-level `PYTHON_COMPARISON_CHECKLIST.md` and `slmp_connect_python_comparison_checklist.md` into one developer-facing note.
 
 The original Python project referenced by this repository is:
 
-- `slmp4e-connect-python`: <https://github.com/fa-yoshinobu/slmp4e-connect-python>
+- `slmp-connect-python`: <https://github.com/fa-yoshinobu/plc-comm-slmp-python>
 
 ## Purpose
 
@@ -14,8 +14,8 @@ Use this note when you want to compare the original Python implementation with t
 
 The relevant C++ baseline in this repository is:
 
-- mixed block support in the codec and request builder ([../src/slmp4e_minimal.cpp](../src/slmp4e_minimal.cpp))
-- mock-PLC integration coverage that accepts mixed `writeBlock()` ([../tests/slmp4e_socket_integration.cpp](../tests/slmp4e_socket_integration.cpp))
+- mixed block support in the codec and request builder ([../src/slmp_minimal.cpp](../src/slmp_minimal.cpp))
+- mock-PLC integration coverage that accepts mixed `writeBlock()` ([../tests/slmp_socket_integration.cpp](../tests/slmp_socket_integration.cpp))
 - a real-board Atom Matrix result against Mitsubishi iQ-R `R08CPU` showing that a one-request mixed `writeBlock` was rejected on the real PLC ([HARDWARE_VALIDATION.md](./HARDWARE_VALIDATION.md))
 
 ## Confirmed Answer

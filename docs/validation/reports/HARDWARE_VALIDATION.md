@@ -25,18 +25,8 @@ Use it together with:
 
 | Target | Transport | Bring-up sketch | Status | Notes |
 |---|---|---|---|---|
-| `esp32dev` | `WiFiClient` | `examples/esp32_read_words` | pending | verify Wi-Fi join, `connect()`, `readTypeName()`, direct read |
-| `esp32dev` | `WiFiClient` | `examples/esp32_password_read_loop` | pending | verify reconnect path, password unlock, periodic poll |
-| `esp32dev` | `WiFiClient` | `examples/esp32_random_block` | pending | verify random/block read and optional write path |
-| `esp32dev` | `WiFiClient` | `examples/esp32_dynamic_bits` | pending | verify dynamic bit walk and odd-address write logic |
-| `esp32-s3-devkitc-1` | `WiFiClient` | `platformio/esp32dev_smoke.cpp` | pending | compile verified, board runtime not yet verified |
-| `esp32-c3-devkitm-1` | `WiFiClient` | `platformio/esp32dev_smoke.cpp` | pending | compile verified, board runtime not yet verified |
-| `esp32-c3-devkitm-1` | `WiFiClient` | `examples/esp32_c3_serial_console` | pending | compile verified, board runtime not yet verified |
 | `m5stack-atom` | `WiFiClient` | `examples/atom_matrix_serial_console` | validated | real-board `check`, `funcheck`, `endurance 1000`, `bench pair 1000`, `bench block 300`, and `reconnect` recorded on 2026-03-14 against Mitsubishi iQ-R `R08CPU`; direct path passed, API path passed except mixed `writeBlock`, durability finished 1000/1000, pair benchmark averaged 18 ms per cycle, block benchmark averaged 17 ms per cycle, and reconnect recovered twice after transport errors |
-| `pico` + W5500 | `EthernetClient` | `examples/rp2040_w5500_read_words` | pending | verify SPI wiring, DHCP or static IP, direct read |
-| `wiznet_5500_evb_pico2` | `EthernetClient` | `examples/w5500_evb_pico2_read_words` | pending | compile target added with Arduino-Pico core, board runtime not yet verified |
-| `wiznet_6300_evb_pico2` | `WiFiClient` via `W6300lwIP` | `examples/w6300_evb_pico2_read_words` | pending | compile target added with Arduino-Pico core, board runtime not yet verified |
-| `nanorp2040connect` | `WiFiNINA` | ESP32-style session flow | pending | compile verified, board runtime not yet verified |
+| `wiznet_6300_evb_pico2` | `WiFiClient` via `W6300lwIP` | `examples/w6300_evb_pico2_serial_console` | pending | compile target kept as the primary Ethernet interactive console for RP2350 validation |
 | real Mitsubishi PLC | TCP | any supported sketch | partial | Atom Matrix `check` and `funcheck` recorded against Mitsubishi iQ-R `R08CPU` on 2026-03-14; mixed `writeBlock` returned `0xC05B`, and the same first-pass result was later confirmed against the original Python implementation |
 
 ## Console Comparison Snapshot
@@ -44,7 +34,6 @@ Use it together with:
 | Target | Transport | `bench` command | `endurance` command | Latest recorded result | Notes |
 |---|---|---|---|---|---|
 | `m5stack-atom` | `WiFiClient` | yes | yes | `bench pair 1000`: `avg_cycle_ms=18`, `avg_req_ms=9`, `req_per_sec=110`, `max_ms=68`, `elapsed_ms=18161`; `bench block 300`: `avg_cycle_ms=17`, `avg_req_ms=8`, `req_per_sec=110`, `max_ms=45`, `elapsed_ms=5414`; `endurance 1000`: `ok=1000`, `fail=0`, `avg_ms=276`, `max_ms=366`, `elapsed_ms=296813`; `reconnect` peer-reset run: `attempts=188`, `fail=14`, `recoveries=2`, `max_consecutive_failures=10`, `elapsed_ms=66133`; `reconnect` PLC-reset run: `attempts=149`, `fail=5`, `recoveries=2`, `max_consecutive_failures=3`, `elapsed_ms=55260`; `reconnect` Wi-Fi power-off run: `attempts=214`, `fail=18`, `recoveries=1`, `max_consecutive_failures=18`, `elapsed_ms=190516` | real-board `check`, `funcheck`, `bench`, `endurance`, and `reconnect` recorded on 2026-03-14 |
-| `esp32-c3-devkitm-1` | `WiFiClient` | yes | no | pending | `bench` command compiled and ready; no real-board benchmark or durability numbers recorded yet |
 | `wiznet_6300_evb_pico2` | `WiFiClient` via `W6300lwIP` | yes | no | pending | `bench` command compiled and ready; no real-board benchmark or durability numbers recorded yet |
 
 ## Recorded Results
@@ -246,15 +235,9 @@ Use it together with:
 
 ## Suggested Issue Titles
 
-- `hardware: validate esp32dev direct read against real PLC`
-- `hardware: validate esp32dev reconnect and remote password flow`
-- `hardware: validate rp2040 w5500 direct read example`
-- `hardware: validate esp32-c3 interactive serial console`
 - `hardware: validate atom matrix interactive serial console`
 - `hardware: compare original python implementation against R08CPU mixed block write result`
-- `hardware: validate W5500-EVB-Pico2 direct read example`
-- `hardware: validate W6300-EVB-Pico2 direct read example`
-- `hardware: validate nano rp2040 connect with WiFiNINA transport`
+- `hardware: validate W6300-EVB-Pico2 serial console`
 - `hardware: verify real PLC end-code behavior against documented strings`
 
 ## Suggested Capture Data

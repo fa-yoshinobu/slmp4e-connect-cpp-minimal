@@ -1,11 +1,11 @@
-#ifndef SLMP4E_UTILITY_H
-#define SLMP4E_UTILITY_H
+#ifndef SLMP_UTILITY_H
+#define SLMP_UTILITY_H
 
 #include <stdint.h>
 
-#include "slmp4e_minimal.h"
+#include "slmp_minimal.h"
 
-namespace slmp4e {
+namespace slmp {
 
 struct ReconnectOptions {
     uint32_t retry_interval_ms = 3000;
@@ -18,7 +18,7 @@ struct ReconnectOptions {
 class ReconnectHelper {
   public:
     ReconnectHelper(
-        Slmp4eClient& client,
+        SlmpClient& client,
         const char* host,
         uint16_t port,
         const ReconnectOptions& options = ReconnectOptions()
@@ -70,7 +70,7 @@ class ReconnectHelper {
     }
 
   private:
-    Slmp4eClient& client_;
+    SlmpClient& client_;
     const char* host_;
     uint16_t port_;
     ReconnectOptions options_;
@@ -79,6 +79,6 @@ class ReconnectHelper {
     bool connected_edge_;
 };
 
-}  // namespace slmp4e
+}  // namespace slmp
 
 #endif

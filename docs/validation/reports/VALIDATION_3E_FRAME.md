@@ -9,7 +9,7 @@
 Added support for SLMP 3E binary frames to the C++ minimal client. This allows communication with environments that require 3E subheaders (0x5000) instead of 4E (0x5400).
 
 ### Technical Specifications
-- **Frame Selection**: Via `plc.setFrameType(slmp4e::FrameType::Frame3E)`.
+- **Frame Selection**: Via `plc.setFrameType(slmp::FrameType::Frame3E)`.
 - **iQ-R Compatibility**: While using 3E headers, the payload maintains iQ-R extension specifications (6-byte device points, subcommands 0x0002/0x0003) to ensure stability with GX Simulator 3 and modern iQ-R/iQ-F series.
 - **Header Adjustments**: Automatically handles different offsets for Network No, Station No, and Data Length between 3E and 4E formats.
 

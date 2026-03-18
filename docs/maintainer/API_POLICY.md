@@ -4,9 +4,9 @@ This library is still in the `0.x` phase, but the public API is being stabilized
 
 Public API surface:
 
-- `src/slmp4e_minimal.h`
-- `src/slmp4e_arduino_transport.h`
-- `src/slmp4e_utility.h`
+- `src/slmp_minimal.h`
+- `src/slmp_arduino_transport.h`
+- `src/slmp_utility.h`
 
 Stability intent:
 
@@ -23,12 +23,12 @@ What may still change before `1.0.0`:
 
 What should remain stable unless there is a strong reason:
 
-- `slmp4e::Error`
-- `slmp4e::DeviceCode`
-- `slmp4e::DeviceAddress`
-- `slmp4e::Slmp4eClient` core read/write API
-- `slmp4e::endCodeString()`
-- `slmp4e::formatHexBytes()`
+- `slmp::Error`
+- `slmp::DeviceCode`
+- `slmp::DeviceAddress`
+- `slmp::SlmpClient` core read/write API
+- `slmp::endCodeString()`
+- `slmp::formatHexBytes()`
 
 Breaking changes policy:
 

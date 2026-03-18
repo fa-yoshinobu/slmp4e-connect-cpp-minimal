@@ -1,10 +1,10 @@
-#ifndef SLMP4E_MINIMAL_H
-#define SLMP4E_MINIMAL_H
+#ifndef SLMP_MINIMAL_H
+#define SLMP_MINIMAL_H
 
 #include <stddef.h>
 #include <stdint.h>
 
-namespace slmp4e {
+namespace slmp {
 
 enum class Error : uint8_t {
     Ok = 0,
@@ -101,51 +101,51 @@ constexpr HexNo hex(uint32_t value) {
     return {value};
 }
 
-#define SLMP4E_DEC_DEVICE_HELPER(name)           \
+#define SLMP_DEC_DEVICE_HELPER(name)           \
     constexpr DeviceAddress name(DecNo number) { \
         return {DeviceCode::name, number.value}; \
     }
 
-#define SLMP4E_HEX_DEVICE_HELPER(name)           \
+#define SLMP_HEX_DEVICE_HELPER(name)           \
     constexpr DeviceAddress name(HexNo number) { \
         return {DeviceCode::name, number.value}; \
     }
 
-SLMP4E_DEC_DEVICE_HELPER(SM)
-SLMP4E_DEC_DEVICE_HELPER(SD)
-SLMP4E_HEX_DEVICE_HELPER(X)
-SLMP4E_HEX_DEVICE_HELPER(Y)
-SLMP4E_DEC_DEVICE_HELPER(M)
-SLMP4E_DEC_DEVICE_HELPER(L)
-SLMP4E_DEC_DEVICE_HELPER(V)
-SLMP4E_HEX_DEVICE_HELPER(B)
-SLMP4E_DEC_DEVICE_HELPER(D)
-SLMP4E_HEX_DEVICE_HELPER(W)
-SLMP4E_DEC_DEVICE_HELPER(TS)
-SLMP4E_DEC_DEVICE_HELPER(TC)
-SLMP4E_DEC_DEVICE_HELPER(TN)
-SLMP4E_DEC_DEVICE_HELPER(STS)
-SLMP4E_DEC_DEVICE_HELPER(STC)
-SLMP4E_DEC_DEVICE_HELPER(STN)
-SLMP4E_DEC_DEVICE_HELPER(CS)
-SLMP4E_DEC_DEVICE_HELPER(CC)
-SLMP4E_DEC_DEVICE_HELPER(CN)
-SLMP4E_DEC_DEVICE_HELPER(LCS)
-SLMP4E_DEC_DEVICE_HELPER(LCC)
-SLMP4E_DEC_DEVICE_HELPER(LCN)
-SLMP4E_HEX_DEVICE_HELPER(SB)
-SLMP4E_HEX_DEVICE_HELPER(SW)
-SLMP4E_HEX_DEVICE_HELPER(DX)
-SLMP4E_HEX_DEVICE_HELPER(DY)
-SLMP4E_DEC_DEVICE_HELPER(R)
-SLMP4E_DEC_DEVICE_HELPER(ZR)
+SLMP_DEC_DEVICE_HELPER(SM)
+SLMP_DEC_DEVICE_HELPER(SD)
+SLMP_HEX_DEVICE_HELPER(X)
+SLMP_HEX_DEVICE_HELPER(Y)
+SLMP_DEC_DEVICE_HELPER(M)
+SLMP_DEC_DEVICE_HELPER(L)
+SLMP_DEC_DEVICE_HELPER(V)
+SLMP_HEX_DEVICE_HELPER(B)
+SLMP_DEC_DEVICE_HELPER(D)
+SLMP_HEX_DEVICE_HELPER(W)
+SLMP_DEC_DEVICE_HELPER(TS)
+SLMP_DEC_DEVICE_HELPER(TC)
+SLMP_DEC_DEVICE_HELPER(TN)
+SLMP_DEC_DEVICE_HELPER(STS)
+SLMP_DEC_DEVICE_HELPER(STC)
+SLMP_DEC_DEVICE_HELPER(STN)
+SLMP_DEC_DEVICE_HELPER(CS)
+SLMP_DEC_DEVICE_HELPER(CC)
+SLMP_DEC_DEVICE_HELPER(CN)
+SLMP_DEC_DEVICE_HELPER(LCS)
+SLMP_DEC_DEVICE_HELPER(LCC)
+SLMP_DEC_DEVICE_HELPER(LCN)
+SLMP_HEX_DEVICE_HELPER(SB)
+SLMP_HEX_DEVICE_HELPER(SW)
+SLMP_HEX_DEVICE_HELPER(DX)
+SLMP_HEX_DEVICE_HELPER(DY)
+SLMP_DEC_DEVICE_HELPER(R)
+SLMP_DEC_DEVICE_HELPER(ZR)
 
 constexpr DeviceAddress FDevice(DecNo number) {
     return {DeviceCode::F, number.value};
 }
 
-#undef SLMP4E_DEC_DEVICE_HELPER
-#undef SLMP4E_HEX_DEVICE_HELPER
+#undef SLMP_DEC_DEVICE_HELPER
+#undef SLMP_HEX_DEVICE_HELPER
 
 constexpr DeviceBlockRead blockRead(DeviceAddress device, uint16_t points) {
     return {device, points};
@@ -185,9 +185,9 @@ class ITransport {
     virtual size_t available() = 0;
 };
 
-class Slmp4eClient {
+class SlmpClient {
   public:
-    Slmp4eClient(
+    SlmpClient(
         ITransport& transport,
         uint8_t* tx_buffer,
         size_t tx_capacity,
@@ -225,12 +225,16 @@ class Slmp4eClient {
     Error writeBits(const DeviceAddress& device, const bool* values, size_t count);
     Error readDWords(const DeviceAddress& device, uint16_t points, uint32_t* values, size_t value_capacity);
     Error writeDWords(const DeviceAddress& device, const uint32_t* values, size_t count);
+    Error readFloat32s(const DeviceAddress& device, uint16_t points, float* values, size_t value_capacity);
+    Error writeFloat32s(const DeviceAddress& device, const float* values, size_t count);
     Error readOneWord(const DeviceAddress& device, uint16_t& value);
     Error writeOneWord(const DeviceAddress& device, uint16_t value);
     Error readOneBit(const DeviceAddress& device, bool& value);
     Error writeOneBit(const DeviceAddress& device, bool value);
     Error readOneDWord(const DeviceAddress& device, uint32_t& value);
     Error writeOneDWord(const DeviceAddress& device, uint32_t value);
+    Error readOneFloat32(const DeviceAddress& device, float& value);
+    Error writeOneFloat32(const DeviceAddress& device, float value);
     Error readRandom(
         const DeviceAddress* word_devices,
         size_t word_count,
@@ -280,6 +284,8 @@ class Slmp4eClient {
     Error beginWriteBits(const DeviceAddress& device, const bool* values, size_t count, uint32_t now_ms);
     Error beginReadDWords(const DeviceAddress& device, uint16_t points, uint32_t* values, size_t value_capacity, uint32_t now_ms);
     Error beginWriteDWords(const DeviceAddress& device, const uint32_t* values, size_t count, uint32_t now_ms);
+    Error beginReadFloat32s(const DeviceAddress& device, uint16_t points, float* values, size_t value_capacity, uint32_t now_ms);
+    Error beginWriteFloat32s(const DeviceAddress& device, const float* values, size_t count, uint32_t now_ms);
     Error beginReadRandom(
         const DeviceAddress* word_devices,
         size_t word_count,
@@ -340,6 +346,8 @@ class Slmp4eClient {
             WriteBits,
             ReadDWords,
             WriteDWords,
+            ReadFloat32s,
+            WriteFloat32s,
             ReadRandom,
             WriteRandomWords,
             WriteRandomBits,
@@ -397,6 +405,6 @@ const char* errorString(Error error);
 const char* endCodeString(uint16_t end_code);
 size_t formatHexBytes(const uint8_t* data, size_t length, char* out, size_t out_capacity);
 
-}  // namespace slmp4e
+}  // namespace slmp
 
 #endif

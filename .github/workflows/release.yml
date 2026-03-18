@@ -40,16 +40,16 @@ jobs:
 
       - name: Run host tests
         run: |
-          g++ -std=c++17 -Wall -Wextra -Isrc tests/slmp4e_minimal_tests.cpp src/slmp4e_minimal.cpp -o /tmp/slmp4e_minimal_tests
-          /tmp/slmp4e_minimal_tests
+          g++ -std=c++17 -Wall -Wextra -Isrc tests/slmp_minimal_tests.cpp src/slmp_minimal.cpp -o /tmp/slmp_minimal_tests
+          /tmp/slmp_minimal_tests
 
       - name: Run socket integration test
         run: python scripts/run_socket_integration.py --compiler g++
 
       - name: Generate coverage summary
         run: |
-          g++ -std=c++17 -Wall -Wextra --coverage -Isrc tests/slmp4e_minimal_tests.cpp src/slmp4e_minimal.cpp -o /tmp/slmp4e_minimal_tests_cov
-          /tmp/slmp4e_minimal_tests_cov
+          g++ -std=c++17 -Wall -Wextra --coverage -Isrc tests/slmp_minimal_tests.cpp src/slmp_minimal.cpp -o /tmp/slmp_minimal_tests_cov
+          /tmp/slmp_minimal_tests_cov
           gcovr --root . --filter src --txt-summary > coverage-summary.txt
 
       - name: Run size regression
@@ -57,15 +57,14 @@ jobs:
 
       - name: Build release smoke targets
         run: |
-          pio run -e esp32dev-session
-          pio run -e pico
-          pio run -e wiznet_5500_evb_pico2
+          pio run -e m5stack-atom-console
+          pio run -e wiznet_6300_evb_pico2
 
       - name: Generate release notes
         run: python scripts/release_notes.py --changelog CHANGELOG.md --version "${{ github.ref_name }}" --output release-notes.md
 
       - name: Create release archive
-        run: git archive --format=zip --prefix="slmp4e-connect-cpp-minimal-${{ github.ref_name }}/" --output "slmp4e-connect-cpp-minimal-${{ github.ref_name }}.zip" HEAD
+        run: git archive --format=zip --prefix="slmp-connect-cpp-minimal-${{ github.ref_name }}/" --output "slmp-connect-cpp-minimal-${{ github.ref_name }}.zip" HEAD
 
       - name: Verify release archive contents
         run: |
@@ -73,8 +72,8 @@ jobs:
           import zipfile
 
           tag = "${{ github.ref_name }}"
-          archive = f"slmp4e-connect-cpp-minimal-{tag}.zip"
-          prefix = f"slmp4e-connect-cpp-minimal-{tag}/"
+          archive = f"slmp-connect-cpp-minimal-{tag}.zip"
+          prefix = f"slmp-connect-cpp-minimal-{tag}/"
 
           with zipfile.ZipFile(archive) as zf:
               names = zf.namelist()
@@ -98,7 +97,7 @@ jobs:
         run: |
           set -euo pipefail
           files=(
-            "slmp4e-connect-cpp-minimal-${TAG_NAME}.zip"
+            "slmp-connect-cpp-minimal-${TAG_NAME}.zip"
             "coverage-summary.txt"
             "size-report.md"
             "size-report.json"

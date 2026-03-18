@@ -16,7 +16,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <slmp4e_arduino_transport.h>
+#include <slmp_arduino_transport.h>
 
 namespace w6300_evb_pico2_serial_console {
 
@@ -43,13 +43,13 @@ constexpr uint32_t kBenchReportIntervalMs = 3000;
 constexpr uint32_t kBenchDefaultCycles = 1000;
 constexpr size_t kBenchWordPoints = kMaxWordPoints;
 constexpr size_t kBenchBlockPoints = kMaxBlockPoints;
-constexpr slmp4e::DeviceAddress kBenchOneWordDevice = {slmp4e::DeviceCode::D, 800};
-constexpr slmp4e::DeviceAddress kBenchWordArrayDevice = {slmp4e::DeviceCode::D, 820};
-constexpr slmp4e::DeviceAddress kBenchBlockWordDevice = {slmp4e::DeviceCode::D, 900};
+constexpr slmp::DeviceAddress kBenchOneWordDevice = {slmp::DeviceCode::D, 800};
+constexpr slmp::DeviceAddress kBenchWordArrayDevice = {slmp::DeviceCode::D, 820};
+constexpr slmp::DeviceAddress kBenchBlockWordDevice = {slmp::DeviceCode::D, 900};
 
 struct DeviceSpec {
     const char* name;
-    slmp4e::DeviceCode code;
+    slmp::DeviceCode code;
     bool hex_address;
 };
 
@@ -87,7 +87,7 @@ struct VerificationRecord {
     bool pass = false;
     bool readback_match = false;
     VerificationKind kind = VerificationKind::None;
-    slmp4e::DeviceAddress device = {slmp4e::DeviceCode::D, 0};
+    slmp::DeviceAddress device = {slmp::DeviceCode::D, 0};
     uint16_t points = 0;
     uint16_t before_words[kMaxWordPoints] = {};
     uint16_t written_words[kMaxWordPoints] = {};
@@ -100,56 +100,56 @@ struct VerificationRecord {
 };
 
 const DeviceSpec kDeviceSpecs[] = {
-    {"SM", slmp4e::DeviceCode::SM, false},
-    {"SD", slmp4e::DeviceCode::SD, false},
-    {"X", slmp4e::DeviceCode::X, true},
-    {"Y", slmp4e::DeviceCode::Y, true},
-    {"M", slmp4e::DeviceCode::M, false},
-    {"L", slmp4e::DeviceCode::L, false},
-    {"F", slmp4e::DeviceCode::F, false},
-    {"V", slmp4e::DeviceCode::V, false},
-    {"B", slmp4e::DeviceCode::B, true},
-    {"D", slmp4e::DeviceCode::D, false},
-    {"W", slmp4e::DeviceCode::W, true},
-    {"TS", slmp4e::DeviceCode::TS, false},
-    {"TC", slmp4e::DeviceCode::TC, false},
-    {"TN", slmp4e::DeviceCode::TN, false},
-    {"LTS", slmp4e::DeviceCode::LTS, false},
-    {"LTC", slmp4e::DeviceCode::LTC, false},
-    {"LTN", slmp4e::DeviceCode::LTN, false},
-    {"STS", slmp4e::DeviceCode::STS, false},
-    {"STC", slmp4e::DeviceCode::STC, false},
-    {"STN", slmp4e::DeviceCode::STN, false},
-    {"LSTS", slmp4e::DeviceCode::LSTS, false},
-    {"LSTC", slmp4e::DeviceCode::LSTC, false},
-    {"LSTN", slmp4e::DeviceCode::LSTN, false},
-    {"CS", slmp4e::DeviceCode::CS, false},
-    {"CC", slmp4e::DeviceCode::CC, false},
-    {"CN", slmp4e::DeviceCode::CN, false},
-    {"LCS", slmp4e::DeviceCode::LCS, false},
-    {"LCC", slmp4e::DeviceCode::LCC, false},
-    {"LCN", slmp4e::DeviceCode::LCN, false},
-    {"SB", slmp4e::DeviceCode::SB, true},
-    {"SW", slmp4e::DeviceCode::SW, true},
-    {"S", slmp4e::DeviceCode::S, false},
-    {"DX", slmp4e::DeviceCode::DX, true},
-    {"DY", slmp4e::DeviceCode::DY, true},
-    {"Z", slmp4e::DeviceCode::Z, false},
-    {"LZ", slmp4e::DeviceCode::LZ, false},
-    {"R", slmp4e::DeviceCode::R, false},
-    {"ZR", slmp4e::DeviceCode::ZR, false},
-    {"RD", slmp4e::DeviceCode::RD, false},
-    {"G", slmp4e::DeviceCode::G, false},
-    {"HG", slmp4e::DeviceCode::HG, false},
+    {"SM", slmp::DeviceCode::SM, false},
+    {"SD", slmp::DeviceCode::SD, false},
+    {"X", slmp::DeviceCode::X, true},
+    {"Y", slmp::DeviceCode::Y, true},
+    {"M", slmp::DeviceCode::M, false},
+    {"L", slmp::DeviceCode::L, false},
+    {"F", slmp::DeviceCode::F, false},
+    {"V", slmp::DeviceCode::V, false},
+    {"B", slmp::DeviceCode::B, true},
+    {"D", slmp::DeviceCode::D, false},
+    {"W", slmp::DeviceCode::W, true},
+    {"TS", slmp::DeviceCode::TS, false},
+    {"TC", slmp::DeviceCode::TC, false},
+    {"TN", slmp::DeviceCode::TN, false},
+    {"LTS", slmp::DeviceCode::LTS, false},
+    {"LTC", slmp::DeviceCode::LTC, false},
+    {"LTN", slmp::DeviceCode::LTN, false},
+    {"STS", slmp::DeviceCode::STS, false},
+    {"STC", slmp::DeviceCode::STC, false},
+    {"STN", slmp::DeviceCode::STN, false},
+    {"LSTS", slmp::DeviceCode::LSTS, false},
+    {"LSTC", slmp::DeviceCode::LSTC, false},
+    {"LSTN", slmp::DeviceCode::LSTN, false},
+    {"CS", slmp::DeviceCode::CS, false},
+    {"CC", slmp::DeviceCode::CC, false},
+    {"CN", slmp::DeviceCode::CN, false},
+    {"LCS", slmp::DeviceCode::LCS, false},
+    {"LCC", slmp::DeviceCode::LCC, false},
+    {"LCN", slmp::DeviceCode::LCN, false},
+    {"SB", slmp::DeviceCode::SB, true},
+    {"SW", slmp::DeviceCode::SW, true},
+    {"S", slmp::DeviceCode::S, false},
+    {"DX", slmp::DeviceCode::DX, true},
+    {"DY", slmp::DeviceCode::DY, true},
+    {"Z", slmp::DeviceCode::Z, false},
+    {"LZ", slmp::DeviceCode::LZ, false},
+    {"R", slmp::DeviceCode::R, false},
+    {"ZR", slmp::DeviceCode::ZR, false},
+    {"RD", slmp::DeviceCode::RD, false},
+    {"G", slmp::DeviceCode::G, false},
+    {"HG", slmp::DeviceCode::HG, false},
 };
 
 Wiznet6300lwIP Ethernet(kEthernetCsPin);
 WiFiClient tcp_client;
-slmp4e::ArduinoClientTransport transport(tcp_client);
+slmp::ArduinoClientTransport transport(tcp_client);
 
 uint8_t tx_buffer[512];
 uint8_t rx_buffer[512];
-slmp4e::Slmp4eClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
+slmp::SlmpClient plc(transport, tx_buffer, sizeof(tx_buffer), rx_buffer, sizeof(rx_buffer));
 
 char serial_line[kSerialLineCapacity] = {};
 size_t serial_line_length = 0;
@@ -176,7 +176,7 @@ const DeviceSpec* findDeviceSpecByName(const char* token) {
     return match;
 }
 
-const DeviceSpec* findDeviceSpecByCode(slmp4e::DeviceCode code) {
+const DeviceSpec* findDeviceSpecByCode(slmp::DeviceCode code) {
     for (size_t i = 0; i < sizeof(kDeviceSpecs) / sizeof(kDeviceSpecs[0]); ++i) {
         if (kDeviceSpecs[i].code == code) {
             return &kDeviceSpecs[i];
@@ -320,7 +320,7 @@ void joinTokens(char* tokens[], int start_index, int token_count, char* out, siz
     }
 }
 
-bool parseDeviceAddress(char* token, slmp4e::DeviceAddress& device) {
+bool parseDeviceAddress(char* token, slmp::DeviceAddress& device) {
     if (token == nullptr || *token == '\0') {
         return false;
     }
@@ -343,7 +343,7 @@ bool parseDeviceAddress(char* token, slmp4e::DeviceAddress& device) {
     return true;
 }
 
-void printDeviceAddress(const slmp4e::DeviceAddress& device, uint32_t offset = 0) {
+void printDeviceAddress(const slmp::DeviceAddress& device, uint32_t offset = 0) {
     const DeviceSpec* spec = findDeviceSpecByCode(device.code);
     if (spec == nullptr) {
         Serial.print("?");
@@ -360,7 +360,7 @@ void printDeviceAddress(const slmp4e::DeviceAddress& device, uint32_t offset = 0
 }
 
 void printTargetAddress() {
-    const slmp4e::TargetAddress& target = plc.target();
+    const slmp::TargetAddress& target = plc.target();
     Serial.print("target_network=");
     Serial.println(target.network);
     Serial.print("target_station=");
@@ -386,7 +386,7 @@ void printLastFrames() {
     if (plc.lastRequestFrameLength() == 0) {
         Serial.println("last request: <none>");
     } else {
-        slmp4e::formatHexBytes(
+        slmp::formatHexBytes(
             plc.lastRequestFrame(),
             plc.lastRequestFrameLength(),
             request_hex,
@@ -399,7 +399,7 @@ void printLastFrames() {
     if (plc.lastResponseFrameLength() == 0) {
         Serial.println("last response: <none>");
     } else {
-        slmp4e::formatHexBytes(
+        slmp::formatHexBytes(
             plc.lastResponseFrame(),
             plc.lastResponseFrameLength(),
             response_hex,
@@ -413,11 +413,11 @@ void printLastFrames() {
 void printLastPlcError(const char* label) {
     Serial.print(label);
     Serial.print(" failed: ");
-    Serial.print(slmp4e::errorString(plc.lastError()));
+    Serial.print(slmp::errorString(plc.lastError()));
     Serial.print(" end=0x");
     Serial.print(plc.lastEndCode(), HEX);
     Serial.print(" (");
-    Serial.print(slmp4e::endCodeString(plc.lastEndCode()));
+    Serial.print(slmp::endCodeString(plc.lastEndCode()));
     Serial.println(")");
     printLastFrames();
 }
@@ -476,7 +476,7 @@ bool connectPlc(bool verbose) {
     if (!plc.connect(kPlcHost, kPlcPort)) {
         if (verbose) {
             Serial.print("connect failed: ");
-            Serial.println(slmp4e::errorString(plc.lastError()));
+            Serial.println(slmp::errorString(plc.lastError()));
         }
         return false;
     }
@@ -520,11 +520,11 @@ void printStatus() {
     Serial.println(plc.monitoringTimer());
     printTargetAddress();
     Serial.print("last_error=");
-    Serial.println(slmp4e::errorString(plc.lastError()));
+    Serial.println(slmp::errorString(plc.lastError()));
     Serial.print("last_end_code=0x");
     Serial.print(plc.lastEndCode(), HEX);
     Serial.print(" (");
-    Serial.print(slmp4e::endCodeString(plc.lastEndCode()));
+    Serial.print(slmp::endCodeString(plc.lastEndCode()));
     Serial.println(")");
     Serial.print("verification_active=");
     Serial.println(verification.active ? "yes" : "no");
@@ -644,7 +644,7 @@ void fillBenchWords(uint16_t* values, size_t count, uint16_t seed) {
     }
 }
 
-void clearBenchWords(const slmp4e::DeviceAddress& device, size_t count) {
+void clearBenchWords(const slmp::DeviceAddress& device, size_t count) {
     if (count == 0 || !connectPlc(false)) {
         return;
     }
@@ -652,7 +652,7 @@ void clearBenchWords(const slmp4e::DeviceAddress& device, size_t count) {
     size_t offset = 0;
     while (offset < count) {
         const size_t chunk = (count - offset) > kMaxWordPoints ? kMaxWordPoints : (count - offset);
-        const slmp4e::DeviceAddress chunk_device = {device.code, device.number + static_cast<uint32_t>(offset)};
+        const slmp::DeviceAddress chunk_device = {device.code, device.number + static_cast<uint32_t>(offset)};
         (void)plc.writeWords(chunk_device, zeros, chunk);
         offset += chunk;
     }
@@ -752,16 +752,16 @@ bool runBench(BenchMode mode, uint32_t cycle_limit) {
 
         if (mode == BenchMode::Row) {
             uint16_t value = 0;
-            ok = plc.readOneWord(kBenchOneWordDevice, value) == slmp4e::Error::Ok;
+            ok = plc.readOneWord(kBenchOneWordDevice, value) == slmp::Error::Ok;
             request_count = 1;
         } else if (mode == BenchMode::Wow) {
-            ok = plc.writeOneWord(kBenchOneWordDevice, seed++) == slmp4e::Error::Ok;
+            ok = plc.writeOneWord(kBenchOneWordDevice, seed++) == slmp::Error::Ok;
             request_count = 1;
         } else if (mode == BenchMode::Pair) {
             const uint16_t expected = seed++;
             uint16_t readback = 0;
-            ok = plc.writeOneWord(kBenchOneWordDevice, expected) == slmp4e::Error::Ok &&
-                 plc.readOneWord(kBenchOneWordDevice, readback) == slmp4e::Error::Ok &&
+            ok = plc.writeOneWord(kBenchOneWordDevice, expected) == slmp::Error::Ok &&
+                 plc.readOneWord(kBenchOneWordDevice, readback) == slmp::Error::Ok &&
                  readback == expected;
             request_count = 2;
         } else if (mode == BenchMode::Rw) {
@@ -769,20 +769,20 @@ bool runBench(BenchMode mode, uint32_t cycle_limit) {
                      kBenchWordArrayDevice,
                      static_cast<uint16_t>(kBenchWordPoints),
                      bench_word_readback,
-                     kBenchWordPoints) == slmp4e::Error::Ok;
+                     kBenchWordPoints) == slmp::Error::Ok;
             request_count = 1;
         } else if (mode == BenchMode::Ww) {
             fillBenchWords(bench_word_values, kBenchWordPoints, seed);
             seed = static_cast<uint16_t>(seed + kBenchWordPoints);
-            ok = plc.writeWords(kBenchWordArrayDevice, bench_word_values, kBenchWordPoints) == slmp4e::Error::Ok;
+            ok = plc.writeWords(kBenchWordArrayDevice, bench_word_values, kBenchWordPoints) == slmp::Error::Ok;
             request_count = 1;
         } else if (mode == BenchMode::Block) {
             fillBenchWords(bench_block_values, kBenchBlockPoints, seed);
             seed = static_cast<uint16_t>(seed + kBenchBlockPoints);
-            const slmp4e::DeviceBlockWrite block = {kBenchBlockWordDevice, bench_block_values, static_cast<uint16_t>(kBenchBlockPoints)};
-            const slmp4e::DeviceBlockRead read_block = {kBenchBlockWordDevice, static_cast<uint16_t>(kBenchBlockPoints)};
-            ok = plc.writeBlock(&block, 1, nullptr, 0) == slmp4e::Error::Ok &&
-                 plc.readBlock(&read_block, 1, nullptr, 0, bench_block_readback, kBenchBlockPoints, nullptr, 0) == slmp4e::Error::Ok &&
+            const slmp::DeviceBlockWrite block = {kBenchBlockWordDevice, bench_block_values, static_cast<uint16_t>(kBenchBlockPoints)};
+            const slmp::DeviceBlockRead read_block = {kBenchBlockWordDevice, static_cast<uint16_t>(kBenchBlockPoints)};
+            ok = plc.writeBlock(&block, 1, nullptr, 0) == slmp::Error::Ok &&
+                 plc.readBlock(&read_block, 1, nullptr, 0, bench_block_readback, kBenchBlockPoints, nullptr, 0) == slmp::Error::Ok &&
                  wordArraysEqual(bench_block_values, bench_block_readback, static_cast<uint16_t>(kBenchBlockPoints));
             request_count = 2;
         }
@@ -908,8 +908,8 @@ void printTypeName() {
         return;
     }
 
-    slmp4e::TypeNameInfo type_name = {};
-    if (plc.readTypeName(type_name) != slmp4e::Error::Ok) {
+    slmp::TypeNameInfo type_name = {};
+    if (plc.readTypeName(type_name) != slmp::Error::Ok) {
         printLastPlcError("readTypeName");
         return;
     }
@@ -925,7 +925,7 @@ void printTypeName() {
 }
 
 void readWordsCommand(char* device_token, char* points_token) {
-    slmp4e::DeviceAddress device = {};
+    slmp::DeviceAddress device = {};
     if (!parseDeviceAddress(device_token, device)) {
         Serial.println("rw usage: rw <device> [points]");
         return;
@@ -943,7 +943,7 @@ void readWordsCommand(char* device_token, char* points_token) {
     }
 
     uint16_t values[kMaxWordPoints] = {};
-    if (plc.readWords(device, points, values, kMaxWordPoints) != slmp4e::Error::Ok) {
+    if (plc.readWords(device, points, values, kMaxWordPoints) != slmp::Error::Ok) {
         printLastPlcError("readWords");
         return;
     }
@@ -964,7 +964,7 @@ void writeWordsCommand(char* tokens[], int token_count) {
         return;
     }
 
-    slmp4e::DeviceAddress device = {};
+    slmp::DeviceAddress device = {};
     if (!parseDeviceAddress(tokens[1], device)) {
         Serial.println("ww device parse failed");
         return;
@@ -989,7 +989,7 @@ void writeWordsCommand(char* tokens[], int token_count) {
         return;
     }
 
-    if (plc.writeWords(device, values, static_cast<size_t>(value_count)) != slmp4e::Error::Ok) {
+    if (plc.writeWords(device, values, static_cast<size_t>(value_count)) != slmp::Error::Ok) {
         printLastPlcError("writeWords");
         return;
     }
@@ -1003,7 +1003,7 @@ void verifyWordsCommand(char* tokens[], int token_count) {
         return;
     }
 
-    slmp4e::DeviceAddress device = {};
+    slmp::DeviceAddress device = {};
     if (!parseDeviceAddress(tokens[1], device)) {
         Serial.println("verifyw device parse failed");
         return;
@@ -1029,18 +1029,18 @@ void verifyWordsCommand(char* tokens[], int token_count) {
     }
 
     uint16_t before[kMaxWordPoints] = {};
-    if (plc.readWords(device, static_cast<uint16_t>(value_count), before, kMaxWordPoints) != slmp4e::Error::Ok) {
+    if (plc.readWords(device, static_cast<uint16_t>(value_count), before, kMaxWordPoints) != slmp::Error::Ok) {
         printLastPlcError("verifyw before read");
         return;
     }
 
-    if (plc.writeWords(device, values, static_cast<size_t>(value_count)) != slmp4e::Error::Ok) {
+    if (plc.writeWords(device, values, static_cast<size_t>(value_count)) != slmp::Error::Ok) {
         printLastPlcError("verifyw write");
         return;
     }
 
     uint16_t readback[kMaxWordPoints] = {};
-    if (plc.readWords(device, static_cast<uint16_t>(value_count), readback, kMaxWordPoints) != slmp4e::Error::Ok) {
+    if (plc.readWords(device, static_cast<uint16_t>(value_count), readback, kMaxWordPoints) != slmp::Error::Ok) {
         printLastPlcError("verifyw readback");
         return;
     }
@@ -1060,7 +1060,7 @@ void verifyWordsCommand(char* tokens[], int token_count) {
 }
 
 void readBitCommand(char* device_token) {
-    slmp4e::DeviceAddress device = {};
+    slmp::DeviceAddress device = {};
     if (!parseDeviceAddress(device_token, device)) {
         Serial.println("rb usage: rb <device>");
         return;
@@ -1072,7 +1072,7 @@ void readBitCommand(char* device_token) {
     }
 
     bool value = false;
-    if (plc.readOneBit(device, value) != slmp4e::Error::Ok) {
+    if (plc.readOneBit(device, value) != slmp::Error::Ok) {
         printLastPlcError("readOneBit");
         return;
     }
@@ -1083,7 +1083,7 @@ void readBitCommand(char* device_token) {
 }
 
 void writeBitCommand(char* device_token, char* value_token) {
-    slmp4e::DeviceAddress device = {};
+    slmp::DeviceAddress device = {};
     if (!parseDeviceAddress(device_token, device)) {
         Serial.println("wb usage: wb <device> <0|1>");
         return;
@@ -1100,7 +1100,7 @@ void writeBitCommand(char* device_token, char* value_token) {
         return;
     }
 
-    if (plc.writeOneBit(device, value) != slmp4e::Error::Ok) {
+    if (plc.writeOneBit(device, value) != slmp::Error::Ok) {
         printLastPlcError("writeOneBit");
         return;
     }
@@ -1109,7 +1109,7 @@ void writeBitCommand(char* device_token, char* value_token) {
 }
 
 void verifyBitCommand(char* device_token, char* value_token) {
-    slmp4e::DeviceAddress device = {};
+    slmp::DeviceAddress device = {};
     if (!parseDeviceAddress(device_token, device)) {
         Serial.println("verifyb usage: verifyb <device> <0|1>");
         return;
@@ -1127,18 +1127,18 @@ void verifyBitCommand(char* device_token, char* value_token) {
     }
 
     bool before = false;
-    if (plc.readOneBit(device, before) != slmp4e::Error::Ok) {
+    if (plc.readOneBit(device, before) != slmp::Error::Ok) {
         printLastPlcError("verifyb before read");
         return;
     }
 
-    if (plc.writeOneBit(device, value) != slmp4e::Error::Ok) {
+    if (plc.writeOneBit(device, value) != slmp::Error::Ok) {
         printLastPlcError("verifyb write");
         return;
     }
 
     bool readback = false;
-    if (plc.readOneBit(device, readback) != slmp4e::Error::Ok) {
+    if (plc.readOneBit(device, readback) != slmp::Error::Ok) {
         printLastPlcError("verifyb readback");
         return;
     }
@@ -1186,7 +1186,7 @@ void targetCommand(char* tokens[], int token_count) {
         return;
     }
 
-    slmp4e::TargetAddress target = plc.target();
+    slmp::TargetAddress target = plc.target();
     target.network = network;
     target.station = station;
     target.module_io = module_io;
@@ -1214,7 +1214,7 @@ void monitorCommand(char* value_token) {
 }
 
 void readOneWordCommand(char* device_token) {
-    slmp4e::DeviceAddress device = {};
+    slmp::DeviceAddress device = {};
     if (!parseDeviceAddress(device_token, device)) {
         Serial.println("row usage: row <device>");
         return;
@@ -1226,7 +1226,7 @@ void readOneWordCommand(char* device_token) {
     }
 
     uint16_t value = 0;
-    if (plc.readOneWord(device, value) != slmp4e::Error::Ok) {
+    if (plc.readOneWord(device, value) != slmp::Error::Ok) {
         printLastPlcError("readOneWord");
         return;
     }
@@ -1240,7 +1240,7 @@ void readOneWordCommand(char* device_token) {
 }
 
 void writeOneWordCommand(char* device_token, char* value_token) {
-    slmp4e::DeviceAddress device = {};
+    slmp::DeviceAddress device = {};
     if (!parseDeviceAddress(device_token, device)) {
         Serial.println("wow usage: wow <device> <value>");
         return;
@@ -1257,7 +1257,7 @@ void writeOneWordCommand(char* device_token, char* value_token) {
         return;
     }
 
-    if (plc.writeOneWord(device, value) != slmp4e::Error::Ok) {
+    if (plc.writeOneWord(device, value) != slmp::Error::Ok) {
         printLastPlcError("writeOneWord");
         return;
     }
@@ -1266,7 +1266,7 @@ void writeOneWordCommand(char* device_token, char* value_token) {
 }
 
 void readBitsCommand(char* device_token, char* points_token) {
-    slmp4e::DeviceAddress device = {};
+    slmp::DeviceAddress device = {};
     if (!parseDeviceAddress(device_token, device)) {
         Serial.println("rbits usage: rbits <device> <points>");
         return;
@@ -1284,7 +1284,7 @@ void readBitsCommand(char* device_token, char* points_token) {
     }
 
     bool values[kMaxWordPoints] = {};
-    if (plc.readBits(device, points, values, kMaxWordPoints) != slmp4e::Error::Ok) {
+    if (plc.readBits(device, points, values, kMaxWordPoints) != slmp::Error::Ok) {
         printLastPlcError("readBits");
         return;
     }
@@ -1302,7 +1302,7 @@ void writeBitsCommand(char* tokens[], int token_count) {
         return;
     }
 
-    slmp4e::DeviceAddress device = {};
+    slmp::DeviceAddress device = {};
     if (!parseDeviceAddress(tokens[1], device)) {
         Serial.println("wbits device parse failed");
         return;
@@ -1327,7 +1327,7 @@ void writeBitsCommand(char* tokens[], int token_count) {
         return;
     }
 
-    if (plc.writeBits(device, values, static_cast<size_t>(value_count)) != slmp4e::Error::Ok) {
+    if (plc.writeBits(device, values, static_cast<size_t>(value_count)) != slmp::Error::Ok) {
         printLastPlcError("writeBits");
         return;
     }
@@ -1336,7 +1336,7 @@ void writeBitsCommand(char* tokens[], int token_count) {
 }
 
 void readDWordsCommand(char* device_token, char* points_token) {
-    slmp4e::DeviceAddress device = {};
+    slmp::DeviceAddress device = {};
     if (!parseDeviceAddress(device_token, device)) {
         Serial.println("rdw usage: rdw <device> [points]");
         return;
@@ -1354,7 +1354,7 @@ void readDWordsCommand(char* device_token, char* points_token) {
     }
 
     uint32_t values[kMaxWordPoints] = {};
-    if (plc.readDWords(device, points, values, kMaxWordPoints) != slmp4e::Error::Ok) {
+    if (plc.readDWords(device, points, values, kMaxWordPoints) != slmp::Error::Ok) {
         printLastPlcError("readDWords");
         return;
     }
@@ -1375,7 +1375,7 @@ void writeDWordsCommand(char* tokens[], int token_count) {
         return;
     }
 
-    slmp4e::DeviceAddress device = {};
+    slmp::DeviceAddress device = {};
     if (!parseDeviceAddress(tokens[1], device)) {
         Serial.println("wdw device parse failed");
         return;
@@ -1400,7 +1400,7 @@ void writeDWordsCommand(char* tokens[], int token_count) {
         return;
     }
 
-    if (plc.writeDWords(device, values, static_cast<size_t>(value_count)) != slmp4e::Error::Ok) {
+    if (plc.writeDWords(device, values, static_cast<size_t>(value_count)) != slmp::Error::Ok) {
         printLastPlcError("writeDWords");
         return;
     }
@@ -1409,7 +1409,7 @@ void writeDWordsCommand(char* tokens[], int token_count) {
 }
 
 void readOneDWordCommand(char* device_token) {
-    slmp4e::DeviceAddress device = {};
+    slmp::DeviceAddress device = {};
     if (!parseDeviceAddress(device_token, device)) {
         Serial.println("rod usage: rod <device>");
         return;
@@ -1421,7 +1421,7 @@ void readOneDWordCommand(char* device_token) {
     }
 
     uint32_t value = 0;
-    if (plc.readOneDWord(device, value) != slmp4e::Error::Ok) {
+    if (plc.readOneDWord(device, value) != slmp::Error::Ok) {
         printLastPlcError("readOneDWord");
         return;
     }
@@ -1435,7 +1435,7 @@ void readOneDWordCommand(char* device_token) {
 }
 
 void writeOneDWordCommand(char* device_token, char* value_token) {
-    slmp4e::DeviceAddress device = {};
+    slmp::DeviceAddress device = {};
     if (!parseDeviceAddress(device_token, device)) {
         Serial.println("wod usage: wod <device> <value>");
         return;
@@ -1452,7 +1452,7 @@ void writeOneDWordCommand(char* device_token, char* value_token) {
         return;
     }
 
-    if (plc.writeOneDWord(device, value) != slmp4e::Error::Ok) {
+    if (plc.writeOneDWord(device, value) != slmp::Error::Ok) {
         printLastPlcError("writeOneDWord");
         return;
     }
@@ -1477,7 +1477,7 @@ void readRandomCommand(char* tokens[], int token_count) {
         return;
     }
 
-    slmp4e::DeviceAddress word_devices[kMaxRandomWordDevices] = {};
+    slmp::DeviceAddress word_devices[kMaxRandomWordDevices] = {};
     for (uint8_t i = 0; i < word_count; ++i) {
         if (!parseDeviceAddress(tokens[index++], word_devices[i])) {
             Serial.println("rr word device parse failed");
@@ -1499,7 +1499,7 @@ void readRandomCommand(char* tokens[], int token_count) {
         return;
     }
 
-    slmp4e::DeviceAddress dword_devices[kMaxRandomDWordDevices] = {};
+    slmp::DeviceAddress dword_devices[kMaxRandomDWordDevices] = {};
     for (uint8_t i = 0; i < dword_count; ++i) {
         if (!parseDeviceAddress(tokens[index++], dword_devices[i])) {
             Serial.println("rr dword device parse failed");
@@ -1523,7 +1523,7 @@ void readRandomCommand(char* tokens[], int token_count) {
             dword_count,
             dword_values,
             kMaxRandomDWordDevices
-        ) != slmp4e::Error::Ok) {
+        ) != slmp::Error::Ok) {
         printLastPlcError("readRandom");
         return;
     }
@@ -1563,7 +1563,7 @@ void writeRandomWordsCommand(char* tokens[], int token_count) {
         return;
     }
 
-    slmp4e::DeviceAddress word_devices[kMaxRandomWordDevices] = {};
+    slmp::DeviceAddress word_devices[kMaxRandomWordDevices] = {};
     uint16_t word_values[kMaxRandomWordDevices] = {};
     for (uint8_t i = 0; i < word_count; ++i) {
         if (!parseDeviceAddress(tokens[index++], word_devices[i])) {
@@ -1590,7 +1590,7 @@ void writeRandomWordsCommand(char* tokens[], int token_count) {
         return;
     }
 
-    slmp4e::DeviceAddress dword_devices[kMaxRandomDWordDevices] = {};
+    slmp::DeviceAddress dword_devices[kMaxRandomDWordDevices] = {};
     uint32_t dword_values[kMaxRandomDWordDevices] = {};
     for (uint8_t i = 0; i < dword_count; ++i) {
         if (!parseDeviceAddress(tokens[index++], dword_devices[i])) {
@@ -1615,7 +1615,7 @@ void writeRandomWordsCommand(char* tokens[], int token_count) {
             dword_devices,
             dword_values,
             dword_count
-        ) != slmp4e::Error::Ok) {
+        ) != slmp::Error::Ok) {
         printLastPlcError("writeRandomWords");
         return;
     }
@@ -1640,7 +1640,7 @@ void writeRandomBitsCommand(char* tokens[], int token_count) {
         return;
     }
 
-    slmp4e::DeviceAddress bit_devices[kMaxRandomBitDevices] = {};
+    slmp::DeviceAddress bit_devices[kMaxRandomBitDevices] = {};
     bool bit_values[kMaxRandomBitDevices] = {};
     for (uint8_t i = 0; i < bit_count; ++i) {
         if (!parseDeviceAddress(tokens[index++], bit_devices[i])) {
@@ -1658,7 +1658,7 @@ void writeRandomBitsCommand(char* tokens[], int token_count) {
         return;
     }
 
-    if (plc.writeRandomBits(bit_devices, bit_values, bit_count) != slmp4e::Error::Ok) {
+    if (plc.writeRandomBits(bit_devices, bit_values, bit_count) != slmp::Error::Ok) {
         printLastPlcError("writeRandomBits");
         return;
     }
@@ -1683,10 +1683,10 @@ void readBlockCommand(char* tokens[], int token_count) {
         return;
     }
 
-    slmp4e::DeviceBlockRead word_blocks[kMaxBlockCount] = {};
+    slmp::DeviceBlockRead word_blocks[kMaxBlockCount] = {};
     uint16_t total_word_points = 0;
     for (uint8_t i = 0; i < word_block_count; ++i) {
-        slmp4e::DeviceAddress device = {};
+        slmp::DeviceAddress device = {};
         uint16_t points = 0;
         if (!parseDeviceAddress(tokens[index++], device)) {
             Serial.println("rblk word block device parse failed");
@@ -1715,10 +1715,10 @@ void readBlockCommand(char* tokens[], int token_count) {
         return;
     }
 
-    slmp4e::DeviceBlockRead bit_blocks[kMaxBlockCount] = {};
+    slmp::DeviceBlockRead bit_blocks[kMaxBlockCount] = {};
     uint16_t total_bit_points = 0;
     for (uint8_t i = 0; i < bit_block_count; ++i) {
-        slmp4e::DeviceAddress device = {};
+        slmp::DeviceAddress device = {};
         uint16_t points = 0;
         if (!parseDeviceAddress(tokens[index++], device)) {
             Serial.println("rblk bit block device parse failed");
@@ -1749,7 +1749,7 @@ void readBlockCommand(char* tokens[], int token_count) {
             kMaxBlockPoints,
             bit_values,
             kMaxBlockPoints
-        ) != slmp4e::Error::Ok) {
+        ) != slmp::Error::Ok) {
         printLastPlcError("readBlock");
         return;
     }
@@ -1791,7 +1791,7 @@ void writeBlockCommand(char* tokens[], int token_count) {
         return;
     }
 
-    slmp4e::DeviceBlockWrite word_blocks[kMaxBlockCount] = {};
+    slmp::DeviceBlockWrite word_blocks[kMaxBlockCount] = {};
     uint16_t word_storage[kMaxBlockPoints] = {};
     uint16_t word_offset = 0;
     for (uint8_t i = 0; i < word_block_count; ++i) {
@@ -1799,7 +1799,7 @@ void writeBlockCommand(char* tokens[], int token_count) {
             Serial.println("wblk word block definition incomplete");
             return;
         }
-        slmp4e::DeviceAddress device = {};
+        slmp::DeviceAddress device = {};
         uint16_t points = 0;
         if (!parseDeviceAddress(tokens[index++], device)) {
             Serial.println("wblk word block device parse failed");
@@ -1839,7 +1839,7 @@ void writeBlockCommand(char* tokens[], int token_count) {
         return;
     }
 
-    slmp4e::DeviceBlockWrite bit_blocks[kMaxBlockCount] = {};
+    slmp::DeviceBlockWrite bit_blocks[kMaxBlockCount] = {};
     uint16_t bit_storage[kMaxBlockPoints] = {};
     uint16_t bit_offset = 0;
     for (uint8_t i = 0; i < bit_block_count; ++i) {
@@ -1847,7 +1847,7 @@ void writeBlockCommand(char* tokens[], int token_count) {
             Serial.println("wblk bit block definition incomplete");
             return;
         }
-        slmp4e::DeviceAddress device = {};
+        slmp::DeviceAddress device = {};
         uint16_t points = 0;
         if (!parseDeviceAddress(tokens[index++], device)) {
             Serial.println("wblk bit block device parse failed");
@@ -1883,7 +1883,7 @@ void writeBlockCommand(char* tokens[], int token_count) {
         return;
     }
 
-    if (plc.writeBlock(word_blocks, word_block_count, bit_blocks, bit_block_count) != slmp4e::Error::Ok) {
+    if (plc.writeBlock(word_blocks, word_block_count, bit_blocks, bit_block_count) != slmp::Error::Ok) {
         printLastPlcError("writeBlock");
         return;
     }
@@ -1902,7 +1902,7 @@ void remotePasswordUnlockCommand(char* password_token) {
         return;
     }
 
-    if (plc.remotePasswordUnlock(password_token) != slmp4e::Error::Ok) {
+    if (plc.remotePasswordUnlock(password_token) != slmp::Error::Ok) {
         printLastPlcError("remotePasswordUnlock");
         return;
     }
@@ -1921,7 +1921,7 @@ void remotePasswordLockCommand(char* password_token) {
         return;
     }
 
-    if (plc.remotePasswordLock(password_token) != slmp4e::Error::Ok) {
+    if (plc.remotePasswordLock(password_token) != slmp::Error::Ok) {
         printLastPlcError("remotePasswordLock");
         return;
     }
@@ -2092,7 +2092,7 @@ void setup() {
         delay(10);
     }
 
-    Serial.println("SLMP4E W6300-EVB-Pico2 serial debug console");
+    Serial.println("SLMP W6300-EVB-Pico2 serial debug console");
     plc.setTimeoutMs(2000);
 
     (void)bringUpEthernet();

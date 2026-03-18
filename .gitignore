@@ -13,4 +13,5 @@ coverage-summary.txt
 coverage.xml
 coverage.html
 release-notes.md
-slmp4e-connect-cpp-minimal-*.zip
+slmp-connect-cpp-minimal-*.zip
+local_folder/

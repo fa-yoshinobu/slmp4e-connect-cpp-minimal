@@ -26,15 +26,15 @@ uint16_t nextFuncheckWordValue();
 uint32_t nextFuncheckDWordValue();
 }
 
-#define SLMP4E_WIFI_SERIAL_CONSOLE_CONFIG_HEADER "../atom_matrix_serial_console/config.h"
-#define SLMP4E_WIFI_SERIAL_CONSOLE_NAMESPACE atom_matrix_serial_console
-#define SLMP4E_WIFI_SERIAL_CONSOLE_BANNER "SLMP4E Atom Matrix serial debug console"
-#define SLMP4E_WIFI_SERIAL_CONSOLE_SERIAL_WAIT_MS 0
-#define SLMP4E_WIFI_SERIAL_CONSOLE_DISABLE_BUILTIN_BENCH 1
-#define SLMP4E_WIFI_SERIAL_CONSOLE_EXTRA_HELP() printAtomExtraHelp()
-#define SLMP4E_WIFI_SERIAL_CONSOLE_CUSTOM_COMMAND_HANDLER(tokens, token_count) handleAtomCustomCommand(tokens, token_count)
-#define SLMP4E_WIFI_SERIAL_CONSOLE_CUSTOM_HELP_HANDLER(tokens, token_count) handleAtomHelpCommand(tokens, token_count)
-#define SLMP4E_WIFI_SERIAL_CONSOLE_PRINT_PENDING_JUDGE_HINT() printAtomPendingJudgeHint()
+#define SLMP_WIFI_SERIAL_CONSOLE_CONFIG_HEADER "../atom_matrix_serial_console/config.h"
+#define SLMP_WIFI_SERIAL_CONSOLE_NAMESPACE atom_matrix_serial_console
+#define SLMP_WIFI_SERIAL_CONSOLE_BANNER "SLMP Atom Matrix serial debug console"
+#define SLMP_WIFI_SERIAL_CONSOLE_SERIAL_WAIT_MS 0
+#define SLMP_WIFI_SERIAL_CONSOLE_DISABLE_BUILTIN_BENCH 1
+#define SLMP_WIFI_SERIAL_CONSOLE_EXTRA_HELP() printAtomExtraHelp()
+#define SLMP_WIFI_SERIAL_CONSOLE_CUSTOM_COMMAND_HANDLER(tokens, token_count) handleAtomCustomCommand(tokens, token_count)
+#define SLMP_WIFI_SERIAL_CONSOLE_CUSTOM_HELP_HANDLER(tokens, token_count) handleAtomHelpCommand(tokens, token_count)
+#define SLMP_WIFI_SERIAL_CONSOLE_PRINT_PENDING_JUDGE_HINT() printAtomPendingJudgeHint()
 
 #include "../esp32_c3_serial_console/esp32_c3_serial_console.h"
 
@@ -66,51 +66,51 @@ constexpr size_t kSlmpRequestHeaderSize = 19;
 constexpr size_t kTxPayloadBudget = example_config::kTxBufferSize > kSlmpRequestHeaderSize
                                         ? (example_config::kTxBufferSize - kSlmpRequestHeaderSize)
                                         : 0;
-constexpr slmp4e::DeviceAddress kButtonIncrementDevice = {slmp4e::DeviceCode::D, 0};
-constexpr slmp4e::DeviceAddress kDemoBitDevice = {slmp4e::DeviceCode::M, 0};
-constexpr slmp4e::DeviceAddress kFuncheckOneWordDevice = {slmp4e::DeviceCode::D, 120};
-constexpr slmp4e::DeviceAddress kFuncheckWordArrayDevice = {slmp4e::DeviceCode::D, 130};
-constexpr slmp4e::DeviceAddress kFuncheckOneBitDevice = {slmp4e::DeviceCode::M, 120};
-constexpr slmp4e::DeviceAddress kFuncheckBitArrayDevice = {slmp4e::DeviceCode::M, 130};
-constexpr slmp4e::DeviceAddress kFuncheckOneDWordDevice = {slmp4e::DeviceCode::D, 220};
-constexpr slmp4e::DeviceAddress kFuncheckDWordArrayDevice = {slmp4e::DeviceCode::D, 230};
-constexpr slmp4e::DeviceAddress kFuncheckRandomWordDevices[] = {
-    {slmp4e::DeviceCode::D, 140},
-    {slmp4e::DeviceCode::D, 141},
+constexpr slmp::DeviceAddress kButtonIncrementDevice = {slmp::DeviceCode::D, 0};
+constexpr slmp::DeviceAddress kDemoBitDevice = {slmp::DeviceCode::M, 0};
+constexpr slmp::DeviceAddress kFuncheckOneWordDevice = {slmp::DeviceCode::D, 120};
+constexpr slmp::DeviceAddress kFuncheckWordArrayDevice = {slmp::DeviceCode::D, 130};
+constexpr slmp::DeviceAddress kFuncheckOneBitDevice = {slmp::DeviceCode::M, 120};
+constexpr slmp::DeviceAddress kFuncheckBitArrayDevice = {slmp::DeviceCode::M, 130};
+constexpr slmp::DeviceAddress kFuncheckOneDWordDevice = {slmp::DeviceCode::D, 220};
+constexpr slmp::DeviceAddress kFuncheckDWordArrayDevice = {slmp::DeviceCode::D, 230};
+constexpr slmp::DeviceAddress kFuncheckRandomWordDevices[] = {
+    {slmp::DeviceCode::D, 140},
+    {slmp::DeviceCode::D, 141},
 };
-constexpr slmp4e::DeviceAddress kFuncheckRandomDWordDevices[] = {
-    {slmp4e::DeviceCode::D, 240},
+constexpr slmp::DeviceAddress kFuncheckRandomDWordDevices[] = {
+    {slmp::DeviceCode::D, 240},
 };
-constexpr slmp4e::DeviceAddress kFuncheckRandomBitDevices[] = {
-    {slmp4e::DeviceCode::M, 140},
-    {slmp4e::DeviceCode::M, 141},
+constexpr slmp::DeviceAddress kFuncheckRandomBitDevices[] = {
+    {slmp::DeviceCode::M, 140},
+    {slmp::DeviceCode::M, 141},
 };
-constexpr slmp4e::DeviceAddress kFuncheckBlockWordDevice = {slmp4e::DeviceCode::D, 300};
-constexpr slmp4e::DeviceAddress kFuncheckBlockBitDevice = {slmp4e::DeviceCode::M, 200};
-constexpr slmp4e::DeviceAddress kEnduranceOneWordDevice = {slmp4e::DeviceCode::D, 500};
-constexpr slmp4e::DeviceAddress kEnduranceWordArrayDevice = {slmp4e::DeviceCode::D, 510};
-constexpr slmp4e::DeviceAddress kEnduranceOneBitDevice = {slmp4e::DeviceCode::M, 500};
-constexpr slmp4e::DeviceAddress kEnduranceBitArrayDevice = {slmp4e::DeviceCode::M, 510};
-constexpr slmp4e::DeviceAddress kEnduranceOneDWordDevice = {slmp4e::DeviceCode::D, 600};
-constexpr slmp4e::DeviceAddress kEnduranceDWordArrayDevice = {slmp4e::DeviceCode::D, 610};
-constexpr slmp4e::DeviceAddress kEnduranceRandomWordDevices[] = {
-    {slmp4e::DeviceCode::D, 520},
-    {slmp4e::DeviceCode::D, 521},
+constexpr slmp::DeviceAddress kFuncheckBlockWordDevice = {slmp::DeviceCode::D, 300};
+constexpr slmp::DeviceAddress kFuncheckBlockBitDevice = {slmp::DeviceCode::M, 200};
+constexpr slmp::DeviceAddress kEnduranceOneWordDevice = {slmp::DeviceCode::D, 500};
+constexpr slmp::DeviceAddress kEnduranceWordArrayDevice = {slmp::DeviceCode::D, 510};
+constexpr slmp::DeviceAddress kEnduranceOneBitDevice = {slmp::DeviceCode::M, 500};
+constexpr slmp::DeviceAddress kEnduranceBitArrayDevice = {slmp::DeviceCode::M, 510};
+constexpr slmp::DeviceAddress kEnduranceOneDWordDevice = {slmp::DeviceCode::D, 600};
+constexpr slmp::DeviceAddress kEnduranceDWordArrayDevice = {slmp::DeviceCode::D, 610};
+constexpr slmp::DeviceAddress kEnduranceRandomWordDevices[] = {
+    {slmp::DeviceCode::D, 520},
+    {slmp::DeviceCode::D, 521},
 };
-constexpr slmp4e::DeviceAddress kEnduranceRandomDWordDevices[] = {
-    {slmp4e::DeviceCode::D, 620},
+constexpr slmp::DeviceAddress kEnduranceRandomDWordDevices[] = {
+    {slmp::DeviceCode::D, 620},
 };
-constexpr slmp4e::DeviceAddress kEnduranceRandomBitDevices[] = {
-    {slmp4e::DeviceCode::M, 520},
-    {slmp4e::DeviceCode::M, 521},
+constexpr slmp::DeviceAddress kEnduranceRandomBitDevices[] = {
+    {slmp::DeviceCode::M, 520},
+    {slmp::DeviceCode::M, 521},
 };
-constexpr slmp4e::DeviceAddress kEnduranceBlockWordDevice = {slmp4e::DeviceCode::D, 540};
-constexpr slmp4e::DeviceAddress kEnduranceBlockBitDevice = {slmp4e::DeviceCode::M, 540};
-constexpr slmp4e::DeviceAddress kTxLimitWordDevice = {slmp4e::DeviceCode::D, 700};
-constexpr slmp4e::DeviceAddress kTxLimitBlockWordDevice = {slmp4e::DeviceCode::D, 1100};
-constexpr slmp4e::DeviceAddress kBenchOneWordDevice = {slmp4e::DeviceCode::D, 800};
-constexpr slmp4e::DeviceAddress kBenchWordArrayDevice = {slmp4e::DeviceCode::D, 820};
-constexpr slmp4e::DeviceAddress kBenchBlockWordDevice = {slmp4e::DeviceCode::D, 900};
+constexpr slmp::DeviceAddress kEnduranceBlockWordDevice = {slmp::DeviceCode::D, 540};
+constexpr slmp::DeviceAddress kEnduranceBlockBitDevice = {slmp::DeviceCode::M, 540};
+constexpr slmp::DeviceAddress kTxLimitWordDevice = {slmp::DeviceCode::D, 700};
+constexpr slmp::DeviceAddress kTxLimitBlockWordDevice = {slmp::DeviceCode::D, 1100};
+constexpr slmp::DeviceAddress kBenchOneWordDevice = {slmp::DeviceCode::D, 800};
+constexpr slmp::DeviceAddress kBenchWordArrayDevice = {slmp::DeviceCode::D, 820};
+constexpr slmp::DeviceAddress kBenchBlockWordDevice = {slmp::DeviceCode::D, 900};
 constexpr size_t kBenchWordPoints = 8;
 constexpr size_t kBenchBlockPoints = 16;
 constexpr size_t kTxLimitWriteWordsMaxCount = kTxPayloadBudget >= 8U ? ((kTxPayloadBudget - 8U) / 2U) : 0U;
@@ -164,7 +164,7 @@ struct EnduranceSession {
     size_t fail = 0;
     char last_step[48] = {};
     char last_issue[64] = {};
-    slmp4e::Error last_error = slmp4e::Error::Ok;
+    slmp::Error last_error = slmp::Error::Ok;
     uint16_t last_end_code = 0;
 };
 struct ReconnectSession {
@@ -185,7 +185,7 @@ struct ReconnectSession {
     size_t max_consecutive_failures = 0;
     char last_step[48] = {};
     char last_issue[64] = {};
-    slmp4e::Error last_error = slmp4e::Error::Ok;
+    slmp::Error last_error = slmp::Error::Ok;
     uint16_t last_end_code = 0;
 };
 enum class BenchMode : uint8_t {
@@ -215,7 +215,7 @@ struct BenchmarkSession {
     size_t last_response_bytes = 0;
     char last_step[48] = {};
     char last_issue[64] = {};
-    slmp4e::Error last_error = slmp4e::Error::Ok;
+    slmp::Error last_error = slmp::Error::Ok;
     uint16_t last_end_code = 0;
 };
 rmt_obj_t* matrix_rmt = nullptr;
@@ -569,7 +569,7 @@ void copyText(char* out, size_t out_capacity, const char* text) {
     out[index] = '\0';
 }
 
-void clearWordsSilently(const slmp4e::DeviceAddress& device, size_t count) {
+void clearWordsSilently(const slmp::DeviceAddress& device, size_t count) {
     if (count == 0 || count > kMaxWordPoints || !connectPlc(false)) {
         return;
     }
@@ -577,7 +577,7 @@ void clearWordsSilently(const slmp4e::DeviceAddress& device, size_t count) {
     (void)plc.writeWords(device, zeros, count);
 }
 
-void clearWordRangeSilently(const slmp4e::DeviceAddress& device, size_t count) {
+void clearWordRangeSilently(const slmp::DeviceAddress& device, size_t count) {
     if (count == 0 || !connectPlc(false)) {
         return;
     }
@@ -585,13 +585,13 @@ void clearWordRangeSilently(const slmp4e::DeviceAddress& device, size_t count) {
     size_t offset = 0;
     while (offset < count) {
         const size_t chunk = (count - offset) > kMaxWordPoints ? kMaxWordPoints : (count - offset);
-        const slmp4e::DeviceAddress chunk_device = {device.code, device.number + static_cast<uint32_t>(offset)};
+        const slmp::DeviceAddress chunk_device = {device.code, device.number + static_cast<uint32_t>(offset)};
         (void)plc.writeWords(chunk_device, zeros, chunk);
         offset += chunk;
     }
 }
 
-void clearBitsSilently(const slmp4e::DeviceAddress& device, size_t count) {
+void clearBitsSilently(const slmp::DeviceAddress& device, size_t count) {
     if (count == 0 || count > kMaxWordPoints || !connectPlc(false)) {
         return;
     }
@@ -603,7 +603,7 @@ void clearBitsSilently(const slmp4e::DeviceAddress& device, size_t count) {
     (void)plc.writeBits(device, zeros, count);
 }
 
-void clearDWordsSilently(const slmp4e::DeviceAddress& device, size_t count) {
+void clearDWordsSilently(const slmp::DeviceAddress& device, size_t count) {
     if (count == 0 || count > kMaxWordPoints || !connectPlc(false)) {
         return;
     }
@@ -616,9 +616,9 @@ void clearDWordsSilently(const slmp4e::DeviceAddress& device, size_t count) {
 }
 
 void clearRandomWordsSilently(
-    const slmp4e::DeviceAddress* word_devices,
+    const slmp::DeviceAddress* word_devices,
     size_t word_count,
-    const slmp4e::DeviceAddress* dword_devices,
+    const slmp::DeviceAddress* dword_devices,
     size_t dword_count
 ) {
     if (!connectPlc(false)) {
@@ -629,7 +629,7 @@ void clearRandomWordsSilently(
     (void)plc.writeRandomWords(word_devices, zero_words, word_count, dword_devices, zero_dwords, dword_count);
 }
 
-void clearRandomBitsSilently(const slmp4e::DeviceAddress* bit_devices, size_t bit_count) {
+void clearRandomBitsSilently(const slmp::DeviceAddress* bit_devices, size_t bit_count) {
     if (!connectPlc(false)) {
         return;
     }
@@ -637,28 +637,28 @@ void clearRandomBitsSilently(const slmp4e::DeviceAddress* bit_devices, size_t bi
     (void)plc.writeRandomBits(bit_devices, zero_bits, bit_count);
 }
 
-void clearPackedBitWordsSilently(const slmp4e::DeviceAddress& device, uint16_t packed_word_count) {
+void clearPackedBitWordsSilently(const slmp::DeviceAddress& device, uint16_t packed_word_count) {
     if (!connectPlc(false)) {
         return;
     }
     uint16_t zero_words[kMaxBlockPoints] = {};
     if (packed_word_count <= kMaxBlockPoints) {
-        const slmp4e::DeviceBlockWrite bit_block = {device, zero_words, packed_word_count};
-        if (plc.writeBlock(nullptr, 0, &bit_block, 1) == slmp4e::Error::Ok) {
+        const slmp::DeviceBlockWrite bit_block = {device, zero_words, packed_word_count};
+        if (plc.writeBlock(nullptr, 0, &bit_block, 1) == slmp::Error::Ok) {
             return;
         }
     }
     const uint32_t bit_count = static_cast<uint32_t>(packed_word_count) * 16U;
     for (uint32_t offset = 0; offset < bit_count; ++offset) {
-        const slmp4e::DeviceAddress bit_device = {device.code, device.number + offset};
+        const slmp::DeviceAddress bit_device = {device.code, device.number + offset};
         (void)plc.writeOneBit(bit_device, false);
     }
 }
 
 void clearBlockSilently(
-    const slmp4e::DeviceAddress& word_device,
+    const slmp::DeviceAddress& word_device,
     uint16_t word_points,
-    const slmp4e::DeviceAddress& bit_device,
+    const slmp::DeviceAddress& bit_device,
     uint16_t bit_points
 ) {
     if (word_points > 0) {
@@ -689,7 +689,7 @@ void clearEnduranceTargetsSilently() {
     clearBlockSilently(kEnduranceBlockWordDevice, 2, kEnduranceBlockBitDevice, 1);
 }
 
-void printFuncheckApiDevices(const char* label, const slmp4e::DeviceAddress* devices, size_t count) {
+void printFuncheckApiDevices(const char* label, const slmp::DeviceAddress* devices, size_t count) {
     Serial.print(label);
     for (size_t i = 0; i < count; ++i) {
         if (i != 0) {
@@ -766,7 +766,7 @@ void printFuncheckList() {
     Serial.println("  funcheck direct");
     Serial.println("    auto-runs check devices with readback judgement and 0 clear");
     Serial.println("  funcheck api");
-    Serial.println("    auto-runs representative Slmp4eClient APIs and clears writes to 0");
+    Serial.println("    auto-runs representative SlmpClient APIs and clears writes to 0");
     Serial.println("funcheck api devices:");
     Serial.print("  row/wow: ");
     printDeviceAddress(kFuncheckOneWordDevice);
@@ -930,7 +930,7 @@ void printEnduranceStatus() {
     Serial.print("endurance_last_issue=");
     Serial.println(endurance.last_issue[0] == '\0' ? "<none>" : endurance.last_issue);
     Serial.print("endurance_last_error=");
-    Serial.println(slmp4e::errorString(endurance.last_error));
+    Serial.println(slmp::errorString(endurance.last_error));
     Serial.print("endurance_last_end_code=0x");
     Serial.println(endurance.last_end_code, HEX);
     printEnduranceSummary("endurance status:");
@@ -1064,7 +1064,7 @@ void printReconnectStatus() {
     Serial.print("reconnect_last_issue=");
     Serial.println(reconnect.last_issue[0] == '\0' ? "<none>" : reconnect.last_issue);
     Serial.print("reconnect_last_error=");
-    Serial.println(slmp4e::errorString(reconnect.last_error));
+    Serial.println(slmp::errorString(reconnect.last_error));
     Serial.print("reconnect_last_end_code=0x");
     Serial.println(reconnect.last_end_code, HEX);
     printReconnectSummary("reconnect status:");
@@ -1112,7 +1112,7 @@ void printTxlimitSummary() {
 
 bool runTxlimitProbeWriteWords() {
     fillTxlimitWords(txlimit_word_values, kTxLimitWriteWordsMaxCount, 1000U);
-    if (plc.writeWords(kTxLimitWordDevice, txlimit_word_values, kTxLimitWriteWordsMaxCount) != slmp4e::Error::Ok) {
+    if (plc.writeWords(kTxLimitWordDevice, txlimit_word_values, kTxLimitWriteWordsMaxCount) != slmp::Error::Ok) {
         printLastPlcError("txlimit writeWords exact");
         return false;
     }
@@ -1120,7 +1120,7 @@ bool runTxlimitProbeWriteWords() {
             kTxLimitWordDevice,
             static_cast<uint16_t>(kTxLimitWriteWordsMaxCount),
             txlimit_word_readback,
-            kTxLimitWriteWordsMaxCount) != slmp4e::Error::Ok) {
+            kTxLimitWriteWordsMaxCount) != slmp::Error::Ok) {
         printLastPlcError("txlimit readWords exact");
         return false;
     }
@@ -1135,17 +1135,17 @@ bool runTxlimitProbeWriteWords() {
     clearWordRangeSilently(kTxLimitWordDevice, kTxLimitWriteWordsMaxCount);
 
     fillTxlimitWords(txlimit_word_values, kTxLimitWriteWordsMaxCount + 1U, 2000U);
-    const slmp4e::Error error = plc.writeWords(kTxLimitWordDevice, txlimit_word_values, kTxLimitWriteWordsMaxCount + 1U);
+    const slmp::Error error = plc.writeWords(kTxLimitWordDevice, txlimit_word_values, kTxLimitWriteWordsMaxCount + 1U);
     Serial.print("txlimit writeWords one_over=");
-    Serial.println(slmp4e::errorString(error));
-    return error == slmp4e::Error::BufferTooSmall;
+    Serial.println(slmp::errorString(error));
+    return error == slmp::Error::BufferTooSmall;
 }
 
 bool runTxlimitProbeWordBlock() {
     fillTxlimitWords(txlimit_block_values, kTxLimitWriteBlockWordMaxPoints, 3000U);
-    const slmp4e::DeviceBlockWrite exact_block = {kTxLimitBlockWordDevice, txlimit_block_values, static_cast<uint16_t>(kTxLimitWriteBlockWordMaxPoints)};
-    const slmp4e::DeviceBlockRead exact_read_block = {kTxLimitBlockWordDevice, static_cast<uint16_t>(kTxLimitWriteBlockWordMaxPoints)};
-    if (plc.writeBlock(&exact_block, 1, nullptr, 0) != slmp4e::Error::Ok) {
+    const slmp::DeviceBlockWrite exact_block = {kTxLimitBlockWordDevice, txlimit_block_values, static_cast<uint16_t>(kTxLimitWriteBlockWordMaxPoints)};
+    const slmp::DeviceBlockRead exact_read_block = {kTxLimitBlockWordDevice, static_cast<uint16_t>(kTxLimitWriteBlockWordMaxPoints)};
+    if (plc.writeBlock(&exact_block, 1, nullptr, 0) != slmp::Error::Ok) {
         printLastPlcError("txlimit writeBlock exact");
         return false;
     }
@@ -1157,7 +1157,7 @@ bool runTxlimitProbeWordBlock() {
             txlimit_block_readback,
             kTxLimitWriteBlockWordMaxPoints,
             nullptr,
-            0) != slmp4e::Error::Ok) {
+            0) != slmp::Error::Ok) {
         printLastPlcError("txlimit readBlock exact");
         return false;
     }
@@ -1172,15 +1172,15 @@ bool runTxlimitProbeWordBlock() {
     clearWordRangeSilently(kTxLimitBlockWordDevice, kTxLimitWriteBlockWordMaxPoints);
 
     fillTxlimitWords(txlimit_block_values, kTxLimitWriteBlockWordMaxPoints + 1U, 4000U);
-    const slmp4e::DeviceBlockWrite over_block = {
+    const slmp::DeviceBlockWrite over_block = {
         kTxLimitBlockWordDevice,
         txlimit_block_values,
         static_cast<uint16_t>(kTxLimitWriteBlockWordMaxPoints + 1U)
     };
-    const slmp4e::Error error = plc.writeBlock(&over_block, 1, nullptr, 0);
+    const slmp::Error error = plc.writeBlock(&over_block, 1, nullptr, 0);
     Serial.print("txlimit writeBlock words one_over=");
-    Serial.println(slmp4e::errorString(error));
-    return error == slmp4e::Error::BufferTooSmall;
+    Serial.println(slmp::errorString(error));
+    return error == slmp::Error::BufferTooSmall;
 }
 
 void runTxlimitProbe() {
@@ -1370,7 +1370,7 @@ void printBenchmarkStatus() {
     Serial.print("bench_last_issue=");
     Serial.println(bench.last_issue[0] == '\0' ? "<none>" : bench.last_issue);
     Serial.print("bench_last_error=");
-    Serial.println(slmp4e::errorString(bench.last_error));
+    Serial.println(slmp::errorString(bench.last_error));
     Serial.print("bench_last_end_code=0x");
     Serial.println(bench.last_end_code, HEX);
     printBenchmarkSummary("bench status:");
@@ -1395,7 +1395,7 @@ void stopBenchmark(bool print_summary, bool failed) {
 bool failBenchmarkCycle(const char* step, const char* issue, const char* plc_label, bool use_plc_error) {
     copyText(bench.last_step, sizeof(bench.last_step), step);
     copyText(bench.last_issue, sizeof(bench.last_issue), issue);
-    bench.last_error = use_plc_error ? plc.lastError() : slmp4e::Error::Ok;
+    bench.last_error = use_plc_error ? plc.lastError() : slmp::Error::Ok;
     bench.last_end_code = use_plc_error ? plc.lastEndCode() : 0;
     ++bench.fail;
     Serial.print("bench failed at ");
@@ -1412,7 +1412,7 @@ bool failBenchmarkCycle(const char* step, const char* issue, const char* plc_lab
 void recordBenchmarkStep(const char* step, size_t request_count) {
     copyText(bench.last_step, sizeof(bench.last_step), step);
     copyText(bench.last_issue, sizeof(bench.last_issue), "none");
-    bench.last_error = slmp4e::Error::Ok;
+    bench.last_error = slmp::Error::Ok;
     bench.last_end_code = 0;
     bench.last_request_bytes = plc.lastRequestFrameLength();
     bench.last_response_bytes = plc.lastResponseFrameLength();
@@ -1444,23 +1444,23 @@ bool runBenchmarkCycle() {
     const uint32_t started_ms = millis();
     if (bench.mode == BenchMode::Row) {
         uint16_t value = 0;
-        if (plc.readOneWord(kBenchOneWordDevice, value) != slmp4e::Error::Ok) {
+        if (plc.readOneWord(kBenchOneWordDevice, value) != slmp::Error::Ok) {
             return failBenchmarkCycle("readOneWord", "plc read failed", "bench readOneWord", true);
         }
         recordBenchmarkStep("readOneWord", 1);
     } else if (bench.mode == BenchMode::Wow) {
         const uint16_t value = nextFuncheckWordValue();
-        if (plc.writeOneWord(kBenchOneWordDevice, value) != slmp4e::Error::Ok) {
+        if (plc.writeOneWord(kBenchOneWordDevice, value) != slmp::Error::Ok) {
             return failBenchmarkCycle("writeOneWord", "plc write failed", "bench writeOneWord", true);
         }
         recordBenchmarkStep("writeOneWord", 1);
     } else if (bench.mode == BenchMode::Pair) {
         const uint16_t expected = nextFuncheckWordValue();
         uint16_t readback = 0;
-        if (plc.writeOneWord(kBenchOneWordDevice, expected) != slmp4e::Error::Ok) {
+        if (plc.writeOneWord(kBenchOneWordDevice, expected) != slmp::Error::Ok) {
             return failBenchmarkCycle("writeOneWord", "plc write failed", "bench writeOneWord", true);
         }
-        if (plc.readOneWord(kBenchOneWordDevice, readback) != slmp4e::Error::Ok) {
+        if (plc.readOneWord(kBenchOneWordDevice, readback) != slmp::Error::Ok) {
             return failBenchmarkCycle("readOneWord", "plc read failed", "bench readOneWord", true);
         }
         if (readback != expected) {
@@ -1468,24 +1468,24 @@ bool runBenchmarkCycle() {
         }
         recordBenchmarkStep("pair", 2);
     } else if (bench.mode == BenchMode::Rw) {
-        if (plc.readWords(kBenchWordArrayDevice, static_cast<uint16_t>(kBenchWordPoints), bench_word_readback, kBenchWordPoints) != slmp4e::Error::Ok) {
+        if (plc.readWords(kBenchWordArrayDevice, static_cast<uint16_t>(kBenchWordPoints), bench_word_readback, kBenchWordPoints) != slmp::Error::Ok) {
             return failBenchmarkCycle("readWords", "plc read failed", "bench readWords", true);
         }
         recordBenchmarkStep("readWords", 1);
     } else if (bench.mode == BenchMode::Ww) {
         fillTxlimitWords(bench_word_values, kBenchWordPoints, nextFuncheckWordValue());
-        if (plc.writeWords(kBenchWordArrayDevice, bench_word_values, kBenchWordPoints) != slmp4e::Error::Ok) {
+        if (plc.writeWords(kBenchWordArrayDevice, bench_word_values, kBenchWordPoints) != slmp::Error::Ok) {
             return failBenchmarkCycle("writeWords", "plc write failed", "bench writeWords", true);
         }
         recordBenchmarkStep("writeWords", 1);
     } else if (bench.mode == BenchMode::Block) {
         fillTxlimitWords(bench_block_values, kBenchBlockPoints, nextFuncheckWordValue());
-        const slmp4e::DeviceBlockWrite block = {kBenchBlockWordDevice, bench_block_values, static_cast<uint16_t>(kBenchBlockPoints)};
-        const slmp4e::DeviceBlockRead read_block = {kBenchBlockWordDevice, static_cast<uint16_t>(kBenchBlockPoints)};
-        if (plc.writeBlock(&block, 1, nullptr, 0) != slmp4e::Error::Ok) {
+        const slmp::DeviceBlockWrite block = {kBenchBlockWordDevice, bench_block_values, static_cast<uint16_t>(kBenchBlockPoints)};
+        const slmp::DeviceBlockRead read_block = {kBenchBlockWordDevice, static_cast<uint16_t>(kBenchBlockPoints)};
+        if (plc.writeBlock(&block, 1, nullptr, 0) != slmp::Error::Ok) {
             return failBenchmarkCycle("writeBlock", "plc write failed", "bench writeBlock", true);
         }
-        if (plc.readBlock(&read_block, 1, nullptr, 0, bench_block_readback, kBenchBlockPoints, nullptr, 0) != slmp4e::Error::Ok) {
+        if (plc.readBlock(&read_block, 1, nullptr, 0, bench_block_readback, kBenchBlockPoints, nullptr, 0) != slmp::Error::Ok) {
             return failBenchmarkCycle("readBlock", "plc read failed", "bench readBlock", true);
         }
         if (!wordArraysEqual(bench_block_values, bench_block_readback, static_cast<uint16_t>(kBenchBlockPoints))) {
@@ -1609,10 +1609,10 @@ bool advanceManualCheckCursorIfReady() {
 }
 
 bool manualCheckFailureShouldAutoSkip() {
-    if (plc.lastError() == slmp4e::Error::UnsupportedDevice) {
+    if (plc.lastError() == slmp::Error::UnsupportedDevice) {
         return true;
     }
-    if (plc.lastError() != slmp4e::Error::PlcError) {
+    if (plc.lastError() != slmp::Error::PlcError) {
         return false;
     }
     switch (plc.lastEndCode()) {
@@ -1678,7 +1678,7 @@ FuncheckResult runFuncheckVerifyWords(char* tokens[], int token_count) {
         Serial.println("funcheck direct failed: verifyw command is incomplete");
         return FuncheckResult::Fail;
     }
-    slmp4e::DeviceAddress device = {};
+    slmp::DeviceAddress device = {};
     if (!parseDeviceAddress(tokens[1], device)) {
         Serial.println("funcheck direct failed: verifyw device parse failed");
         return FuncheckResult::Fail;
@@ -1704,14 +1704,14 @@ FuncheckResult runFuncheckVerifyWords(char* tokens[], int token_count) {
     }
 
     uint16_t before[kMaxWordPoints] = {};
-    if (plc.readWords(device, static_cast<uint16_t>(value_count), before, kMaxWordPoints) != slmp4e::Error::Ok) {
+    if (plc.readWords(device, static_cast<uint16_t>(value_count), before, kMaxWordPoints) != slmp::Error::Ok) {
         if (manualCheckFailureShouldAutoSkip()) {
             return FuncheckResult::Skip;
         }
         printLastPlcError("funcheck verifyw before read");
         return FuncheckResult::Fail;
     }
-    if (plc.writeWords(device, values, static_cast<size_t>(value_count)) != slmp4e::Error::Ok) {
+    if (plc.writeWords(device, values, static_cast<size_t>(value_count)) != slmp::Error::Ok) {
         if (manualCheckFailureShouldAutoSkip()) {
             return FuncheckResult::Skip;
         }
@@ -1719,7 +1719,7 @@ FuncheckResult runFuncheckVerifyWords(char* tokens[], int token_count) {
         return FuncheckResult::Fail;
     }
     uint16_t readback[kMaxWordPoints] = {};
-    if (plc.readWords(device, static_cast<uint16_t>(value_count), readback, kMaxWordPoints) != slmp4e::Error::Ok) {
+    if (plc.readWords(device, static_cast<uint16_t>(value_count), readback, kMaxWordPoints) != slmp::Error::Ok) {
         clearWordsSilently(device, static_cast<size_t>(value_count));
         if (manualCheckFailureShouldAutoSkip()) {
             return FuncheckResult::Skip;
@@ -1752,7 +1752,7 @@ FuncheckResult runFuncheckVerifyBit(char* tokens[], int token_count) {
         Serial.println("funcheck direct failed: verifyb command is incomplete");
         return FuncheckResult::Fail;
     }
-    slmp4e::DeviceAddress device = {};
+    slmp::DeviceAddress device = {};
     if (!parseDeviceAddress(tokens[1], device)) {
         Serial.println("funcheck direct failed: verifyb device parse failed");
         return FuncheckResult::Fail;
@@ -1768,14 +1768,14 @@ FuncheckResult runFuncheckVerifyBit(char* tokens[], int token_count) {
     }
 
     bool before = false;
-    if (plc.readOneBit(device, before) != slmp4e::Error::Ok) {
+    if (plc.readOneBit(device, before) != slmp::Error::Ok) {
         if (manualCheckFailureShouldAutoSkip()) {
             return FuncheckResult::Skip;
         }
         printLastPlcError("funcheck verifyb before read");
         return FuncheckResult::Fail;
     }
-    if (plc.writeOneBit(device, value) != slmp4e::Error::Ok) {
+    if (plc.writeOneBit(device, value) != slmp::Error::Ok) {
         if (manualCheckFailureShouldAutoSkip()) {
             return FuncheckResult::Skip;
         }
@@ -1783,7 +1783,7 @@ FuncheckResult runFuncheckVerifyBit(char* tokens[], int token_count) {
         return FuncheckResult::Fail;
     }
     bool readback = false;
-    if (plc.readOneBit(device, readback) != slmp4e::Error::Ok) {
+    if (plc.readOneBit(device, readback) != slmp::Error::Ok) {
         clearBitsSilently(device, 1);
         if (manualCheckFailureShouldAutoSkip()) {
             return FuncheckResult::Skip;
@@ -1872,7 +1872,7 @@ FuncheckSummary runFuncheckDirectSuite() {
         Serial.println(funcheckResultText(result));
         if (result == FuncheckResult::Skip) {
             Serial.print("funcheck skip_reason=");
-            Serial.println(slmp4e::errorString(plc.lastError()));
+            Serial.println(slmp::errorString(plc.lastError()));
         }
     }
 
@@ -1938,7 +1938,7 @@ void runManualCheckStep() {
         if (!verification.active) {
             if (manualCheckFailureShouldAutoSkip()) {
                 Serial.print("check auto-skip: ");
-                Serial.println(slmp4e::errorString(plc.lastError()));
+                Serial.println(slmp::errorString(plc.lastError()));
                 ++manual_check.next_step_index;
                 if (manual_check.next_step_index >= kManualCheckStepCount) {
                     manual_check.active = false;
@@ -2101,8 +2101,8 @@ void manualCheckCommand(char* tokens[], int token_count) {
 }
 
 FuncheckResult runFuncheckApiTypeAndFrames() {
-    slmp4e::TypeNameInfo type_name = {};
-    if (plc.readTypeName(type_name) != slmp4e::Error::Ok) {
+    slmp::TypeNameInfo type_name = {};
+    if (plc.readTypeName(type_name) != slmp::Error::Ok) {
         printLastPlcError("funcheck readTypeName");
         return FuncheckResult::Fail;
     }
@@ -2116,10 +2116,10 @@ FuncheckResult runFuncheckApiTypeAndFrames() {
 }
 
 FuncheckResult runFuncheckApiTargetHeader() {
-    const slmp4e::TargetAddress current_target = plc.target();
+    const slmp::TargetAddress current_target = plc.target();
     plc.setTarget(current_target);
-    slmp4e::TypeNameInfo type_name = {};
-    if (plc.readTypeName(type_name) != slmp4e::Error::Ok) {
+    slmp::TypeNameInfo type_name = {};
+    if (plc.readTypeName(type_name) != slmp::Error::Ok) {
         printLastPlcError("funcheck target header");
         return FuncheckResult::Fail;
     }
@@ -2144,11 +2144,11 @@ FuncheckResult runFuncheckApiMonitorAndTimeout() {
     plc.setMonitoringTimer(temporary_monitor);
     plc.setTimeoutMs(temporary_timeout);
 
-    slmp4e::TypeNameInfo type_name = {};
-    const slmp4e::Error error = plc.readTypeName(type_name);
+    slmp::TypeNameInfo type_name = {};
+    const slmp::Error error = plc.readTypeName(type_name);
     plc.setMonitoringTimer(original_monitor);
     plc.setTimeoutMs(original_timeout);
-    if (error != slmp4e::Error::Ok) {
+    if (error != slmp::Error::Ok) {
         printLastPlcError("funcheck monitor/timeout");
         return FuncheckResult::Fail;
     }
@@ -2168,14 +2168,14 @@ FuncheckResult runFuncheckApiOneWord() {
     const uint16_t expected = nextFuncheckWordValue();
     Serial.print("funcheck randomized_value=");
     Serial.println(expected);
-    if (plc.writeOneWord(kFuncheckOneWordDevice, expected) != slmp4e::Error::Ok) {
+    if (plc.writeOneWord(kFuncheckOneWordDevice, expected) != slmp::Error::Ok) {
         printLastPlcError("funcheck writeOneWord");
         return FuncheckResult::Fail;
     }
     uint16_t readback = 0;
-    const slmp4e::Error error = plc.readOneWord(kFuncheckOneWordDevice, readback);
+    const slmp::Error error = plc.readOneWord(kFuncheckOneWordDevice, readback);
     clearWordsSilently(kFuncheckOneWordDevice, 1);
-    if (error != slmp4e::Error::Ok) {
+    if (error != slmp::Error::Ok) {
         printLastPlcError("funcheck readOneWord");
         return FuncheckResult::Fail;
     }
@@ -2185,14 +2185,14 @@ FuncheckResult runFuncheckApiOneWord() {
 FuncheckResult runFuncheckApiWords() {
     const uint16_t expected[] = {nextFuncheckWordValue(), nextFuncheckWordValue()};
     printFuncheckWordValues("funcheck randomized_values=", expected, 2);
-    if (plc.writeWords(kFuncheckWordArrayDevice, expected, 2) != slmp4e::Error::Ok) {
+    if (plc.writeWords(kFuncheckWordArrayDevice, expected, 2) != slmp::Error::Ok) {
         printLastPlcError("funcheck writeWords");
         return FuncheckResult::Fail;
     }
     uint16_t readback[2] = {};
-    const slmp4e::Error error = plc.readWords(kFuncheckWordArrayDevice, 2, readback, 2);
+    const slmp::Error error = plc.readWords(kFuncheckWordArrayDevice, 2, readback, 2);
     clearWordsSilently(kFuncheckWordArrayDevice, 2);
-    if (error != slmp4e::Error::Ok) {
+    if (error != slmp::Error::Ok) {
         printLastPlcError("funcheck readWords");
         return FuncheckResult::Fail;
     }
@@ -2200,14 +2200,14 @@ FuncheckResult runFuncheckApiWords() {
 }
 
 FuncheckResult runFuncheckApiOneBit() {
-    if (plc.writeOneBit(kFuncheckOneBitDevice, true) != slmp4e::Error::Ok) {
+    if (plc.writeOneBit(kFuncheckOneBitDevice, true) != slmp::Error::Ok) {
         printLastPlcError("funcheck writeOneBit");
         return FuncheckResult::Fail;
     }
     bool readback = false;
-    const slmp4e::Error error = plc.readOneBit(kFuncheckOneBitDevice, readback);
+    const slmp::Error error = plc.readOneBit(kFuncheckOneBitDevice, readback);
     clearBitsSilently(kFuncheckOneBitDevice, 1);
-    if (error != slmp4e::Error::Ok) {
+    if (error != slmp::Error::Ok) {
         printLastPlcError("funcheck readOneBit");
         return FuncheckResult::Fail;
     }
@@ -2216,14 +2216,14 @@ FuncheckResult runFuncheckApiOneBit() {
 
 FuncheckResult runFuncheckApiBits() {
     const bool expected[] = {true, false, true, false};
-    if (plc.writeBits(kFuncheckBitArrayDevice, expected, 4) != slmp4e::Error::Ok) {
+    if (plc.writeBits(kFuncheckBitArrayDevice, expected, 4) != slmp::Error::Ok) {
         printLastPlcError("funcheck writeBits");
         return FuncheckResult::Fail;
     }
     bool readback[4] = {};
-    const slmp4e::Error error = plc.readBits(kFuncheckBitArrayDevice, 4, readback, 4);
+    const slmp::Error error = plc.readBits(kFuncheckBitArrayDevice, 4, readback, 4);
     clearBitsSilently(kFuncheckBitArrayDevice, 4);
-    if (error != slmp4e::Error::Ok) {
+    if (error != slmp::Error::Ok) {
         printLastPlcError("funcheck readBits");
         return FuncheckResult::Fail;
     }
@@ -2234,14 +2234,14 @@ FuncheckResult runFuncheckApiOneDWord() {
     const uint32_t expected = nextFuncheckDWordValue();
     Serial.print("funcheck randomized_value=");
     Serial.println(expected);
-    if (plc.writeOneDWord(kFuncheckOneDWordDevice, expected) != slmp4e::Error::Ok) {
+    if (plc.writeOneDWord(kFuncheckOneDWordDevice, expected) != slmp::Error::Ok) {
         printLastPlcError("funcheck writeOneDWord");
         return FuncheckResult::Fail;
     }
     uint32_t readback = 0;
-    const slmp4e::Error error = plc.readOneDWord(kFuncheckOneDWordDevice, readback);
+    const slmp::Error error = plc.readOneDWord(kFuncheckOneDWordDevice, readback);
     clearDWordsSilently(kFuncheckOneDWordDevice, 1);
-    if (error != slmp4e::Error::Ok) {
+    if (error != slmp::Error::Ok) {
         printLastPlcError("funcheck readOneDWord");
         return FuncheckResult::Fail;
     }
@@ -2251,14 +2251,14 @@ FuncheckResult runFuncheckApiOneDWord() {
 FuncheckResult runFuncheckApiDWords() {
     const uint32_t expected[] = {nextFuncheckDWordValue(), nextFuncheckDWordValue()};
     printFuncheckDWordValues("funcheck randomized_values=", expected, 2);
-    if (plc.writeDWords(kFuncheckDWordArrayDevice, expected, 2) != slmp4e::Error::Ok) {
+    if (plc.writeDWords(kFuncheckDWordArrayDevice, expected, 2) != slmp::Error::Ok) {
         printLastPlcError("funcheck writeDWords");
         return FuncheckResult::Fail;
     }
     uint32_t readback[2] = {};
-    const slmp4e::Error error = plc.readDWords(kFuncheckDWordArrayDevice, 2, readback, 2);
+    const slmp::Error error = plc.readDWords(kFuncheckDWordArrayDevice, 2, readback, 2);
     clearDWordsSilently(kFuncheckDWordArrayDevice, 2);
-    if (error != slmp4e::Error::Ok) {
+    if (error != slmp::Error::Ok) {
         printLastPlcError("funcheck readDWords");
         return FuncheckResult::Fail;
     }
@@ -2277,14 +2277,14 @@ FuncheckResult runFuncheckApiRandomWords() {
             kFuncheckRandomDWordDevices,
             expected_dwords,
             sizeof(kFuncheckRandomDWordDevices) / sizeof(kFuncheckRandomDWordDevices[0])
-        ) != slmp4e::Error::Ok) {
+        ) != slmp::Error::Ok) {
         printLastPlcError("funcheck writeRandomWords");
         return FuncheckResult::Fail;
     }
 
     uint16_t readback_words[2] = {};
     uint32_t readback_dwords[1] = {};
-    const slmp4e::Error error = plc.readRandom(
+    const slmp::Error error = plc.readRandom(
         kFuncheckRandomWordDevices,
         sizeof(kFuncheckRandomWordDevices) / sizeof(kFuncheckRandomWordDevices[0]),
         readback_words,
@@ -2300,7 +2300,7 @@ FuncheckResult runFuncheckApiRandomWords() {
         kFuncheckRandomDWordDevices,
         sizeof(kFuncheckRandomDWordDevices) / sizeof(kFuncheckRandomDWordDevices[0])
     );
-    if (error != slmp4e::Error::Ok) {
+    if (error != slmp::Error::Ok) {
         printLastPlcError("funcheck readRandom");
         return FuncheckResult::Fail;
     }
@@ -2316,23 +2316,23 @@ FuncheckResult runFuncheckApiRandomBits() {
             kFuncheckRandomBitDevices,
             expected,
             sizeof(kFuncheckRandomBitDevices) / sizeof(kFuncheckRandomBitDevices[0])
-        ) != slmp4e::Error::Ok) {
+        ) != slmp::Error::Ok) {
         printLastPlcError("funcheck writeRandomBits");
         return FuncheckResult::Fail;
     }
     bool first = false;
     bool second = false;
-    const slmp4e::Error first_error = plc.readOneBit(kFuncheckRandomBitDevices[0], first);
-    const slmp4e::Error second_error = plc.readOneBit(kFuncheckRandomBitDevices[1], second);
+    const slmp::Error first_error = plc.readOneBit(kFuncheckRandomBitDevices[0], first);
+    const slmp::Error second_error = plc.readOneBit(kFuncheckRandomBitDevices[1], second);
     clearRandomBitsSilently(
         kFuncheckRandomBitDevices,
         sizeof(kFuncheckRandomBitDevices) / sizeof(kFuncheckRandomBitDevices[0])
     );
-    if (first_error != slmp4e::Error::Ok) {
+    if (first_error != slmp::Error::Ok) {
         printLastPlcError("funcheck readRandomBits first");
         return FuncheckResult::Fail;
     }
-    if (second_error != slmp4e::Error::Ok) {
+    if (second_error != slmp::Error::Ok) {
         printLastPlcError("funcheck readRandomBits second");
         return FuncheckResult::Fail;
     }
@@ -2342,21 +2342,21 @@ FuncheckResult runFuncheckApiRandomBits() {
 FuncheckResult runFuncheckApiWordBlock() {
     const uint16_t expected_words[] = {nextFuncheckWordValue(), nextFuncheckWordValue()};
     printFuncheckWordValues("funcheck randomized_word_values=", expected_words, 2);
-    const slmp4e::DeviceBlockWrite word_blocks[] = {
-        slmp4e::dev::blockWrite(kFuncheckBlockWordDevice, expected_words, 2),
+    const slmp::DeviceBlockWrite word_blocks[] = {
+        slmp::dev::blockWrite(kFuncheckBlockWordDevice, expected_words, 2),
     };
-    if (plc.writeBlock(word_blocks, 1, nullptr, 0) != slmp4e::Error::Ok) {
+    if (plc.writeBlock(word_blocks, 1, nullptr, 0) != slmp::Error::Ok) {
         printLastPlcError("funcheck writeBlock words");
         return FuncheckResult::Fail;
     }
 
-    const slmp4e::DeviceBlockRead read_word_blocks[] = {
-        slmp4e::dev::blockRead(kFuncheckBlockWordDevice, 2),
+    const slmp::DeviceBlockRead read_word_blocks[] = {
+        slmp::dev::blockRead(kFuncheckBlockWordDevice, 2),
     };
     uint16_t readback_words[2] = {};
-    const slmp4e::Error error = plc.readBlock(read_word_blocks, 1, nullptr, 0, readback_words, 2, nullptr, 0);
+    const slmp::Error error = plc.readBlock(read_word_blocks, 1, nullptr, 0, readback_words, 2, nullptr, 0);
     clearWordsSilently(kFuncheckBlockWordDevice, 2);
-    if (error != slmp4e::Error::Ok) {
+    if (error != slmp::Error::Ok) {
         printLastPlcError("funcheck readBlock words");
         return FuncheckResult::Fail;
     }
@@ -2366,21 +2366,21 @@ FuncheckResult runFuncheckApiWordBlock() {
 FuncheckResult runFuncheckApiBitBlock() {
     const uint16_t expected_bits[] = {nextFuncheckWordValue()};
     printFuncheckWordValues("funcheck randomized_packed_bits=", expected_bits, 1);
-    const slmp4e::DeviceBlockWrite bit_blocks[] = {
-        slmp4e::dev::blockWrite(kFuncheckBlockBitDevice, expected_bits, 1),
+    const slmp::DeviceBlockWrite bit_blocks[] = {
+        slmp::dev::blockWrite(kFuncheckBlockBitDevice, expected_bits, 1),
     };
-    if (plc.writeBlock(nullptr, 0, bit_blocks, 1) != slmp4e::Error::Ok) {
+    if (plc.writeBlock(nullptr, 0, bit_blocks, 1) != slmp::Error::Ok) {
         printLastPlcError("funcheck writeBlock bits");
         return FuncheckResult::Fail;
     }
 
-    const slmp4e::DeviceBlockRead read_bit_blocks[] = {
-        slmp4e::dev::blockRead(kFuncheckBlockBitDevice, 1),
+    const slmp::DeviceBlockRead read_bit_blocks[] = {
+        slmp::dev::blockRead(kFuncheckBlockBitDevice, 1),
     };
     uint16_t readback_bits[1] = {};
-    const slmp4e::Error error = plc.readBlock(nullptr, 0, read_bit_blocks, 1, nullptr, 0, readback_bits, 1);
+    const slmp::Error error = plc.readBlock(nullptr, 0, read_bit_blocks, 1, nullptr, 0, readback_bits, 1);
     clearPackedBitWordsSilently(kFuncheckBlockBitDevice, 1);
-    if (error != slmp4e::Error::Ok) {
+    if (error != slmp::Error::Ok) {
         printLastPlcError("funcheck readBlock bits");
         return FuncheckResult::Fail;
     }
@@ -2392,13 +2392,13 @@ FuncheckResult runFuncheckApiMixedBlock() {
     const uint16_t expected_bits[] = {nextFuncheckWordValue()};
     printFuncheckWordValues("funcheck randomized_word_values=", expected_words, 2);
     printFuncheckWordValues("funcheck randomized_packed_bits=", expected_bits, 1);
-    const slmp4e::DeviceBlockWrite word_blocks[] = {
-        slmp4e::dev::blockWrite(kFuncheckBlockWordDevice, expected_words, 2),
+    const slmp::DeviceBlockWrite word_blocks[] = {
+        slmp::dev::blockWrite(kFuncheckBlockWordDevice, expected_words, 2),
     };
-    const slmp4e::DeviceBlockWrite bit_blocks[] = {
-        slmp4e::dev::blockWrite(kFuncheckBlockBitDevice, expected_bits, 1),
+    const slmp::DeviceBlockWrite bit_blocks[] = {
+        slmp::dev::blockWrite(kFuncheckBlockBitDevice, expected_bits, 1),
     };
-    if (plc.writeBlock(word_blocks, 1, bit_blocks, 1) != slmp4e::Error::Ok) {
+    if (plc.writeBlock(word_blocks, 1, bit_blocks, 1) != slmp::Error::Ok) {
         printLastPlcError("funcheck writeBlock mixed");
         clearBlockSilently(kFuncheckBlockWordDevice, 2, kFuncheckBlockBitDevice, 1);
         if (manualCheckFailureShouldAutoSkip()) {
@@ -2407,17 +2407,17 @@ FuncheckResult runFuncheckApiMixedBlock() {
         return FuncheckResult::Fail;
     }
 
-    const slmp4e::DeviceBlockRead read_word_blocks[] = {
-        slmp4e::dev::blockRead(kFuncheckBlockWordDevice, 2),
+    const slmp::DeviceBlockRead read_word_blocks[] = {
+        slmp::dev::blockRead(kFuncheckBlockWordDevice, 2),
     };
-    const slmp4e::DeviceBlockRead read_bit_blocks[] = {
-        slmp4e::dev::blockRead(kFuncheckBlockBitDevice, 1),
+    const slmp::DeviceBlockRead read_bit_blocks[] = {
+        slmp::dev::blockRead(kFuncheckBlockBitDevice, 1),
     };
     uint16_t readback_words[2] = {};
     uint16_t readback_bits[1] = {};
-    const slmp4e::Error error = plc.readBlock(read_word_blocks, 1, read_bit_blocks, 1, readback_words, 2, readback_bits, 1);
+    const slmp::Error error = plc.readBlock(read_word_blocks, 1, read_bit_blocks, 1, readback_words, 2, readback_bits, 1);
     clearBlockSilently(kFuncheckBlockWordDevice, 2, kFuncheckBlockBitDevice, 1);
-    if (error != slmp4e::Error::Ok) {
+    if (error != slmp::Error::Ok) {
         printLastPlcError("funcheck readBlock mixed");
         if (manualCheckFailureShouldAutoSkip()) {
             return FuncheckResult::Skip;
@@ -2475,7 +2475,7 @@ FuncheckSummary runFuncheckApiSuite() {
         Serial.println(funcheckResultText(result));
         if (result == FuncheckResult::Skip) {
             Serial.print("funcheck skip_reason=");
-            Serial.println(slmp4e::errorString(plc.lastError()));
+            Serial.println(slmp::errorString(plc.lastError()));
         }
     }
 
@@ -2591,7 +2591,7 @@ void stopEndurance(bool print_summary, bool failed) {
 bool failEnduranceCycle(const char* step, const char* issue, const char* plc_label, bool use_plc_error) {
     copyText(endurance.last_step, sizeof(endurance.last_step), step);
     copyText(endurance.last_issue, sizeof(endurance.last_issue), issue);
-    endurance.last_error = use_plc_error ? plc.lastError() : slmp4e::Error::Ok;
+    endurance.last_error = use_plc_error ? plc.lastError() : slmp::Error::Ok;
     endurance.last_end_code = use_plc_error ? plc.lastEndCode() : 0;
     ++endurance.attempts;
     ++endurance.fail;
@@ -2630,15 +2630,15 @@ bool runEnduranceCycle() {
 
     const uint32_t started_ms = millis();
     copyText(endurance.last_issue, sizeof(endurance.last_issue), "");
-    endurance.last_error = slmp4e::Error::Ok;
+    endurance.last_error = slmp::Error::Ok;
     endurance.last_end_code = 0;
 
     const uint16_t one_word_value = nextFuncheckWordValue();
     uint16_t one_word_readback = 0;
-    if (plc.writeOneWord(kEnduranceOneWordDevice, one_word_value) != slmp4e::Error::Ok) {
+    if (plc.writeOneWord(kEnduranceOneWordDevice, one_word_value) != slmp::Error::Ok) {
         return failEnduranceCycle("writeOneWord", "plc write failed", "endurance writeOneWord", true);
     }
-    if (plc.readOneWord(kEnduranceOneWordDevice, one_word_readback) != slmp4e::Error::Ok) {
+    if (plc.readOneWord(kEnduranceOneWordDevice, one_word_readback) != slmp::Error::Ok) {
         return failEnduranceCycle("readOneWord", "plc read failed", "endurance readOneWord", true);
     }
     if (one_word_readback != one_word_value) {
@@ -2648,10 +2648,10 @@ bool runEnduranceCycle() {
 
     const uint16_t word_values[] = {nextFuncheckWordValue(), nextFuncheckWordValue()};
     uint16_t word_readback[2] = {};
-    if (plc.writeWords(kEnduranceWordArrayDevice, word_values, 2) != slmp4e::Error::Ok) {
+    if (plc.writeWords(kEnduranceWordArrayDevice, word_values, 2) != slmp::Error::Ok) {
         return failEnduranceCycle("writeWords", "plc write failed", "endurance writeWords", true);
     }
-    if (plc.readWords(kEnduranceWordArrayDevice, 2, word_readback, 2) != slmp4e::Error::Ok) {
+    if (plc.readWords(kEnduranceWordArrayDevice, 2, word_readback, 2) != slmp::Error::Ok) {
         return failEnduranceCycle("readWords", "plc read failed", "endurance readWords", true);
     }
     if (!wordArraysEqual(word_values, word_readback, 2)) {
@@ -2660,10 +2660,10 @@ bool runEnduranceCycle() {
     clearWordsSilently(kEnduranceWordArrayDevice, 2);
 
     bool one_bit_readback = false;
-    if (plc.writeOneBit(kEnduranceOneBitDevice, true) != slmp4e::Error::Ok) {
+    if (plc.writeOneBit(kEnduranceOneBitDevice, true) != slmp::Error::Ok) {
         return failEnduranceCycle("writeOneBit", "plc write failed", "endurance writeOneBit", true);
     }
-    if (plc.readOneBit(kEnduranceOneBitDevice, one_bit_readback) != slmp4e::Error::Ok) {
+    if (plc.readOneBit(kEnduranceOneBitDevice, one_bit_readback) != slmp::Error::Ok) {
         return failEnduranceCycle("readOneBit", "plc read failed", "endurance readOneBit", true);
     }
     if (!one_bit_readback) {
@@ -2681,10 +2681,10 @@ bool runEnduranceCycle() {
         bit_values[0] = true;
     }
     bool bit_readback[4] = {};
-    if (plc.writeBits(kEnduranceBitArrayDevice, bit_values, 4) != slmp4e::Error::Ok) {
+    if (plc.writeBits(kEnduranceBitArrayDevice, bit_values, 4) != slmp::Error::Ok) {
         return failEnduranceCycle("writeBits", "plc write failed", "endurance writeBits", true);
     }
-    if (plc.readBits(kEnduranceBitArrayDevice, 4, bit_readback, 4) != slmp4e::Error::Ok) {
+    if (plc.readBits(kEnduranceBitArrayDevice, 4, bit_readback, 4) != slmp::Error::Ok) {
         return failEnduranceCycle("readBits", "plc read failed", "endurance readBits", true);
     }
     if (!bitArraysEqual(bit_values, bit_readback, 4)) {
@@ -2694,10 +2694,10 @@ bool runEnduranceCycle() {
 
     const uint32_t one_dword_value = nextFuncheckDWordValue();
     uint32_t one_dword_readback = 0;
-    if (plc.writeOneDWord(kEnduranceOneDWordDevice, one_dword_value) != slmp4e::Error::Ok) {
+    if (plc.writeOneDWord(kEnduranceOneDWordDevice, one_dword_value) != slmp::Error::Ok) {
         return failEnduranceCycle("writeOneDWord", "plc write failed", "endurance writeOneDWord", true);
     }
-    if (plc.readOneDWord(kEnduranceOneDWordDevice, one_dword_readback) != slmp4e::Error::Ok) {
+    if (plc.readOneDWord(kEnduranceOneDWordDevice, one_dword_readback) != slmp::Error::Ok) {
         return failEnduranceCycle("readOneDWord", "plc read failed", "endurance readOneDWord", true);
     }
     if (one_dword_readback != one_dword_value) {
@@ -2707,10 +2707,10 @@ bool runEnduranceCycle() {
 
     const uint32_t dword_values[] = {nextFuncheckDWordValue(), nextFuncheckDWordValue()};
     uint32_t dword_readback[2] = {};
-    if (plc.writeDWords(kEnduranceDWordArrayDevice, dword_values, 2) != slmp4e::Error::Ok) {
+    if (plc.writeDWords(kEnduranceDWordArrayDevice, dword_values, 2) != slmp::Error::Ok) {
         return failEnduranceCycle("writeDWords", "plc write failed", "endurance writeDWords", true);
     }
-    if (plc.readDWords(kEnduranceDWordArrayDevice, 2, dword_readback, 2) != slmp4e::Error::Ok) {
+    if (plc.readDWords(kEnduranceDWordArrayDevice, 2, dword_readback, 2) != slmp::Error::Ok) {
         return failEnduranceCycle("readDWords", "plc read failed", "endurance readDWords", true);
     }
     if (!dwordArraysEqual(dword_values, dword_readback, 2)) {
@@ -2728,7 +2728,7 @@ bool runEnduranceCycle() {
             2,
             kEnduranceRandomDWordDevices,
             random_dword_values,
-            1) != slmp4e::Error::Ok) {
+            1) != slmp::Error::Ok) {
         return failEnduranceCycle("writeRandomWords", "plc write failed", "endurance writeRandomWords", true);
     }
     if (plc.readRandom(
@@ -2739,7 +2739,7 @@ bool runEnduranceCycle() {
             kEnduranceRandomDWordDevices,
             1,
             random_dword_readback,
-            1) != slmp4e::Error::Ok) {
+            1) != slmp::Error::Ok) {
         return failEnduranceCycle("readRandom", "plc read failed", "endurance readRandom", true);
     }
     if (!wordArraysEqual(random_word_values, random_word_readback, 2) ||
@@ -2756,13 +2756,13 @@ bool runEnduranceCycle() {
         random_bit_values[0] = true;
     }
     bool random_bit_readback[2] = {};
-    if (plc.writeRandomBits(kEnduranceRandomBitDevices, random_bit_values, 2) != slmp4e::Error::Ok) {
+    if (plc.writeRandomBits(kEnduranceRandomBitDevices, random_bit_values, 2) != slmp::Error::Ok) {
         return failEnduranceCycle("writeRandomBits", "plc write failed", "endurance writeRandomBits", true);
     }
-    if (plc.readBits(kEnduranceRandomBitDevices[0], 1, random_bit_readback, 1) != slmp4e::Error::Ok) {
+    if (plc.readBits(kEnduranceRandomBitDevices[0], 1, random_bit_readback, 1) != slmp::Error::Ok) {
         return failEnduranceCycle("readRandomBits first", "plc read failed", "endurance readRandomBits first", true);
     }
-    if (plc.readBits(kEnduranceRandomBitDevices[1], 1, random_bit_readback + 1, 1) != slmp4e::Error::Ok) {
+    if (plc.readBits(kEnduranceRandomBitDevices[1], 1, random_bit_readback + 1, 1) != slmp::Error::Ok) {
         return failEnduranceCycle("readRandomBits second", "plc read failed", "endurance readRandomBits second", true);
     }
     if (!bitArraysEqual(random_bit_values, random_bit_readback, 2)) {
@@ -2771,13 +2771,13 @@ bool runEnduranceCycle() {
     clearRandomBitsSilently(kEnduranceRandomBitDevices, 2);
 
     const uint16_t block_word_values[] = {nextFuncheckWordValue(), nextFuncheckWordValue()};
-    const slmp4e::DeviceBlockWrite word_block = {kEnduranceBlockWordDevice, block_word_values, 2};
-    const slmp4e::DeviceBlockRead read_word_block = {kEnduranceBlockWordDevice, 2};
+    const slmp::DeviceBlockWrite word_block = {kEnduranceBlockWordDevice, block_word_values, 2};
+    const slmp::DeviceBlockRead read_word_block = {kEnduranceBlockWordDevice, 2};
     uint16_t block_word_readback[2] = {};
-    if (plc.writeBlock(&word_block, 1, nullptr, 0) != slmp4e::Error::Ok) {
+    if (plc.writeBlock(&word_block, 1, nullptr, 0) != slmp::Error::Ok) {
         return failEnduranceCycle("writeBlock words", "plc write failed", "endurance writeBlock words", true);
     }
-    if (plc.readBlock(&read_word_block, 1, nullptr, 0, block_word_readback, 2, nullptr, 0) != slmp4e::Error::Ok) {
+    if (plc.readBlock(&read_word_block, 1, nullptr, 0, block_word_readback, 2, nullptr, 0) != slmp::Error::Ok) {
         return failEnduranceCycle("readBlock words", "plc read failed", "endurance readBlock words", true);
     }
     if (!wordArraysEqual(block_word_values, block_word_readback, 2)) {
@@ -2786,13 +2786,13 @@ bool runEnduranceCycle() {
     clearWordsSilently(kEnduranceBlockWordDevice, 2);
 
     const uint16_t block_bit_values[] = {nextFuncheckWordValue()};
-    const slmp4e::DeviceBlockWrite bit_block = {kEnduranceBlockBitDevice, block_bit_values, 1};
-    const slmp4e::DeviceBlockRead read_bit_block = {kEnduranceBlockBitDevice, 1};
+    const slmp::DeviceBlockWrite bit_block = {kEnduranceBlockBitDevice, block_bit_values, 1};
+    const slmp::DeviceBlockRead read_bit_block = {kEnduranceBlockBitDevice, 1};
     uint16_t block_bit_readback[1] = {};
-    if (plc.writeBlock(nullptr, 0, &bit_block, 1) != slmp4e::Error::Ok) {
+    if (plc.writeBlock(nullptr, 0, &bit_block, 1) != slmp::Error::Ok) {
         return failEnduranceCycle("writeBlock bits", "plc write failed", "endurance writeBlock bits", true);
     }
-    if (plc.readBlock(nullptr, 0, &read_bit_block, 1, nullptr, 0, block_bit_readback, 1) != slmp4e::Error::Ok) {
+    if (plc.readBlock(nullptr, 0, &read_bit_block, 1, nullptr, 0, block_bit_readback, 1) != slmp::Error::Ok) {
         return failEnduranceCycle("readBlock bits", "plc read failed", "endurance readBlock bits", true);
     }
     if (!wordArraysEqual(block_bit_values, block_bit_readback, 1)) {
@@ -2910,7 +2910,7 @@ bool runReconnectCycle() {
     const uint32_t started_ms = millis();
     const size_t failure_streak_before = reconnect.consecutive_failures;
     copyText(reconnect.last_issue, sizeof(reconnect.last_issue), "none");
-    reconnect.last_error = slmp4e::Error::Ok;
+    reconnect.last_error = slmp::Error::Ok;
     reconnect.last_end_code = 0;
 
     uint16_t probe_value = 0;
@@ -2923,7 +2923,7 @@ bool runReconnectCycle() {
         step = "readOneWord";
         issue = "plc read failed";
         use_plc_error = true;
-        if (plc.readOneWord(kEnduranceOneWordDevice, probe_value) == slmp4e::Error::Ok) {
+        if (plc.readOneWord(kEnduranceOneWordDevice, probe_value) == slmp::Error::Ok) {
             ok = true;
         }
     }
@@ -2953,7 +2953,7 @@ bool runReconnectCycle() {
         reconnect.max_consecutive_failures = reconnect.consecutive_failures;
     }
     copyText(reconnect.last_issue, sizeof(reconnect.last_issue), issue);
-    reconnect.last_error = use_plc_error ? plc.lastError() : slmp4e::Error::Ok;
+    reconnect.last_error = use_plc_error ? plc.lastError() : slmp::Error::Ok;
     reconnect.last_end_code = use_plc_error ? plc.lastEndCode() : 0;
     plc.close();
     if (reconnect.consecutive_failures == 1) {
@@ -2963,7 +2963,7 @@ bool runReconnectCycle() {
         Serial.println(issue);
         if (use_plc_error) {
             Serial.print("reconnect last_error=");
-            Serial.print(slmp4e::errorString(reconnect.last_error));
+            Serial.print(slmp::errorString(reconnect.last_error));
             Serial.print(" end=0x");
             Serial.println(reconnect.last_end_code, HEX);
         }
@@ -3111,15 +3111,15 @@ void setupConsole() {
     Serial.begin(115200);
     const uint32_t serial_wait_started_ms = millis();
     while (!Serial) {
-        if (SLMP4E_WIFI_SERIAL_CONSOLE_SERIAL_WAIT_MS == 0 ||
-            millis() - serial_wait_started_ms >= SLMP4E_WIFI_SERIAL_CONSOLE_SERIAL_WAIT_MS) {
+        if (SLMP_WIFI_SERIAL_CONSOLE_SERIAL_WAIT_MS == 0 ||
+            millis() - serial_wait_started_ms >= SLMP_WIFI_SERIAL_CONSOLE_SERIAL_WAIT_MS) {
             break;
         }
         delay(10);
     }
 
     showStartupPhase(5, 8, 8, 8);
-    Serial.println(SLMP4E_WIFI_SERIAL_CONSOLE_BANNER);
+    Serial.println(SLMP_WIFI_SERIAL_CONSOLE_BANNER);
     plc.setTimeoutMs(2000);
     showStartupPhase(10, 0, 16, 8);
     (void)bringUpWiFiWithStartupProgress();
@@ -3335,7 +3335,7 @@ void incrementButtonDevice() {
     }
 
     uint16_t current_value = 0;
-    if (plc.readOneWord(kButtonIncrementDevice, current_value) != slmp4e::Error::Ok) {
+    if (plc.readOneWord(kButtonIncrementDevice, current_value) != slmp::Error::Ok) {
         Serial.println();
         printLastPlcError("button readOneWord");
         printPrompt();
@@ -3343,7 +3343,7 @@ void incrementButtonDevice() {
     }
 
     const uint16_t next_value = static_cast<uint16_t>(current_value + 1U);
-    if (plc.writeOneWord(kButtonIncrementDevice, next_value) != slmp4e::Error::Ok) {
+    if (plc.writeOneWord(kButtonIncrementDevice, next_value) != slmp::Error::Ok) {
         Serial.println();
         printLastPlcError("button writeOneWord");
         printPrompt();
@@ -3445,7 +3445,7 @@ void pollDemoDisplay() {
     }
 
     bool values[kMatrixLedCount] = {};
-    if (plc.readBits(kDemoBitDevice, static_cast<uint16_t>(kMatrixLedCount), values, kMatrixLedCount) != slmp4e::Error::Ok) {
+    if (plc.readBits(kDemoBitDevice, static_cast<uint16_t>(kMatrixLedCount), values, kMatrixLedCount) != slmp::Error::Ok) {
         renderDemoReadError();
         return;
     }
@@ -3454,11 +3454,11 @@ void pollDemoDisplay() {
 
 }  // namespace atom_matrix_serial_console
 
-#undef SLMP4E_WIFI_SERIAL_CONSOLE_CUSTOM_HELP_HANDLER
-#undef SLMP4E_WIFI_SERIAL_CONSOLE_CUSTOM_COMMAND_HANDLER
-#undef SLMP4E_WIFI_SERIAL_CONSOLE_EXTRA_HELP
-#undef SLMP4E_WIFI_SERIAL_CONSOLE_PRINT_PENDING_JUDGE_HINT
-#undef SLMP4E_WIFI_SERIAL_CONSOLE_SERIAL_WAIT_MS
-#undef SLMP4E_WIFI_SERIAL_CONSOLE_BANNER
-#undef SLMP4E_WIFI_SERIAL_CONSOLE_NAMESPACE
-#undef SLMP4E_WIFI_SERIAL_CONSOLE_CONFIG_HEADER
+#undef SLMP_WIFI_SERIAL_CONSOLE_CUSTOM_HELP_HANDLER
+#undef SLMP_WIFI_SERIAL_CONSOLE_CUSTOM_COMMAND_HANDLER
+#undef SLMP_WIFI_SERIAL_CONSOLE_EXTRA_HELP
+#undef SLMP_WIFI_SERIAL_CONSOLE_PRINT_PENDING_JUDGE_HINT
+#undef SLMP_WIFI_SERIAL_CONSOLE_SERIAL_WAIT_MS
+#undef SLMP_WIFI_SERIAL_CONSOLE_BANNER
+#undef SLMP_WIFI_SERIAL_CONSOLE_NAMESPACE
+#undef SLMP_WIFI_SERIAL_CONSOLE_CONFIG_HEADER

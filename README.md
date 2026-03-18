@@ -19,18 +19,18 @@ A lightweight, microcontroller-oriented C++ library for Mitsubishi SLMP (Seamles
 
 ### Minimal Usage
 ```cpp
-#include <slmp4e_arduino_transport.h>
+#include <slmp_arduino_transport.h>
 
 WiFiClient tcp;
-slmp4e::ArduinoClientTransport transport(tcp);
+slmp::ArduinoClientTransport transport(tcp);
 
 uint8_t tx_buffer[128];
 uint8_t rx_buffer[128];
-slmp4e::Slmp4eClient plc(transport, tx_buffer, 128, rx_buffer, 128);
+slmp::SlmpClient plc(transport, tx_buffer, 128, rx_buffer, 128);
 
 void setup() {
     plc.connect("192.168.1.10", 1025);
-    slmp4e::TypeNameInfo info = {};
+    slmp::TypeNameInfo info = {};
     plc.readTypeName(info);
 }
 ```

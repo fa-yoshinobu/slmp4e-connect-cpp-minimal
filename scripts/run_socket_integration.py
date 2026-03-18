@@ -84,10 +84,10 @@ def run_scenario(
     try:
         wait_for_server(host, port, timeout_s=5.0)
         env = os.environ.copy()
-        env["SLMP4E_TEST_HOST"] = host
-        env["SLMP4E_TEST_PORT"] = str(port)
-        env["SLMP4E_TEST_PASSWORD"] = password
-        env["SLMP4E_TEST_SCENARIO"] = scenario
+        env["SLMP_TEST_HOST"] = host
+        env["SLMP_TEST_PORT"] = str(port)
+        env["SLMP_TEST_PASSWORD"] = password
+        env["SLMP_TEST_SCENARIO"] = scenario
         subprocess.check_call([str(output_path)], cwd=project_dir, env=env)
     finally:
         server.terminate()
@@ -103,7 +103,7 @@ def main() -> int:
     project_dir = Path(__file__).resolve().parents[1]
     port = args.port or choose_free_port(args.host)
 
-    exe_name = "slmp4e_socket_integration.exe" if os.name == "nt" else "slmp4e_socket_integration"
+    exe_name = "slmp_socket_integration.exe" if os.name == "nt" else "slmp_socket_integration"
     output_path = Path(tempfile.gettempdir()) / exe_name
 
     build_cmd = [
@@ -112,8 +112,8 @@ def main() -> int:
         "-Wall",
         "-Wextra",
         "-Isrc",
-        "tests/slmp4e_socket_integration.cpp",
-        "src/slmp4e_minimal.cpp",
+        "tests/slmp_socket_integration.cpp",
+        "src/slmp_minimal.cpp",
         "-o",
         str(output_path),
     ]

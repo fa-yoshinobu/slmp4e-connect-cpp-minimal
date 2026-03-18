@@ -12,20 +12,20 @@ The library is board-agnostic and designed for:
 ## 2. Installation
 
 ### Using Arduino IDE
-1. Download the latest release zip (`slmp4e-connect-cpp-minimal-vX.X.X.zip`).
+1. Download the latest release zip (`slmp-connect-cpp-minimal-vX.X.X.zip`).
 2. In Arduino IDE, go to `Sketch -> Include Library -> Add .ZIP Library...`.
-3. The library will now be available under `File -> Examples -> SLMP4E Connect C++ Minimal`.
+3. The library will now be available under `File -> Examples -> SLMP Connect C++ Minimal`.
 
 ### Using PlatformIO
 1. Add the library to your project by cloning this repository into your `lib/` folder:
    ```bash
-   git clone https://github.com/fa-yoshinobu/slmp4e-connect-cpp-minimal.git lib/slmp4e-connect-cpp-minimal
+   git clone https://github.com/fa-yoshinobu/plc-comm-slmp-cpp-minimal.git lib/slmp-connect-cpp-minimal
    ```
 2. Or reference it in your `platformio.ini` (once published to a registry).
 3. Include the necessary headers in your code:
    ```cpp
-   #include <slmp4e_minimal.h>
-   #include <slmp4e_arduino_transport.h>
+   #include <slmp_minimal.h>
+   #include <slmp_arduino_transport.h>
    ```
 
 ## 3. Network Hardware Setup
