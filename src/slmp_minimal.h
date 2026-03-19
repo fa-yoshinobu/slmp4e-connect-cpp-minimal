@@ -95,8 +95,8 @@ struct DeviceBlockWrite {
 };
 
 struct BlockWriteOptions {
-    bool split_mixed_blocks = false;
-    bool retry_mixed_on_error = false;
+    bool split_mixed_blocks;
+    bool retry_mixed_on_error;
 };
 
 namespace dev {

@@ -2170,7 +2170,7 @@ void runFuncheckApiOnly() {
 void runFullScan() {
     Serial.println("=== SLMP Master Full Scan Start ===");
     printEvidenceHeader();
-    
+
     auto report = [](const char* code, const char* name, slmp::Error err) {
         Serial.print("| "); Serial.print(code);
         Serial.print(" | "); Serial.print(name);
@@ -2204,30 +2204,43 @@ void runFullScan() {
     slmp::DeviceAddress brdev = {slmp::DeviceCode::M, 125};
     report("1402", "Write Random (Bit)", plc.writeRandomBits(&brdev, &bval, 1));
 
-    // 3. Monitor (0801/0802)
-    slmp::Error mon_err = plc.request(0x0801, 0x0000, (console_link.compatibility_mode == slmp::CompatibilityMode::Legacy) ? 
-        (const uint8_t*)"\x01\x00\x82\x00\x00\xA8" : (const uint8_t*)"\x01\x00\x82\x00\x00\x00\xA8\x00", 
-        (console_link.compatibility_mode == slmp::CompatibilityMode::Legacy) ? 6 : 8);
-    report("0801", "Monitor Entry", mon_err);
-    if (mon_err == slmp::Error::Ok) {
-        report("0802", "Monitor Execute", plc.request(0x0802, 0x0000, nullptr, 0));
-    }
+    // 3. Self test loopback (0619)
+    const uint8_t loopback_req[] = {'O', 'K'};
+    uint8_t loopback_resp[8] = {};
+    size_t loopback_resp_len = 0;
+    report(
+        "0619",
+        "Self Test Loopback",
+        plc.selfTestLoopback(
+            loopback_req,
+            sizeof(loopback_req),
+            loopback_resp,
+            sizeof(loopback_resp),
+            loopback_resp_len
+        )
+    );
 
     // 4. Extensions
-    report("0101", "Read Type Name", plc.readTypeName(async_ctx_.data.type_name));
+    slmp::TypeNameInfo type_info = {};
+    report("0101", "Read Type Name", plc.readTypeName(type_info));
     slmp::DeviceBlockRead rb = {{slmp::DeviceCode::D, 140}, 1};
-    report("0406", "Read Block", plc.readBlock(&rb, 1, nullptr, 0, nullptr, 0, nullptr, 0));
-    
+    uint16_t rb_word = 0;
+    report("0406", "Read Block", plc.readBlock(&rb, 1, nullptr, 0, &rb_word, 1, nullptr, 0));
+
     Serial.println("=== Full Scan Complete ===");
 }
 
 void fullscanCommand(char* tokens[], int token_count) {
+    (void)tokens;
+    (void)token_count;
     if (!plc.connected() && !connectPlc(true)) {
         Serial.println("fullscan failed: plc not connected");
         return;
     }
     runFullScan();
 }
+
+void funcheckCommand(char* tokens[], int token_count) {
     if (token_count == 1) {
         printEvidenceHeader();
         runFuncheckAll();

@@ -1,76 +1,76 @@
 {
-  "envs": {
-    "size-probe-base": {
-      "label": "baseline (`readTypeName`)",
-      "flash_used": 742721,
-      "flash_total": 1310720,
-      "ram_used": 45272,
-      "ram_total": 327680,
-      "allowed_flash_growth": 512,
-      "allowed_ram_growth": 32
-    },
-    "size-probe-direct": {
-      "label": "direct read/write + dword/one-shot",
-      "flash_used": 744789,
-      "flash_total": 1310720,
-      "ram_used": 45272,
-      "ram_total": 327680,
-      "allowed_flash_growth": 512,
-      "allowed_ram_growth": 32
-    },
-    "size-probe-password": {
-      "label": "password",
-      "flash_used": 743037,
-      "flash_total": 1310720,
-      "ram_used": 45272,
-      "ram_total": 327680,
-      "allowed_flash_growth": 512,
-      "allowed_ram_growth": 32
-    },
-    "size-probe-endcode": {
-      "label": "end code text",
-      "flash_used": 743449,
-      "flash_total": 1310720,
-      "ram_used": 45272,
-      "ram_total": 327680,
-      "allowed_flash_growth": 512,
-      "allowed_ram_growth": 32
-    },
-    "size-probe-debug": {
-      "label": "frame hex dump",
-      "flash_used": 743105,
-      "flash_total": 1310720,
-      "ram_used": 45272,
-      "ram_total": 327680,
-      "allowed_flash_growth": 512,
-      "allowed_ram_growth": 32
-    },
-    "size-probe-random": {
-      "label": "random read/write",
-      "flash_used": 744161,
-      "flash_total": 1310720,
-      "ram_used": 45272,
-      "ram_total": 327680,
-      "allowed_flash_growth": 512,
-      "allowed_ram_growth": 32
-    },
-    "size-probe-block": {
-      "label": "block read/write",
-      "flash_used": 744113,
-      "flash_total": 1310720,
-      "ram_used": 45272,
-      "ram_total": 327680,
-      "allowed_flash_growth": 512,
-      "allowed_ram_growth": 32
-    },
-    "size-probe-all": {
-      "label": "all above",
-      "flash_used": 748789,
-      "flash_total": 1310720,
-      "ram_used": 45272,
-      "ram_total": 327680,
-      "allowed_flash_growth": 768,
-      "allowed_ram_growth": 32
-    }
-  }
+    "envs":  {
+                 "size-probe-base":  {
+                                         "label":  "baseline (`readTypeName`)",
+                                         "flash_used":  746133,
+                                         "flash_total":  1310720,
+                                         "ram_used":  45312,
+                                         "ram_total":  327680,
+                                         "allowed_flash_growth":  512,
+                                         "allowed_ram_growth":  32
+                                     },
+                 "size-probe-direct":  {
+                                           "label":  "direct read/write + dword/one-shot",
+                                           "flash_used":  747965,
+                                           "flash_total":  1310720,
+                                           "ram_used":  45312,
+                                           "ram_total":  327680,
+                                           "allowed_flash_growth":  512,
+                                           "allowed_ram_growth":  32
+                                       },
+                 "size-probe-password":  {
+                                             "label":  "password",
+                                             "flash_used":  746437,
+                                             "flash_total":  1310720,
+                                             "ram_used":  45312,
+                                             "ram_total":  327680,
+                                             "allowed_flash_growth":  512,
+                                             "allowed_ram_growth":  32
+                                         },
+                 "size-probe-endcode":  {
+                                            "label":  "end code text",
+                                            "flash_used":  747085,
+                                            "flash_total":  1310720,
+                                            "ram_used":  45312,
+                                            "ram_total":  327680,
+                                            "allowed_flash_growth":  512,
+                                            "allowed_ram_growth":  32
+                                        },
+                 "size-probe-debug":  {
+                                          "label":  "frame hex dump",
+                                          "flash_used":  746505,
+                                          "flash_total":  1310720,
+                                          "ram_used":  45312,
+                                          "ram_total":  327680,
+                                          "allowed_flash_growth":  512,
+                                          "allowed_ram_growth":  32
+                                      },
+                 "size-probe-random":  {
+                                           "label":  "random read/write",
+                                           "flash_used":  747477,
+                                           "flash_total":  1310720,
+                                           "ram_used":  45312,
+                                           "ram_total":  327680,
+                                           "allowed_flash_growth":  512,
+                                           "allowed_ram_growth":  32
+                                       },
+                 "size-probe-block":  {
+                                          "label":  "block read/write",
+                                          "flash_used":  747033,
+                                          "flash_total":  1310720,
+                                          "ram_used":  45312,
+                                          "ram_total":  327680,
+                                          "allowed_flash_growth":  512,
+                                          "allowed_ram_growth":  32
+                                      },
+                 "size-probe-all":  {
+                                        "label":  "all above",
+                                        "flash_used":  751881,
+                                        "flash_total":  1310720,
+                                        "ram_used":  45312,
+                                        "ram_total":  327680,
+                                        "allowed_flash_growth":  768,
+                                        "allowed_ram_growth":  32
+                                    }
+             }
 }
