@@ -23,6 +23,11 @@ enum class FrameType : uint8_t {
     Frame4E,
 };
 
+enum class CompatibilityMode : uint8_t {
+    iQR,     // Subcommands 0x0002/0x0003 (iQ-R extension)
+    Legacy,  // Subcommands 0x0000/0x0001 (Q/L series legacy)
+};
+
 enum class DeviceCode : uint16_t {
     SM = 0x0091,
     SD = 0x00A9,
@@ -204,6 +209,9 @@ class SlmpClient {
 
     void setFrameType(FrameType frame_type);
     FrameType frameType() const;
+
+    void setCompatibilityMode(CompatibilityMode mode);
+    CompatibilityMode compatibilityMode() const;
 
     void setMonitoringTimer(uint16_t monitoring_timer);
     uint16_t monitoringTimer() const;
@@ -387,6 +395,7 @@ class SlmpClient {
     size_t rx_capacity_;
     TargetAddress target_;
     FrameType frame_type_;
+    CompatibilityMode compatibility_mode_;
     uint16_t monitoring_timer_;
     uint32_t timeout_ms_;
     uint16_t serial_;

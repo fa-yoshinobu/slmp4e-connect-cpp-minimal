@@ -88,11 +88,20 @@ inline size_t packedBitBytes(size_t bit_count) {
     return (bit_count + 1U) / 2U;
 }
 
-inline size_t encodeDeviceSpec(const DeviceAddress& device, uint8_t* out, size_t capacity) {
-    if (capacity < 6) return 0;
-    writeLe32(out, device.number);
-    writeLe16(out + 4, static_cast<uint16_t>(device.code));
-    return 6;
+inline size_t encodeDeviceSpec(const DeviceAddress& device, CompatibilityMode mode, uint8_t* out, size_t capacity) {
+    if (mode == CompatibilityMode::Legacy) {
+        if (capacity < 4) return 0;
+        out[0] = (uint8_t)(device.number & 0xFFU);
+        out[1] = (uint8_t)((device.number >> 8U) & 0xFFU);
+        out[2] = (uint8_t)((device.number >> 16U) & 0xFFU);
+        out[3] = (uint8_t)device.code;
+        return 4;
+    } else {
+        if (capacity < 6) return 0;
+        writeLe32(out, device.number);
+        writeLe16(out + 4, static_cast<uint16_t>(device.code));
+        return 6;
+    }
 }
 
 inline bool isUnsupportedDirectDevice(DeviceCode code) {
@@ -225,6 +234,7 @@ SlmpClient::SlmpClient(
       rx_capacity_(rx_capacity),
       target_(),
       frame_type_(FrameType::Frame4E),
+      compatibility_mode_(CompatibilityMode::iQR),
       monitoring_timer_(0x0010),
       timeout_ms_(3000),
       serial_(0),
@@ -276,6 +286,14 @@ void SlmpClient::setFrameType(FrameType frame_type) {
 
 FrameType SlmpClient::frameType() const {
     return frame_type_;
+}
+
+void SlmpClient::setCompatibilityMode(CompatibilityMode mode) {
+    compatibility_mode_ = mode;
+}
+
+CompatibilityMode SlmpClient::compatibilityMode() const {
+    return compatibility_mode_;
 }
 
 void SlmpClient::setMonitoringTimer(uint16_t monitoring_timer) {
@@ -336,6 +354,10 @@ Error SlmpClient::startAsync(AsyncContext::Type type, size_t payload_length, uin
 
     uint16_t command = 0;
     uint16_t subcommand = 0;
+
+    const uint16_t subcommand_word = (compatibility_mode_ == CompatibilityMode::Legacy) ? 0x0000 : kSubcommandWord;
+    const uint16_t subcommand_bit = (compatibility_mode_ == CompatibilityMode::Legacy) ? 0x0001 : kSubcommandBit;
+
     switch (type) {
         case AsyncContext::Type::ReadTypeName:
             command = kCommandReadTypeName;
@@ -346,34 +368,34 @@ Error SlmpClient::startAsync(AsyncContext::Type type, size_t payload_length, uin
         case AsyncContext::Type::ReadFloat32s:
         case AsyncContext::Type::ReadBits:
             command = kCommandDeviceRead;
-            subcommand = (type == AsyncContext::Type::ReadBits) ? kSubcommandBit : kSubcommandWord;
+            subcommand = (type == AsyncContext::Type::ReadBits) ? subcommand_bit : subcommand_word;
             break;
         case AsyncContext::Type::WriteWords:
         case AsyncContext::Type::WriteDWords:
         case AsyncContext::Type::WriteFloat32s:
         case AsyncContext::Type::WriteBits:
             command = kCommandDeviceWrite;
-            subcommand = (type == AsyncContext::Type::WriteBits) ? kSubcommandBit : kSubcommandWord;
+            subcommand = (type == AsyncContext::Type::WriteBits) ? subcommand_bit : subcommand_word;
             break;
         case AsyncContext::Type::ReadRandom:
             command = kCommandDeviceReadRandom;
-            subcommand = kSubcommandWord;
+            subcommand = subcommand_word;
             break;
         case AsyncContext::Type::WriteRandomWords:
             command = kCommandDeviceWriteRandom;
-            subcommand = kSubcommandWord;
+            subcommand = subcommand_word;
             break;
         case AsyncContext::Type::WriteRandomBits:
             command = kCommandDeviceWriteRandom;
-            subcommand = kSubcommandBit;
+            subcommand = subcommand_bit;
             break;
         case AsyncContext::Type::ReadBlock:
             command = kCommandDeviceReadBlock;
-            subcommand = kSubcommandWord;
+            subcommand = subcommand_word;
             break;
         case AsyncContext::Type::WriteBlock:
             command = kCommandDeviceWriteBlock;
-            subcommand = kSubcommandWord;
+            subcommand = subcommand_word;
             break;
         case AsyncContext::Type::PasswordUnlock:
             command = kCommandRemotePasswordUnlock;
@@ -680,15 +702,16 @@ Error SlmpClient::beginReadWords(
         return last_error_;
     }
 
-    if (encodeDeviceSpec(device, tx_buffer_, tx_capacity_) == 0) {
+    size_t written = encodeDeviceSpec(device, compatibility_mode_, tx_buffer_, tx_capacity_);
+    if (written == 0) {
         setError(Error::BufferTooSmall);
         return last_error_;
     }
-    writeLe16(tx_buffer_ + 6, points);
+    writeLe16(tx_buffer_ + written, points);
 
     async_ctx_.data.common.values = values;
     async_ctx_.data.common.points = points;
-    return startAsync(AsyncContext::Type::ReadWords, 8, now_ms);
+    return startAsync(AsyncContext::Type::ReadWords, written + 2U, now_ms);
 }
 
 Error SlmpClient::readWords(
@@ -720,19 +743,21 @@ Error SlmpClient::beginWriteWords(
         return last_error_;
     }
 
-    size_t payload_length = 8U + (count * 2U);
+    size_t spec_size = (compatibility_mode_ == CompatibilityMode::Legacy) ? 4U : 6U;
+    size_t payload_length = spec_size + 2U + (count * 2U);
     if (tx_capacity_ < payload_length) {
         setError(Error::BufferTooSmall);
         return last_error_;
     }
 
-    if (encodeDeviceSpec(device, tx_buffer_, tx_capacity_) == 0) {
+    size_t written = encodeDeviceSpec(device, compatibility_mode_, tx_buffer_, tx_capacity_);
+    if (written == 0) {
         setError(Error::BufferTooSmall);
         return last_error_;
     }
-    writeLe16(tx_buffer_ + 6, static_cast<uint16_t>(count));
+    writeLe16(tx_buffer_ + written, static_cast<uint16_t>(count));
     for (size_t i = 0; i < count; ++i) {
-        writeLe16(tx_buffer_ + 8 + (i * 2U), values[i]);
+        writeLe16(tx_buffer_ + written + 2U + (i * 2U), values[i]);
     }
 
     return startAsync(AsyncContext::Type::WriteWords, payload_length, now_ms);
@@ -767,15 +792,16 @@ Error SlmpClient::beginReadBits(
         return last_error_;
     }
 
-    if (encodeDeviceSpec(device, tx_buffer_, tx_capacity_) == 0) {
+    size_t written = encodeDeviceSpec(device, compatibility_mode_, tx_buffer_, tx_capacity_);
+    if (written == 0) {
         setError(Error::BufferTooSmall);
         return last_error_;
     }
-    writeLe16(tx_buffer_ + 6, points);
+    writeLe16(tx_buffer_ + written, points);
 
     async_ctx_.data.common.values = values;
     async_ctx_.data.common.points = points;
-    return startAsync(AsyncContext::Type::ReadBits, 8, now_ms);
+    return startAsync(AsyncContext::Type::ReadBits, written + 2U, now_ms);
 }
 
 Error SlmpClient::readBits(const DeviceAddress& device, uint16_t points, bool* values, size_t value_capacity) {
@@ -802,17 +828,19 @@ Error SlmpClient::beginWriteBits(
         return last_error_;
     }
 
-    size_t payload_length = 8U + packedBitBytes(count);
+    size_t spec_size = (compatibility_mode_ == CompatibilityMode::Legacy) ? 4U : 6U;
+    size_t payload_length = spec_size + 2U + packedBitBytes(count);
     if (tx_capacity_ < payload_length) {
         setError(Error::BufferTooSmall);
         return last_error_;
     }
 
-    if (encodeDeviceSpec(device, tx_buffer_, tx_capacity_) == 0) {
+    size_t written = encodeDeviceSpec(device, compatibility_mode_, tx_buffer_, tx_capacity_);
+    if (written == 0) {
         setError(Error::BufferTooSmall);
         return last_error_;
     }
-    writeLe16(tx_buffer_ + 6, static_cast<uint16_t>(count));
+    writeLe16(tx_buffer_ + written, static_cast<uint16_t>(count));
 
     for (size_t i = 0; i < packedBitBytes(count); ++i) {
         size_t index = i * 2U;
@@ -821,7 +849,7 @@ Error SlmpClient::beginWriteBits(
         if (index + 1U < count && values[index + 1U]) {
             low = 0x01U;
         }
-        tx_buffer_[8 + i] = static_cast<uint8_t>(high | low);
+        tx_buffer_[written + 2U + i] = static_cast<uint8_t>(high | low);
     }
 
     return startAsync(AsyncContext::Type::WriteBits, payload_length, now_ms);
@@ -856,15 +884,16 @@ Error SlmpClient::beginReadDWords(
         return last_error_;
     }
 
-    if (encodeDeviceSpec(device, tx_buffer_, tx_capacity_) == 0) {
+    size_t written = encodeDeviceSpec(device, compatibility_mode_, tx_buffer_, tx_capacity_);
+    if (written == 0) {
         setError(Error::BufferTooSmall);
         return last_error_;
     }
-    writeLe16(tx_buffer_ + 6, static_cast<uint16_t>(points * 2U));
+    writeLe16(tx_buffer_ + written, static_cast<uint16_t>(points * 2U));
 
     async_ctx_.data.common.values = values;
     async_ctx_.data.common.points = points;
-    return startAsync(AsyncContext::Type::ReadDWords, 8, now_ms);
+    return startAsync(AsyncContext::Type::ReadDWords, written + 2U, now_ms);
 }
 
 Error SlmpClient::readDWords(
@@ -896,19 +925,21 @@ Error SlmpClient::beginWriteDWords(
         return last_error_;
     }
 
-    size_t payload_length = 8U + (count * 4U);
+    size_t spec_size = (compatibility_mode_ == CompatibilityMode::Legacy) ? 4U : 6U;
+    size_t payload_length = spec_size + 2U + (count * 4U);
     if (tx_capacity_ < payload_length) {
         setError(Error::BufferTooSmall);
         return last_error_;
     }
 
-    if (encodeDeviceSpec(device, tx_buffer_, tx_capacity_) == 0) {
+    size_t written = encodeDeviceSpec(device, compatibility_mode_, tx_buffer_, tx_capacity_);
+    if (written == 0) {
         setError(Error::BufferTooSmall);
         return last_error_;
     }
-    writeLe16(tx_buffer_ + 6, static_cast<uint16_t>(count * 2U));
+    writeLe16(tx_buffer_ + written, static_cast<uint16_t>(count * 2U));
     for (size_t i = 0; i < count; ++i) {
-        writeLe32(tx_buffer_ + 8 + (i * 4U), values[i]);
+        writeLe32(tx_buffer_ + written + 2U + (i * 4U), values[i]);
     }
 
     return startAsync(AsyncContext::Type::WriteDWords, payload_length, now_ms);
@@ -943,15 +974,16 @@ Error SlmpClient::beginReadFloat32s(
         return last_error_;
     }
 
-    if (encodeDeviceSpec(device, tx_buffer_, tx_capacity_) == 0) {
+    size_t written = encodeDeviceSpec(device, compatibility_mode_, tx_buffer_, tx_capacity_);
+    if (written == 0) {
         setError(Error::BufferTooSmall);
         return last_error_;
     }
-    writeLe16(tx_buffer_ + 6, static_cast<uint16_t>(points * 2U));
+    writeLe16(tx_buffer_ + written, static_cast<uint16_t>(points * 2U));
 
     async_ctx_.data.common.values = values;
     async_ctx_.data.common.points = points;
-    return startAsync(AsyncContext::Type::ReadFloat32s, 8, now_ms);
+    return startAsync(AsyncContext::Type::ReadFloat32s, written + 2U, now_ms);
 }
 
 Error SlmpClient::readFloat32s(
@@ -983,19 +1015,21 @@ Error SlmpClient::beginWriteFloat32s(
         return last_error_;
     }
 
-    size_t payload_length = 8U + (count * 4U);
+    size_t spec_size = (compatibility_mode_ == CompatibilityMode::Legacy) ? 4U : 6U;
+    size_t payload_length = spec_size + 2U + (count * 4U);
     if (tx_capacity_ < payload_length) {
         setError(Error::BufferTooSmall);
         return last_error_;
     }
 
-    if (encodeDeviceSpec(device, tx_buffer_, tx_capacity_) == 0) {
+    size_t written = encodeDeviceSpec(device, compatibility_mode_, tx_buffer_, tx_capacity_);
+    if (written == 0) {
         setError(Error::BufferTooSmall);
         return last_error_;
     }
-    writeLe16(tx_buffer_ + 6, static_cast<uint16_t>(count * 2U));
+    writeLe16(tx_buffer_ + written, static_cast<uint16_t>(count * 2U));
     for (size_t i = 0; i < count; ++i) {
-        writeLe32(tx_buffer_ + 8 + (i * 4U), floatToBits(values[i]));
+        writeLe32(tx_buffer_ + written + 2U + (i * 4U), floatToBits(values[i]));
     }
 
     return startAsync(AsyncContext::Type::WriteFloat32s, payload_length, now_ms);
@@ -1074,7 +1108,7 @@ Error SlmpClient::beginReadRandom(
         return last_error_;
     }
 
-    size_t spec_size = 6U;
+    size_t spec_size = (compatibility_mode_ == CompatibilityMode::Legacy) ? 4U : 6U;
     size_t payload_length = 2U + ((word_count + dword_count) * spec_size);
     if (tx_capacity_ < payload_length) {
         setError(Error::BufferTooSmall);
@@ -1086,14 +1120,14 @@ Error SlmpClient::beginReadRandom(
 
     size_t offset = 2U;
     for (size_t i = 0; i < word_count; ++i) {
-        if (encodeDeviceSpec(word_devices[i], tx_buffer_ + offset, tx_capacity_ - offset) == 0) {
+        if (encodeDeviceSpec(word_devices[i], compatibility_mode_, tx_buffer_ + offset, tx_capacity_ - offset) == 0) {
             setError(Error::BufferTooSmall);
             return last_error_;
         }
         offset += spec_size;
     }
     for (size_t i = 0; i < dword_count; ++i) {
-        if (encodeDeviceSpec(dword_devices[i], tx_buffer_ + offset, tx_capacity_ - offset) == 0) {
+        if (encodeDeviceSpec(dword_devices[i], compatibility_mode_, tx_buffer_ + offset, tx_capacity_ - offset) == 0) {
             setError(Error::BufferTooSmall);
             return last_error_;
         }
@@ -1166,7 +1200,7 @@ Error SlmpClient::beginWriteRandomWords(
         return last_error_;
     }
 
-    size_t spec_size = 6U;
+    size_t spec_size = (compatibility_mode_ == CompatibilityMode::Legacy) ? 4U : 6U;
     size_t payload_length = 2U + (word_count * (spec_size + 2U)) + (dword_count * (spec_size + 4U));
     size_t request_header_size = (frame_type_ == FrameType::Frame4E) ? kRequestHeaderSize4E : kRequestHeaderSize3E;
     if (tx_capacity_ < request_header_size + payload_length) {
@@ -1179,7 +1213,7 @@ Error SlmpClient::beginWriteRandomWords(
 
     size_t offset = 2U;
     for (size_t i = 0; i < word_count; ++i) {
-        if (encodeDeviceSpec(word_devices[i], tx_buffer_ + offset, tx_capacity_ - offset) == 0) {
+        if (encodeDeviceSpec(word_devices[i], compatibility_mode_, tx_buffer_ + offset, tx_capacity_ - offset) == 0) {
             setError(Error::BufferTooSmall);
             return last_error_;
         }
@@ -1187,7 +1221,7 @@ Error SlmpClient::beginWriteRandomWords(
         offset += spec_size + 2U;
     }
     for (size_t i = 0; i < dword_count; ++i) {
-        if (encodeDeviceSpec(dword_devices[i], tx_buffer_ + offset, tx_capacity_ - offset) == 0) {
+        if (encodeDeviceSpec(dword_devices[i], compatibility_mode_, tx_buffer_ + offset, tx_capacity_ - offset) == 0) {
             setError(Error::BufferTooSmall);
             return last_error_;
         }
@@ -1239,8 +1273,9 @@ Error SlmpClient::beginWriteRandomBits(
         return last_error_;
     }
 
-    size_t spec_size = 6U;
-    size_t payload_length = 1U + (bit_count * (spec_size + 2U));
+    size_t spec_size = (compatibility_mode_ == CompatibilityMode::Legacy) ? 4U : 6U;
+    size_t val_size = (compatibility_mode_ == CompatibilityMode::Legacy) ? 1U : 2U;
+    size_t payload_length = 1U + (bit_count * (spec_size + val_size));
     size_t request_header_size = (frame_type_ == FrameType::Frame4E) ? kRequestHeaderSize4E : kRequestHeaderSize3E;
     if (tx_capacity_ < request_header_size + payload_length) {
         setError(Error::BufferTooSmall);
@@ -1251,12 +1286,17 @@ Error SlmpClient::beginWriteRandomBits(
 
     size_t offset = 1U;
     for (size_t i = 0; i < bit_count; ++i) {
-        if (encodeDeviceSpec(bit_devices[i], tx_buffer_ + offset, tx_capacity_ - offset) == 0) {
+        if (encodeDeviceSpec(bit_devices[i], compatibility_mode_, tx_buffer_ + offset, tx_capacity_ - offset) == 0) {
             setError(Error::BufferTooSmall);
             return last_error_;
         }
-        writeLe16(tx_buffer_ + offset + spec_size, bit_values[i] ? 1U : 0U);
-        offset += spec_size + 2U;
+        if (compatibility_mode_ == CompatibilityMode::Legacy) {
+            tx_buffer_[offset + spec_size] = bit_values[i] ? 1U : 0U;
+            offset += spec_size + 1U;
+        } else {
+            writeLe16(tx_buffer_ + offset + spec_size, bit_values[i] ? 1U : 0U);
+            offset += spec_size + 2U;
+        }
     }
 
     return startAsync(AsyncContext::Type::WriteRandomBits, payload_length, now_ms);
@@ -1305,7 +1345,7 @@ Error SlmpClient::beginReadBlock(
         return last_error_;
     }
 
-    size_t spec_size = 6U;
+    size_t spec_size = (compatibility_mode_ == CompatibilityMode::Legacy) ? 4U : 6U;
     size_t payload_length = 2U + ((word_block_count + bit_block_count) * (spec_size + 2U));
     size_t request_header_size = (frame_type_ == FrameType::Frame4E) ? kRequestHeaderSize4E : kRequestHeaderSize3E;
     if (tx_capacity_ < request_header_size + payload_length) {
@@ -1318,7 +1358,7 @@ Error SlmpClient::beginReadBlock(
 
     size_t offset = 2U;
     for (size_t i = 0; i < word_block_count; ++i) {
-        size_t written = encodeDeviceSpec(word_blocks[i].device, tx_buffer_ + offset, tx_capacity_ - offset);
+        size_t written = encodeDeviceSpec(word_blocks[i].device, compatibility_mode_, tx_buffer_ + offset, tx_capacity_ - offset);
         if (written == 0) {
             setError(Error::BufferTooSmall);
             return last_error_;
@@ -1327,7 +1367,7 @@ Error SlmpClient::beginReadBlock(
         offset += written + 2U;
     }
     for (size_t i = 0; i < bit_block_count; ++i) {
-        size_t written = encodeDeviceSpec(bit_blocks[i].device, tx_buffer_ + offset, tx_capacity_ - offset);
+        size_t written = encodeDeviceSpec(bit_blocks[i].device, compatibility_mode_, tx_buffer_ + offset, tx_capacity_ - offset);
         if (written == 0) {
             setError(Error::BufferTooSmall);
             return last_error_;
@@ -1397,7 +1437,7 @@ Error SlmpClient::beginWriteBlock(
         return last_error_;
     }
 
-    size_t spec_size = 6U;
+    size_t spec_size = (compatibility_mode_ == CompatibilityMode::Legacy) ? 4U : 6U;
     size_t payload_length =
         2U + ((word_block_count + bit_block_count) * (spec_size + 2U)) + ((total_word_points + total_bit_points) * 2U);
     size_t request_header_size = (frame_type_ == FrameType::Frame4E) ? kRequestHeaderSize4E : kRequestHeaderSize3E;
@@ -1411,7 +1451,7 @@ Error SlmpClient::beginWriteBlock(
 
     size_t offset = 2U;
     for (size_t i = 0; i < word_block_count; ++i) {
-        size_t written = encodeDeviceSpec(word_blocks[i].device, tx_buffer_ + offset, tx_capacity_ - offset);
+        size_t written = encodeDeviceSpec(word_blocks[i].device, compatibility_mode_, tx_buffer_ + offset, tx_capacity_ - offset);
         if (written == 0) {
             setError(Error::BufferTooSmall);
             return last_error_;
@@ -1420,7 +1460,7 @@ Error SlmpClient::beginWriteBlock(
         offset += written + 2U;
     }
     for (size_t i = 0; i < bit_block_count; ++i) {
-        size_t written = encodeDeviceSpec(bit_blocks[i].device, tx_buffer_ + offset, tx_capacity_ - offset);
+        size_t written = encodeDeviceSpec(bit_blocks[i].device, compatibility_mode_, tx_buffer_ + offset, tx_capacity_ - offset);
         if (written == 0) {
             setError(Error::BufferTooSmall);
             return last_error_;

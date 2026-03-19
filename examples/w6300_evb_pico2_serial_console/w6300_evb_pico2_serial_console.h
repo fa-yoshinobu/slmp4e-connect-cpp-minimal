@@ -231,6 +231,8 @@ struct ReconnectSession {
 struct ConsoleLinkState {
     TransportMode transport_mode = TransportMode::Tcp;
     slmp::FrameType frame_type = slmp::FrameType::Frame4E;
+    slmp::CompatibilityMode compatibility_mode = slmp::CompatibilityMode::iQR;
+    uint16_t plc_port = kPlcPort;
 };
 
 const DeviceSpec kDeviceSpecs[] = {
@@ -571,10 +573,69 @@ const char* frameTypeText(slmp::FrameType frame_type) {
     return "4e";
 }
 
+const char* compatibilityModeText(slmp::CompatibilityMode mode) {
+    switch (mode) {
+        case slmp::CompatibilityMode::iQR:
+            return "iqr";
+        case slmp::CompatibilityMode::Legacy:
+            return "legacy";
+    }
+    return "iqr";
+}
+
 void applyLedState();
 void pollBoardSwitch();
 void setTransportMode(TransportMode mode, bool reconnect_after_change);
 void setFrameTypeMode(slmp::FrameType frame_type);
+
+void setCompatibilityModeMode(slmp::CompatibilityMode mode) {
+    if (console_link.compatibility_mode == mode) {
+        Serial.print("compat=");
+        Serial.println(compatibilityModeText(console_link.compatibility_mode));
+        return;
+    }
+
+    console_link.compatibility_mode = mode;
+    plc.setCompatibilityMode(mode);
+    Serial.print("compat=");
+    Serial.println(compatibilityModeText(console_link.compatibility_mode));
+
+    if (plc.connected()) {
+        Serial.println("compatibility mode change will apply to the next request");
+    }
+}
+
+void printCompatibilityList() {
+    Serial.println("compatibility modes:");
+    Serial.println("  compat iqr");
+    Serial.println("    Default for iQ-R/iQ-F series (subcommands 0x0002/0x0003)");
+    Serial.println("  compat legacy");
+    Serial.println("    For Q/L series legacy SLMP (subcommands 0x0000/0x0001)");
+}
+
+void compatibilityCommand(char* tokens[], int token_count) {
+    if (token_count == 1) {
+        Serial.print("compat=");
+        Serial.println(compatibilityModeText(console_link.compatibility_mode));
+        return;
+    }
+
+    uppercaseInPlace(tokens[1]);
+    if (strcmp(tokens[1], "LIST") == 0) {
+        printCompatibilityList();
+        return;
+    }
+    if (strcmp(tokens[1], "IQR") == 0 || strcmp(tokens[1], "MODERN") == 0) {
+        setCompatibilityModeMode(slmp::CompatibilityMode::iQR);
+        return;
+    }
+    if (strcmp(tokens[1], "LEGACY") == 0 || strcmp(tokens[1], "Q") == 0 || strcmp(tokens[1], "L") == 0) {
+        setCompatibilityModeMode(slmp::CompatibilityMode::Legacy);
+        return;
+    }
+
+    Serial.println("compat usage: compat [iqr|legacy|list]");
+}
 
 uint16_t readFrameLe16(const uint8_t* bytes) {
     if (bytes == nullptr) {
@@ -774,6 +835,36 @@ void printLastPlcError(const char* label) {
     printLastFrames();
 }
 
+void printEvidenceHeader() {
+    Serial.println("--- Evidence Header ---");
+    Serial.println("board=W6300-EVB-Pico2 (RP2350)");
+    Serial.print("local_ip=");
+    Serial.println(Ethernet.localIP());
+    Serial.print("plc_host=");
+    Serial.println(kPlcHost);
+    Serial.print("plc_port=");
+    Serial.println(console_link.plc_port);
+    Serial.print("transport=");
+    Serial.println(transportModeText(console_link.transport_mode));
+    Serial.print("frame=");
+    Serial.println(frameTypeText(console_link.frame_type));
+    Serial.print("compat=");
+    Serial.println(compatibilityModeText(console_link.compatibility_mode));
+
+    if (plc.connected()) {
+        slmp::TypeNameInfo type_name = {};
+        if (plc.readTypeName(type_name) == slmp::Error::Ok) {
+            Serial.print("plc_model=");
+            Serial.println(type_name.model);
+        } else {
+            Serial.println("plc_model=unknown (read error)");
+        }
+    } else {
+        Serial.println("plc_model=disconnected");
+    }
+    Serial.println("-----------------------");
+}
+
 void printPrompt() {
     Serial.print("> ");
 }
@@ -825,7 +916,7 @@ bool connectPlc(bool verbose) {
         }
         return true;
     }
-    if (!plc.connect(kPlcHost, kPlcPort)) {
+    if (!plc.connect(kPlcHost, console_link.plc_port)) {
         if (verbose) {
             Serial.print("connect failed: ");
             Serial.println(slmp::errorString(plc.lastError()));
@@ -990,6 +1081,10 @@ void printStatus() {
     Serial.println(transportModeText(console_link.transport_mode));
     Serial.print("frame=");
     Serial.println(frameTypeText(console_link.frame_type));
+    Serial.print("compat=");
+    Serial.println(compatibilityModeText(console_link.compatibility_mode));
+    Serial.print("plc_port=");
+    Serial.println(console_link.plc_port);
     Serial.print("plc_connected=");
     Serial.println(plc.connected() ? "yes" : "no");
     Serial.print("tx_buffer_bytes=");
@@ -1479,6 +1574,7 @@ void benchCommand(char* tokens[], int token_count) {
     Serial.print(benchModeText(mode));
     Serial.print(" cycles=");
     Serial.println(cycles);
+    printEvidenceHeader();
     (void)runBench(mode, cycles);
 }
 
@@ -2071,22 +2167,86 @@ void runFuncheckApiOnly() {
     (void)runFuncheckApiSuite();
 }
 
-void funcheckCommand(char* tokens[], int token_count) {
+void runFullScan() {
+    Serial.println("=== SLMP Master Full Scan Start ===");
+    printEvidenceHeader();
+    
+    auto report = [](const char* code, const char* name, slmp::Error err) {
+        Serial.print("| "); Serial.print(code);
+        Serial.print(" | "); Serial.print(name);
+        if (err == slmp::Error::Ok) {
+            Serial.println(" | PASS | - |");
+        } else {
+            Serial.print(" | FAIL | ");
+            Serial.print(slmp::errorString(err));
+            if (err == slmp::Error::PlcError) {
+                Serial.print(" (0x");
+                Serial.print(plc.lastEndCode(), HEX);
+                Serial.print(")");
+            }
+            Serial.println(" |");
+        }
+    };
+
+    // 1. Basic R/W
+    uint16_t wval = 0;
+    bool bval = false;
+    report("0401", "Read Device (Word)", plc.readOneWord({slmp::DeviceCode::D, 130}, wval));
+    report("0401", "Read Device (Bit)", plc.readOneBit({slmp::DeviceCode::M, 120}, bval));
+    report("1401", "Write Device (Word)", plc.writeOneWord({slmp::DeviceCode::D, 130}, 0));
+    report("1401", "Write Device (Bit)", plc.writeOneBit({slmp::DeviceCode::M, 120}, false));
+
+    // 2. Random R/W
+    slmp::DeviceAddress rdev = {slmp::DeviceCode::D, 135};
+    uint16_t rval = 0;
+    report("0403", "Read Random (Word)", plc.readRandom(&rdev, 1, &rval, 1, nullptr, 0, nullptr, 0));
+    report("1402", "Write Random (Word)", plc.writeRandomWords(&rdev, &rval, 1, nullptr, nullptr, 0));
+    slmp::DeviceAddress brdev = {slmp::DeviceCode::M, 125};
+    report("1402", "Write Random (Bit)", plc.writeRandomBits(&brdev, &bval, 1));
+
+    // 3. Monitor (0801/0802)
+    slmp::Error mon_err = plc.request(0x0801, 0x0000, (console_link.compatibility_mode == slmp::CompatibilityMode::Legacy) ? 
+        (const uint8_t*)"\x01\x00\x82\x00\x00\xA8" : (const uint8_t*)"\x01\x00\x82\x00\x00\x00\xA8\x00", 
+        (console_link.compatibility_mode == slmp::CompatibilityMode::Legacy) ? 6 : 8);
+    report("0801", "Monitor Entry", mon_err);
+    if (mon_err == slmp::Error::Ok) {
+        report("0802", "Monitor Execute", plc.request(0x0802, 0x0000, nullptr, 0));
+    }
+
+    // 4. Extensions
+    report("0101", "Read Type Name", plc.readTypeName(async_ctx_.data.type_name));
+    slmp::DeviceBlockRead rb = {{slmp::DeviceCode::D, 140}, 1};
+    report("0406", "Read Block", plc.readBlock(&rb, 1, nullptr, 0, nullptr, 0, nullptr, 0));
+    
+    Serial.println("=== Full Scan Complete ===");
+}
+
+void fullscanCommand(char* tokens[], int token_count) {
+    if (!plc.connected() && !connectPlc(true)) {
+        Serial.println("fullscan failed: plc not connected");
+        return;
+    }
+    runFullScan();
+}
     if (token_count == 1) {
+        printEvidenceHeader();
         runFuncheckAll();
         return;
     }
 
     uppercaseInPlace(tokens[1]);
     if (strcmp(tokens[1], "ALL") == 0 || strcmp(tokens[1], "START") == 0 || strcmp(tokens[1], "ON") == 0) {
+        printEvidenceHeader();
         runFuncheckAll();
         return;
     }
     if (strcmp(tokens[1], "DIRECT") == 0 || strcmp(tokens[1], "DEVICES") == 0) {
+        printEvidenceHeader();
         runFuncheckDirectOnly();
         return;
     }
     if (strcmp(tokens[1], "API") == 0 || strcmp(tokens[1], "FUNCTIONS") == 0) {
+        printEvidenceHeader();
         runFuncheckApiOnly();
         return;
     }
@@ -2308,6 +2468,7 @@ void startEndurance(uint32_t cycle_limit) {
     Serial.println("endurance=on");
     Serial.print("endurance_cycle_limit=");
     Serial.println(cycle_limit);
+    printEvidenceHeader();
 }
 
 void enduranceCommand(char* tokens[], int token_count) {
@@ -2550,6 +2711,7 @@ void startReconnect(uint32_t cycle_limit) {
     Serial.println("reconnect=on");
     Serial.print("reconnect_cycle_limit=");
     Serial.println(cycle_limit);
+    printEvidenceHeader();
 }
 
 void reconnectCommand(char* tokens[], int token_count) {
@@ -2739,6 +2901,7 @@ void runTxlimitProbe() {
         Serial.println("txlimit probe failed: plc not connected");
         return;
     }
+    printEvidenceHeader();
     printTxlimitSummary();
     const bool write_words_ok = runTxlimitProbeWriteWords();
     const bool block_ok = runTxlimitProbeWordBlock();
@@ -2864,6 +3027,7 @@ void runTxlimitBinarySearch() {
         Serial.println("txlimit binary sweep failed: plc not connected");
         return;
     }
+    printEvidenceHeader();
     printTxlimitSummary();
     const bool words_ok = runTxlimitBinarySearchWriteWords();
     const bool block_ok = runTxlimitBinarySearchWordBlock();
@@ -2947,6 +3111,7 @@ void runTxlimitSweep() {
         Serial.println("txlimit sweep failed: plc not connected");
         return;
     }
+    printEvidenceHeader();
     printTxlimitSummary();
     const bool words_ok = runTxlimitSweepWriteWords();
     const bool block_ok = runTxlimitSweepWordBlock();
@@ -3060,11 +3225,15 @@ void printHelp() {
     Serial.println("  connect | close | reinit | type | dump");
     Serial.println("  transport [tcp|udp|list]");
     Serial.println("  frame [3e|4e|list]");
+    Serial.println("  compat [iqr|legacy|list]");
+    Serial.println("  port <number>");
     Serial.println("  target [network station module_io multidrop]");
     Serial.println("  monitor [value]");
     Serial.println("  timeout <ms>");
-    Serial.println("  funcheck [all|direct|api|list]");
+    Serial.println("  funcheck [all|direct|api]");
+    Serial.println("  fullscan");
     Serial.println("  endurance [start [cycles]|status|stop|list]");
+
     Serial.println("  reconnect [start [cycles]|status|stop|list]");
     Serial.println("  txlimit [calc|probe|sweep]");
     Serial.println("  txlimit sweep [all|words|block]");
@@ -3182,6 +3351,40 @@ void frameCommand(char* tokens[], int token_count) {
     }
 
     Serial.println("frame usage: frame [3e|4e|list]");
+}
+
+void portCommand(char* tokens[], int token_count) {
+    if (token_count == 1) {
+        Serial.print("plc_port=");
+        Serial.println(console_link.plc_port);
+        return;
+    }
+
+    unsigned long parsed_port = 0;
+    if (!parseUnsignedValue(tokens[1], parsed_port, 10) || parsed_port == 0 || parsed_port > 65535UL) {
+        Serial.println("port usage: port <1..65535>");
+        return;
+    }
+
+    const uint16_t new_port = static_cast<uint16_t>(parsed_port);
+    if (console_link.plc_port == new_port) {
+        Serial.print("plc_port=");
+        Serial.println(console_link.plc_port);
+        return;
+    }
+
+    const bool was_connected = plc.connected();
+    if (was_connected) {
+        plc.close();
+    }
+
+    console_link.plc_port = new_port;
+    Serial.print("plc_port=");
+    Serial.println(console_link.plc_port);
+
+    if (was_connected) {
+        (void)connectPlc(true);
+    }
 }
 
 void printTypeName() {
@@ -4297,6 +4500,10 @@ void handleCommand(char* line) {
         transportCommand(tokens, token_count);
     } else if (strcmp(tokens[0], "FRAME") == 0) {
         frameCommand(tokens, token_count);
+    } else if (strcmp(tokens[0], "COMPAT") == 0 || strcmp(tokens[0], "COMPATIBILITY") == 0) {
+        compatibilityCommand(tokens, token_count);
+    } else if (strcmp(tokens[0], "PORT") == 0) {
+        portCommand(tokens, token_count);
     } else if (strcmp(tokens[0], "TARGET") == 0) {
         targetCommand(tokens, token_count);
     } else if (strcmp(tokens[0], "MONITOR") == 0 || strcmp(tokens[0], "MON") == 0) {

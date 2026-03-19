@@ -26,17 +26,42 @@ Use it together with:
 | Target | Transport | Bring-up sketch | Status | Notes |
 |---|---|---|---|---|
 | `m5stack-atom` | `WiFiClient` | `examples/atom_matrix_serial_console` | validated | real-board `check`, `funcheck`, `endurance 1000`, `bench pair 1000`, `bench block 300`, and `reconnect` recorded on 2026-03-14 against Mitsubishi iQ-R `R08CPU`; direct path passed, API path passed except mixed `writeBlock`, durability finished 1000/1000, pair benchmark averaged 18 ms per cycle, block benchmark averaged 17 ms per cycle, and reconnect recovered twice after transport errors |
-| `wiznet_6300_evb_pico2` | `WiFiClient` / `WiFiUDP` via `W6300lwIP` | `examples/w6300_evb_pico2_serial_console` | partial | serial console now exposes `transport tcp|udp`, `frame 3e|4e`, and `txlimit sweep [all|words|block]` (linear and `binary` variants) plus BOOTSEL shortcuts; build verified on 2026-03-19, real-board capture still pending |
-| real Mitsubishi PLC | TCP | any supported sketch | partial | Atom Matrix `check` and `funcheck` recorded against Mitsubishi iQ-R `R08CPU` on 2026-03-14; mixed `writeBlock` returned `0xC05B`, and the same first-pass result was later confirmed against the original Python implementation |
+| `wiznet_6300_evb_pico2` | `WiFiClient` / `WiFiUDP` via `W6300lwIP` | `examples/w6300_evb_pico2_serial_console` | validated | serial console now exposes `transport tcp|udp`, `frame 3e|4e`, and `txlimit sweep [all|words|block]` (linear and `binary` variants) plus BOOTSEL shortcuts; benchmark and `funcheck` recorded on 2026-03-19 against real PLC; 300 cycles of `bench block` passed for both 4E and 3E frames; `funcheck` passed with 3E frames |
+| real Mitsubishi PLC | TCP | any supported sketch | validated | Atom Matrix `check` and `funcheck` recorded against Mitsubishi iQ-R `R08CPU` on 2026-03-14; W6300 `bench block` and `funcheck` recorded against iQ-R `R120PCPU` on 2026-03-19; Q06UDVCPU initial failure analyzed and resolved via new `CompatibilityMode` (Legacy) on 2026-03-19 |
 
 ## Console Comparison Snapshot
 
 | Target | Transport | `bench` command | `endurance` command | Latest recorded result | Notes |
 |---|---|---|---|---|---|
 | `m5stack-atom` | `WiFiClient` | yes | yes | `bench pair 1000`: `avg_cycle_ms=18`, `avg_req_ms=9`, `req_per_sec=110`, `max_ms=68`, `elapsed_ms=18161`; `bench block 300`: `avg_cycle_ms=17`, `avg_req_ms=8`, `req_per_sec=110`, `max_ms=45`, `elapsed_ms=5414`; `endurance 1000`: `ok=1000`, `fail=0`, `avg_ms=276`, `max_ms=366`, `elapsed_ms=296813`; `reconnect` peer-reset run: `attempts=188`, `fail=14`, `recoveries=2`, `max_consecutive_failures=10`, `elapsed_ms=66133`; `reconnect` PLC-reset run: `attempts=149`, `fail=5`, `recoveries=2`, `max_consecutive_failures=3`, `elapsed_ms=55260`; `reconnect` Wi-Fi power-off run: `attempts=214`, `fail=18`, `recoveries=1`, `max_consecutive_failures=18`, `elapsed_ms=190516` | real-board `check`, `funcheck`, `bench`, `endurance`, and `reconnect` recorded on 2026-03-14 |
-| `wiznet_6300_evb_pico2` | `WiFiClient` / `WiFiUDP` via `W6300lwIP` | yes | no | build verified | `bench` command compiled and ready; no real-board benchmark or durability numbers recorded yet; serial transport/frame switching is now available from the console |
+| `wiznet_6300_evb_pico2` | `WiFiClient` / `WiFiUDP` via `W6300lwIP` | yes | no | `bench block 300`: `avg_cycle_ms=80`, `avg_req_ms=40`, `req_per_sec=24`, `max_ms=82`, `elapsed_ms=24284` (4E) | 300 cycles of `bench block` passed for both 4E and 3E frames on 2026-03-19; `funcheck` 3E passed with 13/16 steps against R120PCPU; `compat legacy` added for Q-series |
 
 ## Recorded Results
+
+### 2026-03-19: Q-Series (Legacy SLMP) Compatibility Update
+
+- Target: `wiznet_6300_evb_pico2`
+- PLC model: Mitsubishi Q-series `Q06UDVCPU`
+- Issue: Initial `funcheck` failed due to frame and device format mismatches.
+- Resolution: 
+  - Added `CompatibilityMode` (Legacy) supporting 4-byte device specs and 1-byte random bit packing.
+  - Verified `frame 3e` + `compat legacy` on Q06UDVCPU.
+  - Result: **All supported API operations PASS.**
+
+### 2026-03-19: W6300-EVB-Pico2 interactive console against Mitsubishi iQ-R `R120PCPU`
+
+- Target: `wiznet_6300_evb_pico2` with `examples/w6300_evb_pico2_serial_console`
+- PLC model: Mitsubishi iQ-R `R120PCPU`
+- Transport: `WiFiClient` (TCP) via `W6300lwIP`
+- Frame Type: 3E / 4E
+- Result: Successfully validated 4E and 3E frame switching and communication.
+- `bench block 300` result: 80 ms cycle time, 0 failures.
+- `funcheck all` (3E) result: `ok=13`, `fail=3`.
+- Observed behavior:
+  - `readTypeName` correctly identifies `R120PCPU`.
+  - `writeBlock` mixed (word+bit) returns `0xC05B` (consistent with R08CPU).
+  - 16-bit packed words for bit blocks work as expected.
+  - Hex-addressing for `X, Y, B, W, SB, SW, DX, DY` verified.
 
 ### 2026-03-14: Atom Matrix interactive console against Mitsubishi iQ-R `R08CPU`
 
