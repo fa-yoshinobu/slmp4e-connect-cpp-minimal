@@ -906,6 +906,79 @@ bool ensureEthernet() {
     return bringUpEthernet();
 }
 
+struct AutoProfileCandidate {
+    slmp::FrameType frame_type;
+    slmp::CompatibilityMode compatibility_mode;
+};
+
+bool probeCurrentProfileReachable() {
+    uint16_t probe_value = 0;
+    const slmp::Error error = plc.readOneWord({slmp::DeviceCode::D, 0}, probe_value);
+    return error == slmp::Error::Ok || error == slmp::Error::PlcError;
+}
+
+bool autoDetectProfile(bool verbose, slmp::TypeNameInfo* out_type_name, bool* out_type_name_ok) {
+    if (out_type_name != nullptr) {
+        *out_type_name = slmp::TypeNameInfo();
+    }
+    if (out_type_name_ok != nullptr) {
+        *out_type_name_ok = false;
+    }
+
+    const AutoProfileCandidate current = {console_link.frame_type, console_link.compatibility_mode};
+    const AutoProfileCandidate fallback_candidates[] = {
+        {slmp::FrameType::Frame4E, slmp::CompatibilityMode::iQR},
+        {slmp::FrameType::Frame3E, slmp::CompatibilityMode::Legacy},
+        {slmp::FrameType::Frame3E, slmp::CompatibilityMode::iQR},
+        {slmp::FrameType::Frame4E, slmp::CompatibilityMode::Legacy},
+    };
+
+    AutoProfileCandidate probe_order[1 + (sizeof(fallback_candidates) / sizeof(fallback_candidates[0]))] = {};
+    size_t probe_count = 0;
+    probe_order[probe_count++] = current;
+    for (size_t i = 0; i < sizeof(fallback_candidates) / sizeof(fallback_candidates[0]); ++i) {
+        if (fallback_candidates[i].frame_type == current.frame_type &&
+            fallback_candidates[i].compatibility_mode == current.compatibility_mode) {
+            continue;
+        }
+        probe_order[probe_count++] = fallback_candidates[i];
+    }
+
+    bool resolved = false;
+    AutoProfileCandidate selected = current;
+    for (size_t i = 0; i < probe_count; ++i) {
+        const AutoProfileCandidate candidate = probe_order[i];
+        plc.setFrameType(candidate.frame_type);
+        plc.setCompatibilityMode(candidate.compatibility_mode);
+        if (probeCurrentProfileReachable()) {
+            selected = candidate;
+            resolved = true;
+            break;
+        }
+    }
+
+    plc.setFrameType(selected.frame_type);
+    plc.setCompatibilityMode(selected.compatibility_mode);
+    console_link.frame_type = selected.frame_type;
+    console_link.compatibility_mode = selected.compatibility_mode;
+
+    if (resolved && out_type_name != nullptr) {
+        *out_type_name_ok = plc.readTypeName(*out_type_name) == slmp::Error::Ok;
+    }
+
+    if (verbose) {
+        if (resolved) {
+            Serial.print("auto_profile frame=");
+            Serial.print(frameTypeText(console_link.frame_type));
+            Serial.print(" compat=");
+            Serial.println(compatibilityModeText(console_link.compatibility_mode));
+        } else {
+            Serial.println("auto_profile unresolved (keeping current profile)");
+        }
+    }
+    return resolved;
+}
+
 bool connectPlc(bool verbose) {
     if (!ensureEthernet()) {
         return false;
@@ -923,11 +996,34 @@ bool connectPlc(bool verbose) {
         }
         return false;
     }
+
+    slmp::TypeNameInfo type_name = {};
+    bool type_name_ok = false;
+    (void)autoDetectProfile(verbose, &type_name, &type_name_ok);
+
     if (verbose) {
         Serial.print("transport=");
         Serial.print(transportModeText(console_link.transport_mode));
         Serial.print(" frame=");
-        Serial.println(frameTypeText(console_link.frame_type));
+        Serial.print(frameTypeText(console_link.frame_type));
+        Serial.print(" compat=");
+        Serial.println(compatibilityModeText(console_link.compatibility_mode));
+        if (type_name_ok) {
+            Serial.print("model=");
+            Serial.print(type_name.model);
+            if (type_name.has_model_code) {
+                Serial.print(" code=0x");
+                Serial.print(type_name.model_code, HEX);
+            }
+            Serial.println();
+            const slmp::ProfileRecommendation recommendation = slmp::recommendProfile(type_name);
+            Serial.print("profile_class=");
+            Serial.print(slmp::profileClassString(recommendation.profile_class));
+            Serial.print(" confident=");
+            Serial.println(recommendation.confident ? "yes" : "no");
+        } else {
+            Serial.println("model=unknown (readTypeName unavailable)");
+        }
         Serial.println("plc connected");
     }
     return true;
