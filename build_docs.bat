@@ -8,7 +8,6 @@ echo ===================================================
 where doxygen >nul 2>&1
 if %errorlevel% neq 0 (
     echo [ERROR] doxygen command not found. Please install Doxygen and add it to PATH.
-    pause & exit /b %errorlevel%
 )
 
 doxygen Doxyfile
@@ -21,5 +20,4 @@ if %errorlevel% equ 0 (
     echo [ERROR] Doxygen generation failed.
 )
 
-pause
 endlocal
