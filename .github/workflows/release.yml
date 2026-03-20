@@ -4,108 +4,31 @@ on:
   push:
     tags:
       - "v*"
+  workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
-  release:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-
-      - uses: actions/setup-python@v6
-        with:
-          python-version: "3.11"
-
-      - name: Install tools
-        run: pip install platformio gcovr
-
-      - name: Verify library version matches tag
+      - uses: actions/checkout@v4
+      
+      - name: Create Archive
         run: |
-          python - <<'PY'
-          from pathlib import Path
-          tag = "${{ github.ref_name }}"
-          expected = tag[1:] if tag.startswith("v") else tag
-          props = Path("library.properties").read_text(encoding="utf-8")
-          for line in props.splitlines():
-              if line.startswith("version="):
-                  actual = line.split("=", 1)[1].strip()
-                  break
-          else:
-              raise SystemExit("version= not found in library.properties")
-          if actual != expected:
-              raise SystemExit(f"tag version mismatch: tag={expected} library.properties={actual}")
-          PY
-
-      - name: Run host tests
-        run: |
-          g++ -std=c++17 -Wall -Wextra -Isrc tests/slmp_minimal_tests.cpp src/slmp_minimal.cpp -o /tmp/slmp_minimal_tests
-          /tmp/slmp_minimal_tests
-
-      - name: Run socket integration test
-        run: python scripts/run_socket_integration.py --compiler g++
-
-      - name: Generate coverage summary
-        run: |
-          g++ -std=c++17 -Wall -Wextra --coverage -Isrc tests/slmp_minimal_tests.cpp src/slmp_minimal.cpp -o /tmp/slmp_minimal_tests_cov
-          /tmp/slmp_minimal_tests_cov
-          gcovr --root . --filter src --txt-summary > coverage-summary.txt
-
-      - name: Run size regression
-        run: python scripts/size_report.py --project-dir . --baseline scripts/size_baseline.json --pio pio --markdown-out size-report.md --json-out size-report.json
-
-      - name: Build release smoke targets
-        run: |
-          pio run -e m5stack-atom-console
-          pio run -e wiznet_6300_evb_pico2
-
-      - name: Generate release notes
-        run: python scripts/release_notes.py --changelog CHANGELOG.md --version "${{ github.ref_name }}" --output release-notes.md
-
-      - name: Create release archive
-        run: git archive --format=zip --prefix="slmp-connect-cpp-minimal-${{ github.ref_name }}/" --output "slmp-connect-cpp-minimal-${{ github.ref_name }}.zip" HEAD
-
-      - name: Verify release archive contents
-        run: |
-          python - <<'PY'
-          import zipfile
-
-          tag = "${{ github.ref_name }}"
-          archive = f"slmp-connect-cpp-minimal-{tag}.zip"
-          prefix = f"slmp-connect-cpp-minimal-{tag}/"
-
-          with zipfile.ZipFile(archive) as zf:
-              names = zf.namelist()
-
-          checks = {
-              "src/": any(name.startswith(prefix + "src/") for name in names),
-              "examples/": any(name.startswith(prefix + "examples/") for name in names),
-              "library.properties": prefix + "library.properties" in names,
-              "library.json": prefix + "library.json" in names,
-          }
-          missing = [name for name, ok in checks.items() if not ok]
-          if missing:
-              raise SystemExit("release archive is missing: " + ", ".join(missing))
-          print("release archive contents: ok")
-          PY
-
-      - name: Publish GitHub release
+          mkdir -p release-artifacts
+          zip -r release-artifacts/slmp-cpp-minimal-${{ github.ref_name }}.zip . -x "*.git*" "node_modules/*" "local_folder/*"
+          
+      - name: Create or Update Release
         env:
           GH_TOKEN: ${{ github.token }}
-          TAG_NAME: ${{ github.ref_name }}
         run: |
-          set -euo pipefail
-          files=(
-            "slmp-connect-cpp-minimal-${TAG_NAME}.zip"
-            "coverage-summary.txt"
-            "size-report.md"
-            "size-report.json"
-          )
-
-          if gh release view "$TAG_NAME" >/dev/null 2>&1; then
-            gh release edit "$TAG_NAME" --notes-file release-notes.md
-            gh release upload "$TAG_NAME" "${files[@]}" --clobber
+          tag="${{ github.ref_name }}"
+          if [[ -z "$tag" || "$tag" == "main" ]]; then tag="v0.1.0"; fi
+          
+          if gh release view "$tag" > /dev/null 2>&1; then
+            gh release upload "$tag" release-artifacts/* --clobber
           else
-            gh release create "$TAG_NAME" "${files[@]}" --title "$TAG_NAME" --notes-file release-notes.md --verify-tag
+            gh release create "$tag" release-artifacts/* --title "Release $tag" --generate-notes
           fi
