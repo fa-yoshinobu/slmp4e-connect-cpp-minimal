@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['m_0',['M',['../namespaceslmp_1_1dev.html#afe7bce865d5a4a89761d6e469c164aef',1,'slmp::dev::M()'],['../namespaceslmp.html#aa263202128d36069394170b3ec9e024ea69691c7bdcc3ce6d5d8a1361f22d04ac',1,'slmp::M']]],
+  ['m_0',['M',['../namespaceslmp_1_1dev.html#afe7bce865d5a4a89761d6e469c164aef',1,'slmp::dev::M()'],['../group___s_l_m_p___devices.html#ggaa263202128d36069394170b3ec9e024ea69691c7bdcc3ce6d5d8a1361f22d04ac',1,'slmp::M']]],
   ['manual_5fcheck_1',['manual_check',['../namespaceatom__matrix__serial__console.html#ae0c2316bd093cef8289a31b379649dea',1,'atom_matrix_serial_console']]],
   ['manualcheckcommand_2',['manualCheckCommand',['../namespaceatom__matrix__serial__console.html#a60aeaf2281517bbbaf9fda7890e2650b',1,'atom_matrix_serial_console']]],
   ['manualcheckconfiglooksunset_3',['manualCheckConfigLooksUnset',['../namespaceatom__matrix__serial__console.html#af77d104f4e8d7f90a8f5e40a71461e13',1,'atom_matrix_serial_console']]],
@@ -19,12 +19,12 @@ var searchData=
   ['millis_16',['millis',['../slmp__minimal_8cpp.html#a5229e8911d1f7eed10eb978ff088e551',1,'slmp_minimal.cpp']]],
   ['min_5fcycle_5fms_17',['min_cycle_ms',['../structatom__matrix__serial__console_1_1_endurance_session.html#ac4e65771fa6602ba2207901a248612db',1,'atom_matrix_serial_console::EnduranceSession::min_cycle_ms'],['../structatom__matrix__serial__console_1_1_reconnect_session.html#a2e2efbfadc04642c8baf23bb2aab034c',1,'atom_matrix_serial_console::ReconnectSession::min_cycle_ms'],['../structatom__matrix__serial__console_1_1_benchmark_session.html#a3cf0a0bb2a3bb591bea68cc6e66a96e5',1,'atom_matrix_serial_console::BenchmarkSession::min_cycle_ms'],['../structslmp__wifi__serial__console_1_1_bench_summary.html#a38af218478b09d3aa56a4d441295ef10',1,'slmp_wifi_serial_console::BenchSummary::min_cycle_ms'],['../structw6300__evb__pico2__serial__console_1_1_bench_summary.html#a5b95b694b93f9b660e85a183f547db42',1,'w6300_evb_pico2_serial_console::BenchSummary::min_cycle_ms'],['../structw6300__evb__pico2__serial__console_1_1_endurance_session.html#a8188867f4675215978eb94c6c06f8397',1,'w6300_evb_pico2_serial_console::EnduranceSession::min_cycle_ms'],['../structw6300__evb__pico2__serial__console_1_1_reconnect_session.html#a17d46ebfc7023edbb333db4d5c59afb6',1,'w6300_evb_pico2_serial_console::ReconnectSession::min_cycle_ms']]],
   ['minimal_18',['(Mitsubishi MELSEC) SLMP C++ Minimal',['../index.html',1,'']]],
-  ['minimal_20firmware_20usage_19',['Minimal Firmware Usage',['../index.html#autotoc_md7',1,'']]],
+  ['minimal_20firmware_20usage_19',['Minimal Firmware Usage',['../index.html#autotoc_md10',1,'']]],
   ['mitsubishi_20melsec_20slmp_20c_20minimal_20',['(Mitsubishi MELSEC) SLMP C++ Minimal',['../index.html',1,'']]],
   ['mode_21',['mode',['../structatom__matrix__serial__console_1_1_benchmark_session.html#ad1b07de922947e97e0d6a802cc15d621',1,'atom_matrix_serial_console::BenchmarkSession']]],
   ['model_22',['model',['../structslmp_1_1_type_name_info.html#aa4b4af665a4df2bf146f76119593680e',1,'slmp::TypeNameInfo']]],
   ['model_5fcode_23',['model_code',['../structslmp_1_1_type_name_info.html#af85b118809c8dca91a8eb3dfb40cc4d1',1,'slmp::TypeNameInfo']]],
-  ['moderniqr_24',['ModernIQR',['../namespaceslmp.html#ac5cee44d7394f2ef4238eed3af3a3db2a33d35d61752f43ee4090dceb6cd9c2bd',1,'slmp']]],
+  ['moderniqr_24',['ModernIQR',['../group___s_l_m_p___core.html#ggac5cee44d7394f2ef4238eed3af3a3db2a33d35d61752f43ee4090dceb6cd9c2bd',1,'slmp']]],
   ['module_5fio_25',['module_io',['../structslmp_1_1_target_address.html#a5edd9b36c338a66a8a789b26411c9774',1,'slmp::TargetAddress']]],
   ['monitorcommand_26',['monitorCommand',['../namespaceslmp__wifi__serial__console.html#aa5b82d641b49f108284b2493b4b7b2c6',1,'slmp_wifi_serial_console::monitorCommand()'],['../namespacew6300__evb__pico2__serial__console.html#a955bad5081d375f07c97633c1025392e',1,'w6300_evb_pico2_serial_console::monitorCommand()']]],
   ['monitoringtimer_27',['monitoringTimer',['../classslmp_1_1_slmp_client.html#a53bfbe081da6a81263854073f9e8ac0a',1,'slmp::SlmpClient']]],

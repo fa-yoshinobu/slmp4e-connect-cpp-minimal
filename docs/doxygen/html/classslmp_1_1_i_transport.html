@@ -89,7 +89,7 @@ $(function(){initNavTree('classslmp_1_1_i_transport.html','','classslmp_1_1_i_tr
 </div>
 
 <div class="header">
-  <div class="headertitle"><div class="title">slmp::ITransport Class Reference<span class="mlabels"><span class="mlabel abstract">abstract</span></span></div></div>
+  <div class="headertitle"><div class="title">slmp::ITransport Class Reference<span class="mlabels"><span class="mlabel abstract">abstract</span></span><div class="ingroups"><a class="el" href="group___s_l_m_p___transport.html">Transport Interface</a></div></div></div>
 </div><!--header-->
 <div class="contents">
 
@@ -103,7 +103,7 @@ Inheritance diagram for slmp::ITransport:</div>
  <div class="center">
   <img src="classslmp_1_1_i_transport.png" usemap="#slmp_3A_3AITransport_map" alt=""/>
   <map id="slmp_3A_3AITransport_map" name="slmp_3A_3AITransport_map">
-<area href="classslmp_1_1_arduino_client_transport.html" title="Transport adapter for Arduino &#39;Client&#39; objects (typically TCP)." alt="slmp::ArduinoClientTransport" shape="rect" coords="0,56,347,80"/>
+<area href="classslmp_1_1_arduino_client_transport.html" title="Transport adapter for Arduino &#39;Client&#39; objects (TCP)." alt="slmp::ArduinoClientTransport" shape="rect" coords="0,56,347,80"/>
 <area href="classslmp_1_1_arduino_udp_transport.html" title="Transport adapter for Arduino &#39;UDP&#39; objects." alt="slmp::ArduinoUdpTransport" shape="rect" coords="357,56,704,80"/>
 <area href="classw6300__evb__pico2__serial__console_1_1_console_transport_router.html" alt="w6300_evb_pico2_serial_console::ConsoleTransportRouter" shape="rect" coords="714,56,1061,80"/>
   </map>
@@ -131,8 +131,9 @@ Public Member Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Abstract interface for the underlying transport layer (TCP/UDP/Serial). </p>
+<p>Implement this interface to support custom communication stacks. For Arduino, see <a class="el" href="classslmp_1_1_arduino_client_transport.html" title="ArduinoClientTransport">ArduinoClientTransport</a> or <a class="el" href="classslmp_1_1_arduino_udp_transport.html" title="ArduinoUdpTransport">ArduinoUdpTransport</a>. </p>
 
-<p class="definition">Definition at line <a class="el" href="slmp__minimal_8h_source.html#l00259">259</a> of file <a class="el" href="slmp__minimal_8h_source.html">slmp_minimal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="slmp__minimal_8h_source.html#l00295">295</a> of file <a class="el" href="slmp__minimal_8h_source.html">slmp_minimal.h</a>.</p>
 </div><a name="doc-constructors" id="doc-constructors"></a><h2 id="header-doc-constructors" class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="adcd91ecfdba2b1a4df067f73138df306" name="adcd91ecfdba2b1a4df067f73138df306"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#adcd91ecfdba2b1a4df067f73138df306">&#9670;&#160;</a></span>~ITransport()</h2>

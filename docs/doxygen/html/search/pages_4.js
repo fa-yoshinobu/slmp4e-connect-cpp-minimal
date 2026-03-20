@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['index_0',['Example Index',['../dir_d28a4824dc47e487b107a5db32ef43c4.html#autotoc_md0',1,'']]]
+  ['features_0',['Key Features',['../index.html#autotoc_md7',1,'']]],
+  ['firmware_20usage_1',['Minimal Firmware Usage',['../index.html#autotoc_md10',1,'']]],
+  ['first_20test_2',['PC Console (Recommended First Test)',['../index.html#autotoc_md9',1,'']]]
 ];

@@ -26,6 +26,7 @@ var NAVTREE =
 [
   [ "SLMP Minimal C++", "index.html", [
     [ "(Mitsubishi MELSEC) SLMP C++ Minimal", "index.html", "index" ],
+    [ "Topics", "topics.html", "topics" ],
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", "namespaces_dup" ],
       [ "Namespace Members", "namespacemembers.html", [
@@ -52,20 +53,19 @@ var NAVTREE =
         [ "Functions", "globals_func.html", null ],
         [ "Macros", "globals_defs.html", null ]
       ] ]
-    ] ],
-    [ "Examples", "examples.html", "examples" ]
+    ] ]
   ] ]
 ];
 
 var NAVTREEINDEX =
 [
 "annotated.html",
-"classw6300__evb__pico2__serial__console_1_1_console_transport_router.html#a52e109f6085cebb4c24ce2f2c417cec2",
-"namespaceatom__matrix__serial__console.html#acdcd4c5aa05322ae790d813d8f2bad38",
-"namespaceslmp__wifi__serial__console.html#a1a178c7575e71e4823f7f99f5dc5e7aa",
-"namespacew6300__evb__pico2__serial__console.html#a78448890f6d4a3181cba233c2fa206e3",
-"structatom__matrix__serial__console_1_1_endurance_session.html#ae1e1e9db26f59782e51423da3a1de78f",
-"structw6300__evb__pico2__serial__console_1_1_endurance_session.html"
+"functions_o.html",
+"namespaceatom__matrix__serial__console.html#aa0516918be634dbdc31a1c48bea76211",
+"namespaceslmp__wifi__serial__console.html#a5aff47c03cbefd119b138c22d3bf1093",
+"namespacew6300__evb__pico2__serial__console.html#a96d7820da47d005308c8c53fdd42ff2e",
+"structatom__matrix__serial__console_1_1_reconnect_session.html#a0e6c5806eb5af25b6caa8d4c1abea169",
+"structw6300__evb__pico2__serial__console_1_1_reconnect_session.html#a84c12462eff896bc778d80713b386a9d"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronization';

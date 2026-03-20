@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['key_20features_0',['Key Features',['../index.html#autotoc_md4',1,'']]]
+  ['index_0',['Example Index',['../dir_d28a4824dc47e487b107a5db32ef43c4.html#autotoc_md3',1,'']]]
 ];

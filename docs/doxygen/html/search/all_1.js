@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['b_0',['B',['../namespaceslmp_1_1dev.html#a0d537fdaadb7b6fd25c310ec0c57e723',1,'slmp::dev::B()'],['../namespaceslmp.html#aa263202128d36069394170b3ec9e024ea9d5ed678fe57bcca610140957afab571',1,'slmp::B']]],
+  ['b_0',['B',['../namespaceslmp_1_1dev.html#a0d537fdaadb7b6fd25c310ec0c57e723',1,'slmp::dev::B()'],['../group___s_l_m_p___devices.html#ggaa263202128d36069394170b3ec9e024ea9d5ed678fe57bcca610140957afab571',1,'slmp::B']]],
   ['before_5fbit_1',['before_bit',['../structslmp__wifi__serial__console_1_1_verification_record.html#a21ebae091ba696241b281f97397eba76',1,'slmp_wifi_serial_console::VerificationRecord::before_bit'],['../structw6300__evb__pico2__serial__console_1_1_verification_record.html#aa366711bdd5d0fbc0a119c5316489e1c',1,'w6300_evb_pico2_serial_console::VerificationRecord::before_bit']]],
   ['before_5fwords_2',['before_words',['../structslmp__wifi__serial__console_1_1_verification_record.html#a7d3de3bf081968d6f474598772041243',1,'slmp_wifi_serial_console::VerificationRecord::before_words'],['../structw6300__evb__pico2__serial__console_1_1_verification_record.html#a3b51650feb106d44f039face643daf6a',1,'w6300_evb_pico2_serial_console::VerificationRecord::before_words']]],
   ['beginclearerror_3',['beginClearError',['../classslmp_1_1_slmp_client.html#a2ae0837c7f88c4edc8d5706e356ebe2f',1,'slmp::SlmpClient']]],
@@ -47,8 +47,8 @@ var searchData=
   ['bringupethernet_44',['bringUpEthernet',['../namespacew6300__evb__pico2__serial__console.html#a1ce3d9745d5420ead2bcd649fadf43b9',1,'w6300_evb_pico2_serial_console']]],
   ['bringupwifi_45',['bringUpWiFi',['../namespaceslmp__wifi__serial__console.html#a4571ace0a3cb62e389570cf57e66124c',1,'slmp_wifi_serial_console']]],
   ['bringupwifiwithstartupprogress_46',['bringUpWiFiWithStartupProgress',['../namespaceatom__matrix__serial__console.html#aa018640b7c5d57d7efa4b294e233211f',1,'atom_matrix_serial_console']]],
-  ['buffertoosmall_47',['BufferTooSmall',['../namespaceslmp.html#af5303f40fbe1fe48112db91b1f7a7acfab801c4d44abd4738b7f69c4e390ed61d',1,'slmp']]],
-  ['busy_48',['Busy',['../namespaceslmp.html#af5303f40fbe1fe48112db91b1f7a7acfad8a942ef2b04672adfafef0ad817a407',1,'slmp']]],
+  ['buffertoosmall_47',['BufferTooSmall',['../group___s_l_m_p___core.html#ggaf5303f40fbe1fe48112db91b1f7a7acfab801c4d44abd4738b7f69c4e390ed61d',1,'slmp']]],
+  ['busy_48',['Busy',['../group___s_l_m_p___core.html#ggaf5303f40fbe1fe48112db91b1f7a7acfad8a942ef2b04672adfafef0ad817a407',1,'slmp']]],
   ['button_5flast_5fchange_5fms_49',['button_last_change_ms',['../namespaceatom__matrix__serial__console.html#a69f094bdfec7f122376db84abb631070',1,'atom_matrix_serial_console']]],
   ['button_5flong_5fpress_5fhandled_50',['button_long_press_handled',['../namespaceatom__matrix__serial__console.html#a96d88d3b24fa5673a03cff894e29ad2d',1,'atom_matrix_serial_console']]],
   ['button_5fpress_5fstarted_5fms_51',['button_press_started_ms',['../namespaceatom__matrix__serial__console.html#acfc86427bc82090cf3ff2bf404d0330d',1,'atom_matrix_serial_console']]],

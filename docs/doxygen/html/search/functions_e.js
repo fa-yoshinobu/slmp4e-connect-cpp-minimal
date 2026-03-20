@@ -57,6 +57,6 @@ var searchData=
   ['printverificationsummary_54',['printVerificationSummary',['../namespaceslmp__wifi__serial__console.html#a3082b09e4fc3f8e6fc9df0fbf405074e',1,'slmp_wifi_serial_console::printVerificationSummary()'],['../namespacew6300__evb__pico2__serial__console.html#ae2f2d0bae385051d619c645b10813253',1,'w6300_evb_pico2_serial_console::printVerificationSummary()']]],
   ['printwifisummary_55',['printWifiSummary',['../namespaceslmp__wifi__serial__console.html#a190b96d1bb19a406229d18806fc2a671',1,'slmp_wifi_serial_console']]],
   ['probecurrentprofilereachable_56',['probeCurrentProfileReachable',['../namespacew6300__evb__pico2__serial__console.html#ae7d053fea3fb926e666bfb3e3701bbc9',1,'w6300_evb_pico2_serial_console']]],
-  ['profileclassstring_57',['profileClassString',['../namespaceslmp.html#a77be87a2780a310216d34c21766f8162',1,'slmp']]],
+  ['profileclassstring_57',['profileClassString',['../group___s_l_m_p___utils.html#ga77be87a2780a310216d34c21766f8162',1,'slmp']]],
   ['pulseethernetreset_58',['pulseEthernetReset',['../namespacew6300__evb__pico2__serial__console.html#a6ce2326e4095d68988d0e21ad12f9faa',1,'w6300_evb_pico2_serial_console']]]
 ];

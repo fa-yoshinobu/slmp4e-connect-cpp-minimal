@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['w_0',['W',['../namespaceslmp_1_1dev.html#adda6868122e572f126f75452e45f2f4a',1,'slmp::dev::W()'],['../namespaceslmp.html#aa263202128d36069394170b3ec9e024ea61e9c06ea9a85a5088a499df6458d276',1,'slmp::W']]],
+  ['w_0',['W',['../namespaceslmp_1_1dev.html#adda6868122e572f126f75452e45f2f4a',1,'slmp::dev::W()'],['../group___s_l_m_p___devices.html#ggaa263202128d36069394170b3ec9e024ea61e9c06ea9a85a5088a499df6458d276',1,'slmp::W']]],
   ['w6300_5fevb_5fpico2_5fserial_5fconsole_1',['w6300_evb_pico2_serial_console',['../namespacew6300__evb__pico2__serial__console.html',1,'']]],
   ['w6300_5fevb_5fpico2_5fserial_5fconsole_2eh_2',['w6300_evb_pico2_serial_console.h',['../w6300__evb__pico2__serial__console_8h.html',1,'']]],
   ['waitforwificonnection_3',['waitForWifiConnection',['../namespaceslmp__wifi__serial__console.html#a223b93569a509265332d48bd81f51048',1,'slmp_wifi_serial_console']]],

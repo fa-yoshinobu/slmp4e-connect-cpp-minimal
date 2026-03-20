@@ -11,7 +11,7 @@ var searchData=
   ['finishbenchmarkcycle_8',['finishBenchmarkCycle',['../namespaceatom__matrix__serial__console.html#a7902ca5d50e7074fdcbaf7a82988c9b8',1,'atom_matrix_serial_console']]],
   ['finishreconnectcycletiming_9',['finishReconnectCycleTiming',['../namespaceatom__matrix__serial__console.html#a005500493732f086e948ea9ccd4747e5',1,'atom_matrix_serial_console::finishReconnectCycleTiming()'],['../namespacew6300__evb__pico2__serial__console.html#aad6f7417a37b28dccaf58483ce7ef715',1,'w6300_evb_pico2_serial_console::finishReconnectCycleTiming()']]],
   ['forcereconnect_10',['forceReconnect',['../classslmp_1_1_reconnect_helper.html#a6757123ef3094565f528d776ed09e2f9',1,'slmp::ReconnectHelper']]],
-  ['formathexbytes_11',['formatHexBytes',['../namespaceslmp.html#a6b1e4ec75a076d134156f47e008fccca',1,'slmp']]],
+  ['formathexbytes_11',['formatHexBytes',['../group___s_l_m_p___utils.html#ga6b1e4ec75a076d134156f47e008fccca',1,'slmp']]],
   ['framecommand_12',['frameCommand',['../namespacew6300__evb__pico2__serial__console.html#a0a1ad9154dd886b87285072cf314e271',1,'w6300_evb_pico2_serial_console']]],
   ['frametype_13',['frameType',['../classslmp_1_1_slmp_client.html#a0e2f538745067d0b7ddd75cfba52a5f7',1,'slmp::SlmpClient']]],
   ['frametypetext_14',['frameTypeText',['../namespacew6300__evb__pico2__serial__console.html#aaa80619da012e22f594fdc2c5b32da52',1,'w6300_evb_pico2_serial_console']]],

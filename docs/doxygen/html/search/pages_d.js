@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['usage_0',['Minimal Firmware Usage',['../index.html#autotoc_md7',1,'']]],
-  ['use_20cases_1',['Use Cases',['../index.html#autotoc_md10',1,'']]]
+  ['test_0',['PC Console (Recommended First Test)',['../index.html#autotoc_md9',1,'']]]
 ];

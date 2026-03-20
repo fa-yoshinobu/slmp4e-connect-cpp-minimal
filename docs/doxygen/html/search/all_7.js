@@ -10,5 +10,5 @@ var searchData=
   ['hex_7',['hex',['../namespaceslmp_1_1dev.html#ab53482e5dd9ca969c12e155928985298',1,'slmp::dev']]],
   ['hex_5faddress_8',['hex_address',['../structslmp__wifi__serial__console_1_1_device_spec.html#ae285259215f081f75939415372af14a8',1,'slmp_wifi_serial_console::DeviceSpec::hex_address'],['../structw6300__evb__pico2__serial__console_1_1_device_spec.html#ab2d310aa85cffd757296f5115dbfb951',1,'w6300_evb_pico2_serial_console::DeviceSpec::hex_address']]],
   ['hexno_9',['HexNo',['../structslmp_1_1dev_1_1_hex_no.html',1,'slmp::dev']]],
-  ['hg_10',['HG',['../namespaceslmp.html#aa263202128d36069394170b3ec9e024eaefbfa2b2fcea4f9cfbe3ae9333588857',1,'slmp']]]
+  ['hg_10',['HG',['../group___s_l_m_p___devices.html#ggaa263202128d36069394170b3ec9e024eaefbfa2b2fcea4f9cfbe3ae9333588857',1,'slmp']]]
 ];
