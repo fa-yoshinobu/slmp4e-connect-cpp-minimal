@@ -67,7 +67,7 @@ This minimal client focuses on direct device access. Actual availability depends
 | --- | --- | --- | --- |
 | Bit devices (direct) | SM, X, Y, M, L, F, V, B, TS, TC, STS, STC, CS, CC, SB, DX, DY | Supported | `X/Y/B/SB/DX/DY` use hexadecimal numbering. |
 | Word devices (direct) | SD, D, W, SW, TN, STN, CN, R, ZR | Supported | `W/SW` use hexadecimal numbering. |
-| Not supported (direct API) | S, Z, LZ, RD, LTS/LTC/LTN, LSTS/LSTC/LSTN, LCS/LCC/LCN, G/HG, `Jn\\Xn` | Not supported | Appendix 1 and linked direct devices are not implemented in the minimal library. |
+| Not supported (direct API) | S, Z, LZ, RD, LTS/LTC/LTN, LSTS/LSTC/LSTN, LCS/LCC/LCN, G/HG, `Jn\\Xn` | Not supported | Extended Specification and linked direct devices are not implemented in the minimal library. |
 
 ## Use Cases
 
