@@ -1,5 +1,6 @@
 var NAVTREEINDEX1 =
 {
+"classw6300__evb__pico2__serial__console_1_1_console_transport_router.html#a52e109f6085cebb4c24ce2f2c417cec2":[1,0,4,7,4],
 "classw6300__evb__pico2__serial__console_1_1_console_transport_router.html#a52e109f6085cebb4c24ce2f2c417cec2":[2,0,4,7,4],
 "classw6300__evb__pico2__serial__console_1_1_console_transport_router.html#a7ff326ba8a6025e3fc80d5728b3bcef3":[1,0,4,7,3],
 "classw6300__evb__pico2__serial__console_1_1_console_transport_router.html#a7ff326ba8a6025e3fc80d5728b3bcef3":[2,0,4,7,3],
@@ -18,6 +19,7 @@ var NAVTREEINDEX1 =
 "dir_68267d1309a1af8e8297ef4c3efbcdba.html":[3,0,1],
 "dir_80e1878e687319b933637d565f342276.html":[3,0,0,2],
 "dir_d28a4824dc47e487b107a5db32ef43c4.html":[3,0,0],
+"examples.html":[4],
 "files.html":[3,0],
 "functions.html":[2,3,0],
 "functions.html":[2,3,0,0],
@@ -247,7 +249,5 @@ var NAVTREEINDEX1 =
 "namespaceatom__matrix__serial__console.html#ac62e23e743a6341e4e87a7c4f3347dc5":[1,0,0,209],
 "namespaceatom__matrix__serial__console.html#ac9df9fc691d52008b0219675baeb9bb5":[1,0,0,68],
 "namespaceatom__matrix__serial__console.html#acc1f207a491b79ded45a595065bab88c":[1,0,0,137],
-"namespaceatom__matrix__serial__console.html#acd402ddd354785fbadf2d20d1581cfba":[1,0,0,69],
-"namespaceatom__matrix__serial__console.html#acdcd4c5aa05322ae790d813d8f2bad38":[1,0,0,116],
-"namespaceatom__matrix__serial__console.html#acfc86427bc82090cf3ff2bf404d0330d":[1,0,0,160]
+"namespaceatom__matrix__serial__console.html#acd402ddd354785fbadf2d20d1581cfba":[1,0,0,69]
 };

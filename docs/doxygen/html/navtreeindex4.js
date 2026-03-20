@@ -1,5 +1,7 @@
 var NAVTREEINDEX4 =
 {
+"namespacew6300__evb__pico2__serial__console.html#a78448890f6d4a3181cba233c2fa206e3":[1,0,4,147],
+"namespacew6300__evb__pico2__serial__console.html#a79d881bf50f933cf24dfd13184334541":[1,0,4,102],
 "namespacew6300__evb__pico2__serial__console.html#a79de01d59a6bca0e3517f62b6f09d8b9":[1,0,4,202],
 "namespacew6300__evb__pico2__serial__console.html#a7b51f2da899f22734f4419d9350b1e1f":[1,0,4,132],
 "namespacew6300__evb__pico2__serial__console.html#a7c9b66d3898d9997599836c8f6d856d1":[1,0,4,240],
@@ -247,7 +249,5 @@ var NAVTREEINDEX4 =
 "structatom__matrix__serial__console_1_1_endurance_session.html#aca2e25f3e6efb4ffa73af6cba61a63c1":[2,0,0,2,7],
 "structatom__matrix__serial__console_1_1_endurance_session.html#adc92dc7c0742b9edb715eefa7801c219":[1,0,0,2,3],
 "structatom__matrix__serial__console_1_1_endurance_session.html#adc92dc7c0742b9edb715eefa7801c219":[2,0,0,2,3],
-"structatom__matrix__serial__console_1_1_endurance_session.html#ae1e1e9db26f59782e51423da3a1de78f":[1,0,0,2,12],
-"structatom__matrix__serial__console_1_1_endurance_session.html#ae1e1e9db26f59782e51423da3a1de78f":[2,0,0,2,12],
-"structatom__matrix__serial__console_1_1_endurance_session.html#af4a46ac609d5e6b0c112328db302565d":[1,0,0,2,5]
+"structatom__matrix__serial__console_1_1_endurance_session.html#ae1e1e9db26f59782e51423da3a1de78f":[1,0,0,2,12]
 };

@@ -52,7 +52,8 @@ var NAVTREE =
         [ "Functions", "globals_func.html", null ],
         [ "Macros", "globals_defs.html", null ]
       ] ]
-    ] ]
+    ] ],
+    [ "Examples", "examples.html", "examples" ]
   ] ]
 ];
 
@@ -60,11 +61,11 @@ var NAVTREEINDEX =
 [
 "annotated.html",
 "classw6300__evb__pico2__serial__console_1_1_console_transport_router.html#a52e109f6085cebb4c24ce2f2c417cec2",
-"namespaceatom__matrix__serial__console.html#ad34fabfd3a5d32cef5529585ef9938b1",
-"namespaceslmp__wifi__serial__console.html#a1a9597983c97d9c0f239c34a3fb439c1",
-"namespacew6300__evb__pico2__serial__console.html#a79de01d59a6bca0e3517f62b6f09d8b9",
-"structatom__matrix__serial__console_1_1_endurance_session.html#af4a46ac609d5e6b0c112328db302565d",
-"structw6300__evb__pico2__serial__console_1_1_endurance_session.html#a1ad03a8aef64782a0b4000be96e77036"
+"namespaceatom__matrix__serial__console.html#acdcd4c5aa05322ae790d813d8f2bad38",
+"namespaceslmp__wifi__serial__console.html#a1a178c7575e71e4823f7f99f5dc5e7aa",
+"namespacew6300__evb__pico2__serial__console.html#a78448890f6d4a3181cba233c2fa206e3",
+"structatom__matrix__serial__console_1_1_endurance_session.html#ae1e1e9db26f59782e51423da3a1de78f",
+"structw6300__evb__pico2__serial__console_1_1_endurance_session.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronization';

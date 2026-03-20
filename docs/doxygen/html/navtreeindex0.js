@@ -12,6 +12,7 @@ var NAVTREEINDEX0 =
 "atom__matrix__serial__console_8h.html#ada279369ff88a2629389f1f5f9cae3ba":[3,0,0,0,0,11],
 "atom__matrix__serial__console_8h.html#ae0d21c8be87008c923f11d359ac17c6f":[3,0,0,0,0,8],
 "atom__matrix__serial__console_8h_source.html":[3,0,0,0,0],
+"atom_matrix_serial_console_8ino-example.html":[4,0],
 "classes.html":[2,1],
 "classslmp_1_1_arduino_client_transport.html":[1,0,2,1],
 "classslmp_1_1_arduino_client_transport.html":[2,0,2,1],
@@ -248,6 +249,5 @@ var NAVTREEINDEX0 =
 "classw6300__evb__pico2__serial__console_1_1_console_transport_router.html#a40c43ad226190d4f8b86896af8728ec2":[1,0,4,7,0],
 "classw6300__evb__pico2__serial__console_1_1_console_transport_router.html#a40c43ad226190d4f8b86896af8728ec2":[2,0,4,7,0],
 "classw6300__evb__pico2__serial__console_1_1_console_transport_router.html#a494bf9ce771cc094625a16b26d60de8d":[1,0,4,7,2],
-"classw6300__evb__pico2__serial__console_1_1_console_transport_router.html#a494bf9ce771cc094625a16b26d60de8d":[2,0,4,7,2],
-"classw6300__evb__pico2__serial__console_1_1_console_transport_router.html#a52e109f6085cebb4c24ce2f2c417cec2":[1,0,4,7,4]
+"classw6300__evb__pico2__serial__console_1_1_console_transport_router.html#a494bf9ce771cc094625a16b26d60de8d":[2,0,4,7,2]
 };

@@ -1,5 +1,7 @@
 var NAVTREEINDEX6 =
 {
+"structw6300__evb__pico2__serial__console_1_1_endurance_session.html":[2,0,4,4],
+"structw6300__evb__pico2__serial__console_1_1_endurance_session.html#a1ad03a8aef64782a0b4000be96e77036":[1,0,4,4,6],
 "structw6300__evb__pico2__serial__console_1_1_endurance_session.html#a1ad03a8aef64782a0b4000be96e77036":[2,0,4,4,6],
 "structw6300__evb__pico2__serial__console_1_1_endurance_session.html#a1d946ab4a9bbeafca8b770f5993ebb26":[1,0,4,4,5],
 "structw6300__evb__pico2__serial__console_1_1_endurance_session.html#a1d946ab4a9bbeafca8b770f5993ebb26":[2,0,4,4,5],
@@ -110,5 +112,6 @@ var NAVTREEINDEX6 =
 "structw6300__evb__pico2__serial__console_1_1_verification_record.html#ae0de8ff4268cf9103e009cf2ab1c0f58":[1,0,4,2,11],
 "structw6300__evb__pico2__serial__console_1_1_verification_record.html#ae0de8ff4268cf9103e009cf2ab1c0f58":[2,0,4,2,11],
 "w6300__evb__pico2__serial__console_8h.html":[3,0,0,2,0],
-"w6300__evb__pico2__serial__console_8h_source.html":[3,0,0,2,0]
+"w6300__evb__pico2__serial__console_8h_source.html":[3,0,0,2,0],
+"w6300_evb_pico2_serial_console_8ino-example.html":[4,1]
 };

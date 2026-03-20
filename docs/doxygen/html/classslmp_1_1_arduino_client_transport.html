@@ -93,6 +93,9 @@ $(function(){initNavTree('classslmp_1_1_arduino_client_transport.html','','class
 </div><!--header-->
 <div class="contents">
 
+<p>Transport adapter for Arduino 'Client' objects (typically TCP).  
+ <a href="#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="slmp__arduino__transport_8h_source.html">slmp_arduino_transport.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for slmp::ArduinoClientTransport:</div>
@@ -107,6 +110,7 @@ Inheritance diagram for slmp::ArduinoClientTransport:</div>
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a1d009f65e70df94308f0defb6c65c72c" id="r_a1d009f65e70df94308f0defb6c65c72c"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a1d009f65e70df94308f0defb6c65c72c">ArduinoClientTransport</a> (::Client &amp;client)</td></tr>
+<tr class="memdesc:a1d009f65e70df94308f0defb6c65c72c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wrap an existing Arduino Client.  <br /></td></tr>
 <tr class="memitem:a4eab8eb1e9056a5ab7f83e344ba35fd1" id="r_a4eab8eb1e9056a5ab7f83e344ba35fd1"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#a4eab8eb1e9056a5ab7f83e344ba35fd1">connect</a> (const char *host, uint16_t port) override</td></tr>
 <tr class="memdesc:a4eab8eb1e9056a5ab7f83e344ba35fd1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Connect to host.  <br /></td></tr>
 <tr class="memitem:a7b6b540882b8fd60dec18aefc471459c" id="r_a7b6b540882b8fd60dec18aefc471459c"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a7b6b540882b8fd60dec18aefc471459c">close</a> () override</td></tr>
@@ -127,8 +131,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:adcd91ecfdba2b1a4df067f73138df306 inherit pub_methods_classslmp_1_1_i_transport" id="r_adcd91ecfdba2b1a4df067f73138df306"><td class="memItemLeft">virtual&#160;</td><td class="memItemRight"><a class="el" href="classslmp_1_1_i_transport.html#adcd91ecfdba2b1a4df067f73138df306">~ITransport</a> ()=default</td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock">
-<p class="definition">Definition at line <a class="el" href="slmp__arduino__transport_8h_source.html#l00018">18</a> of file <a class="el" href="slmp__arduino__transport_8h_source.html">slmp_arduino_transport.h</a>.</p>
+<div class="textblock"><p>Transport adapter for Arduino 'Client' objects (typically TCP). </p>
+<p>Use this with EthernetClient, WiFiClient, or similar classes. </p>
+
+<p class="definition">Definition at line <a class="el" href="slmp__arduino__transport_8h_source.html#l00031">31</a> of file <a class="el" href="slmp__arduino__transport_8h_source.html">slmp_arduino_transport.h</a>.</p>
 </div><a name="doc-constructors" id="doc-constructors"></a><h2 id="header-doc-constructors" class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a1d009f65e70df94308f0defb6c65c72c" name="a1d009f65e70df94308f0defb6c65c72c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a1d009f65e70df94308f0defb6c65c72c">&#9670;&#160;</a></span>ArduinoClientTransport()</h2>
@@ -153,7 +159,9 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="slmp__arduino__transport_8h_source.html#l00020">20</a> of file <a class="el" href="slmp__arduino__transport_8h_source.html">slmp_arduino_transport.h</a>.</p>
+<p>Wrap an existing Arduino Client. </p>
+
+<p class="definition">Definition at line <a class="el" href="slmp__arduino__transport_8h_source.html#l00034">34</a> of file <a class="el" href="slmp__arduino__transport_8h_source.html">slmp_arduino_transport.h</a>.</p>
 
 </div>
 </div>
@@ -185,7 +193,7 @@ Public Member Functions</h2></td></tr>
 
 <p>Implements <a class="el" href="classslmp_1_1_i_transport.html#a7ce8a8f2c52b6577d71d9ee408301082">slmp::ITransport</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="slmp__arduino__transport_8h_source.html#l00079">79</a> of file <a class="el" href="slmp__arduino__transport_8h_source.html">slmp_arduino_transport.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="slmp__arduino__transport_8h_source.html#l00093">93</a> of file <a class="el" href="slmp__arduino__transport_8h_source.html">slmp_arduino_transport.h</a>.</p>
 
 </div>
 </div>
@@ -216,7 +224,7 @@ Public Member Functions</h2></td></tr>
 
 <p>Implements <a class="el" href="classslmp_1_1_i_transport.html#a2113583f5784b16be82b8e5818a50366">slmp::ITransport</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="slmp__arduino__transport_8h_source.html#l00026">26</a> of file <a class="el" href="slmp__arduino__transport_8h_source.html">slmp_arduino_transport.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="slmp__arduino__transport_8h_source.html#l00040">40</a> of file <a class="el" href="slmp__arduino__transport_8h_source.html">slmp_arduino_transport.h</a>.</p>
 
 </div>
 </div>
@@ -251,7 +259,7 @@ Public Member Functions</h2></td></tr>
 
 <p>Implements <a class="el" href="classslmp_1_1_i_transport.html#a8a8fe5a141fe7f6b5be4d77768f897ec">slmp::ITransport</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="slmp__arduino__transport_8h_source.html#l00022">22</a> of file <a class="el" href="slmp__arduino__transport_8h_source.html">slmp_arduino_transport.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="slmp__arduino__transport_8h_source.html#l00036">36</a> of file <a class="el" href="slmp__arduino__transport_8h_source.html">slmp_arduino_transport.h</a>.</p>
 
 </div>
 </div>
@@ -282,7 +290,7 @@ Public Member Functions</h2></td></tr>
 
 <p>Implements <a class="el" href="classslmp_1_1_i_transport.html#a4cb21c611a3d11989408926111de843b">slmp::ITransport</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="slmp__arduino__transport_8h_source.html#l00030">30</a> of file <a class="el" href="slmp__arduino__transport_8h_source.html">slmp_arduino_transport.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="slmp__arduino__transport_8h_source.html#l00044">44</a> of file <a class="el" href="slmp__arduino__transport_8h_source.html">slmp_arduino_transport.h</a>.</p>
 
 </div>
 </div>
@@ -317,7 +325,7 @@ Public Member Functions</h2></td></tr>
 
 <p>Implements <a class="el" href="classslmp_1_1_i_transport.html#a64f2bdf263667f94c45c84ae81517a57">slmp::ITransport</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="slmp__arduino__transport_8h_source.html#l00075">75</a> of file <a class="el" href="slmp__arduino__transport_8h_source.html">slmp_arduino_transport.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="slmp__arduino__transport_8h_source.html#l00089">89</a> of file <a class="el" href="slmp__arduino__transport_8h_source.html">slmp_arduino_transport.h</a>.</p>
 
 </div>
 </div>
@@ -357,7 +365,7 @@ Public Member Functions</h2></td></tr>
 
 <p>Implements <a class="el" href="classslmp_1_1_i_transport.html#ab2bb286c9b0c774a9403453d53c9da42">slmp::ITransport</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="slmp__arduino__transport_8h_source.html#l00046">46</a> of file <a class="el" href="slmp__arduino__transport_8h_source.html">slmp_arduino_transport.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="slmp__arduino__transport_8h_source.html#l00060">60</a> of file <a class="el" href="slmp__arduino__transport_8h_source.html">slmp_arduino_transport.h</a>.</p>
 
 </div>
 </div>
@@ -392,7 +400,7 @@ Public Member Functions</h2></td></tr>
 
 <p>Implements <a class="el" href="classslmp_1_1_i_transport.html#a22a6cdc54234d7d09f03a5149e05f9d4">slmp::ITransport</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="slmp__arduino__transport_8h_source.html#l00071">71</a> of file <a class="el" href="slmp__arduino__transport_8h_source.html">slmp_arduino_transport.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="slmp__arduino__transport_8h_source.html#l00085">85</a> of file <a class="el" href="slmp__arduino__transport_8h_source.html">slmp_arduino_transport.h</a>.</p>
 
 </div>
 </div>
@@ -427,7 +435,7 @@ Public Member Functions</h2></td></tr>
 
 <p>Implements <a class="el" href="classslmp_1_1_i_transport.html#a12506353ae8d42389233023ce488d0cc">slmp::ITransport</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="slmp__arduino__transport_8h_source.html#l00034">34</a> of file <a class="el" href="slmp__arduino__transport_8h_source.html">slmp_arduino_transport.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="slmp__arduino__transport_8h_source.html#l00048">48</a> of file <a class="el" href="slmp__arduino__transport_8h_source.html">slmp_arduino_transport.h</a>.</p>
 
 </div>
 </div>

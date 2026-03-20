@@ -93,18 +93,27 @@ $(function(){initNavTree('classslmp_1_1_reconnect_helper.html','','classslmp_1_1
 </div><!--header-->
 <div class="contents">
 
+<p>Automates PLC connection maintenance.  
+ <a href="#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="slmp__utility_8h_source.html">slmp_utility.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a15b373ebcda5d895bd0ba4948b2d2a26" id="r_a15b373ebcda5d895bd0ba4948b2d2a26"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a15b373ebcda5d895bd0ba4948b2d2a26">ReconnectHelper</a> (<a class="el" href="classslmp_1_1_slmp_client.html">SlmpClient</a> &amp;client, const char *host, uint16_t port, const <a class="el" href="structslmp_1_1_reconnect_options.html">ReconnectOptions</a> &amp;options=<a class="el" href="structslmp_1_1_reconnect_options.html">ReconnectOptions</a>())</td></tr>
+<tr class="memdesc:a15b373ebcda5d895bd0ba4948b2d2a26"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize helper with client and target.  <br /></td></tr>
 <tr class="memitem:a899bacf7dcdada86df723ad6a687cde5" id="r_a899bacf7dcdada86df723ad6a687cde5"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#a899bacf7dcdada86df723ad6a687cde5">ensureConnected</a> (uint32_t now_ms)</td></tr>
+<tr class="memdesc:a899bacf7dcdada86df723ad6a687cde5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check and restore connection if needed.  <br /></td></tr>
 <tr class="memitem:a53cbe2313afa0c6c833df47c3b7b2a2f" id="r_a53cbe2313afa0c6c833df47c3b7b2a2f"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#a53cbe2313afa0c6c833df47c3b7b2a2f">consumeConnectedEdge</a> ()</td></tr>
+<tr class="memdesc:a53cbe2313afa0c6c833df47c3b7b2a2f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if a NEW connection was established since the last call.  <br /></td></tr>
 <tr class="memitem:a6757123ef3094565f528d776ed09e2f9" id="r_a6757123ef3094565f528d776ed09e2f9"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a6757123ef3094565f528d776ed09e2f9">forceReconnect</a> (uint32_t now_ms)</td></tr>
+<tr class="memdesc:a6757123ef3094565f528d776ed09e2f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Manually trigger a reconnection attempt on the next update.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock">
-<p class="definition">Definition at line <a class="el" href="slmp__utility_8h_source.html#l00018">18</a> of file <a class="el" href="slmp__utility_8h_source.html">slmp_utility.h</a>.</p>
+<div class="textblock"><p>Automates PLC connection maintenance. </p>
+<p>Handles periodic retry logic when the connection is lost, ensuring the application remains connected without blocking the main loop. </p>
+
+<p class="definition">Definition at line <a class="el" href="slmp__utility_8h_source.html#l00036">36</a> of file <a class="el" href="slmp__utility_8h_source.html">slmp_utility.h</a>.</p>
 </div><a name="doc-constructors" id="doc-constructors"></a><h2 id="header-doc-constructors" class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a15b373ebcda5d895bd0ba4948b2d2a26" name="a15b373ebcda5d895bd0ba4948b2d2a26"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a15b373ebcda5d895bd0ba4948b2d2a26">&#9670;&#160;</a></span>ReconnectHelper()</h2>
@@ -143,7 +152,18 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="slmp__utility_8h_source.html#l00020">20</a> of file <a class="el" href="slmp__utility_8h_source.html">slmp_utility.h</a>.</p>
+<p>Initialize helper with client and target. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">client</td><td>Reference to an initialized <a class="el" href="classslmp_1_1_slmp_client.html" title="Main SLMP client implementation.">SlmpClient</a>. </td></tr>
+    <tr><td class="paramname">host</td><td>Target IP address. </td></tr>
+    <tr><td class="paramname">port</td><td>Target Port. </td></tr>
+    <tr><td class="paramname">options</td><td>Reconnection configuration. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="slmp__utility_8h_source.html#l00045">45</a> of file <a class="el" href="slmp__utility_8h_source.html">slmp_utility.h</a>.</p>
 
 </div>
 </div>
@@ -171,7 +191,10 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="slmp__utility_8h_source.html#l00059">59</a> of file <a class="el" href="slmp__utility_8h_source.html">slmp_utility.h</a>.</p>
+<p>Returns true if a NEW connection was established since the last call. </p>
+<p>Useful for triggering one-time initialization (e.g., reading PLC type). </p>
+
+<p class="definition">Definition at line <a class="el" href="slmp__utility_8h_source.html#l00094">94</a> of file <a class="el" href="slmp__utility_8h_source.html">slmp_utility.h</a>.</p>
 
 </div>
 </div>
@@ -198,7 +221,16 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="slmp__utility_8h_source.html#l00034">34</a> of file <a class="el" href="slmp__utility_8h_source.html">slmp_utility.h</a>.</p>
+<p>Check and restore connection if needed. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">now_ms</td><td>Current system time in milliseconds. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if currently connected (or just successfully reconnected). </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="slmp__utility_8h_source.html#l00064">64</a> of file <a class="el" href="slmp__utility_8h_source.html">slmp_utility.h</a>.</p>
 
 </div>
 </div>
@@ -225,7 +257,9 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="slmp__utility_8h_source.html#l00065">65</a> of file <a class="el" href="slmp__utility_8h_source.html">slmp_utility.h</a>.</p>
+<p>Manually trigger a reconnection attempt on the next update. </p>
+
+<p class="definition">Definition at line <a class="el" href="slmp__utility_8h_source.html#l00103">103</a> of file <a class="el" href="slmp__utility_8h_source.html">slmp_utility.h</a>.</p>
 
 </div>
 </div>

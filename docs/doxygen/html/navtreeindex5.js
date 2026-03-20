@@ -1,5 +1,7 @@
 var NAVTREEINDEX5 =
 {
+"structatom__matrix__serial__console_1_1_endurance_session.html#ae1e1e9db26f59782e51423da3a1de78f":[2,0,0,2,12],
+"structatom__matrix__serial__console_1_1_endurance_session.html#af4a46ac609d5e6b0c112328db302565d":[1,0,0,2,5],
 "structatom__matrix__serial__console_1_1_endurance_session.html#af4a46ac609d5e6b0c112328db302565d":[2,0,0,2,5],
 "structatom__matrix__serial__console_1_1_endurance_session.html#af8508291530afa59d2a2fec5c2d616b9":[1,0,0,2,1],
 "structatom__matrix__serial__console_1_1_endurance_session.html#af8508291530afa59d2a2fec5c2d616b9":[2,0,0,2,1],
@@ -247,7 +249,5 @@ var NAVTREEINDEX5 =
 "structw6300__evb__pico2__serial__console_1_1_device_spec.html#a746c07ec5d75b2db7a3c3f51288c2968":[2,0,4,0,2],
 "structw6300__evb__pico2__serial__console_1_1_device_spec.html#ab2d310aa85cffd757296f5115dbfb951":[1,0,4,0,1],
 "structw6300__evb__pico2__serial__console_1_1_device_spec.html#ab2d310aa85cffd757296f5115dbfb951":[2,0,4,0,1],
-"structw6300__evb__pico2__serial__console_1_1_endurance_session.html":[1,0,4,4],
-"structw6300__evb__pico2__serial__console_1_1_endurance_session.html":[2,0,4,4],
-"structw6300__evb__pico2__serial__console_1_1_endurance_session.html#a1ad03a8aef64782a0b4000be96e77036":[1,0,4,4,6]
+"structw6300__evb__pico2__serial__console_1_1_endurance_session.html":[1,0,4,4]
 };

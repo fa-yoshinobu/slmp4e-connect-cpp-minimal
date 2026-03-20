@@ -1,5 +1,7 @@
 var NAVTREEINDEX3 =
 {
+"namespaceslmp__wifi__serial__console.html#a1a178c7575e71e4823f7f99f5dc5e7aa":[1,0,3,98],
+"namespaceslmp__wifi__serial__console.html#a1a422d88d6711f5dbe150e6fc490df7b":[1,0,3,5],
 "namespaceslmp__wifi__serial__console.html#a1a9597983c97d9c0f239c34a3fb439c1":[1,0,3,8],
 "namespaceslmp__wifi__serial__console.html#a1eb1d7f54078f1d354e9a0e76fcf754e":[1,0,3,67],
 "namespaceslmp__wifi__serial__console.html#a1fec3bb6f7c1c4298b8fd588d4271896":[1,0,3,31],
@@ -247,7 +249,5 @@ var NAVTREEINDEX3 =
 "namespacew6300__evb__pico2__serial__console.html#a74d540c5f641b8d2d2834899ddef8fa7":[1,0,4,27],
 "namespacew6300__evb__pico2__serial__console.html#a767d92ec2174a18abd7ab34db653bd73":[1,0,4,233],
 "namespacew6300__evb__pico2__serial__console.html#a76fd1ab0cc7f57a81940ce2d4ae719d0":[1,0,4,46],
-"namespacew6300__evb__pico2__serial__console.html#a77db70d275e92568348e126c96a720dd":[1,0,4,228],
-"namespacew6300__evb__pico2__serial__console.html#a78448890f6d4a3181cba233c2fa206e3":[1,0,4,147],
-"namespacew6300__evb__pico2__serial__console.html#a79d881bf50f933cf24dfd13184334541":[1,0,4,102]
+"namespacew6300__evb__pico2__serial__console.html#a77db70d275e92568348e126c96a720dd":[1,0,4,228]
 };
