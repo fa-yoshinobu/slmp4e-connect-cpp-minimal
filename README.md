@@ -18,7 +18,7 @@ Install from PlatformIO Registry:
 
 ```ini
 lib_deps =
-  fa-yoshinobu/slmp-connect-cpp-minimal@^0.4.1
+  fa-yoshinobu/slmp-connect-cpp-minimal@^0.4.3
 ```
 
 ## Design Philosophy
