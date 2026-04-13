@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 0.4.4
+
+- add guard logic for unsupported long-timer direct reads and unsupported `LCS/LCC` random, block, and monitor-registration paths so the minimal client matches the shared cross-library consistency rules
+- expand host regression coverage for the guarded paths and long-device command routing
+
 ## 0.4.3
 
 - regenerate `tests/generated_shared_spec.h` from `plc-comm-slmp-cross-verify/specs/shared` so host tests and release builds consume the same canonical parity vectors as the cross-library verification harness

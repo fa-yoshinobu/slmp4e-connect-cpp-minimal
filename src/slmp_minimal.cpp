@@ -144,6 +144,62 @@ inline bool isUnsupportedDirectDevice(DeviceCode code) {
     }
 }
 
+inline bool isLongTimerStateReadOnlyDevice(DeviceCode code) {
+    switch (code) {
+        case DeviceCode::LTS:
+        case DeviceCode::LTC:
+        case DeviceCode::LSTS:
+        case DeviceCode::LSTC:
+            return true;
+        default:
+            return false;
+    }
+}
+
+inline bool isLongTimerCurrentBlockDevice(DeviceCode code) {
+    switch (code) {
+        case DeviceCode::LTN:
+        case DeviceCode::LSTN:
+            return true;
+        default:
+            return false;
+    }
+}
+
+inline bool isLongCounterContactDevice(DeviceCode code) {
+    switch (code) {
+        case DeviceCode::LCS:
+        case DeviceCode::LCC:
+            return true;
+        default:
+            return false;
+    }
+}
+
+inline Error validateDirectWordReadDevice(const DeviceAddress& device, uint16_t points) {
+    if (isUnsupportedDirectDevice(device.code)) {
+        return Error::UnsupportedDevice;
+    }
+    if (isLongTimerCurrentBlockDevice(device.code) && (points == 0U || (points % 4U) != 0U)) {
+        return Error::UnsupportedDevice;
+    }
+    return Error::Ok;
+}
+
+inline Error validateDirectBitReadDevice(const DeviceAddress& device) {
+    if (isUnsupportedDirectDevice(device.code) || isLongTimerStateReadOnlyDevice(device.code)) {
+        return Error::UnsupportedDevice;
+    }
+    return Error::Ok;
+}
+
+inline Error validateDirectDWordReadDevice(const DeviceAddress& device) {
+    if (isUnsupportedDirectDevice(device.code) || isLongTimerCurrentBlockDevice(device.code)) {
+        return Error::UnsupportedDevice;
+    }
+    return Error::Ok;
+}
+
 inline Error validateDirectDeviceList(const DeviceAddress* devices, size_t count) {
     if (count == 0) {
         return Error::Ok;
@@ -171,7 +227,7 @@ inline Error summarizeBlockReadList(const DeviceBlockRead* blocks, size_t count,
         if (blocks[i].points == 0) {
             return Error::InvalidArgument;
         }
-        if (isUnsupportedDirectDevice(blocks[i].device.code)) {
+        if (isUnsupportedDirectDevice(blocks[i].device.code) || isLongCounterContactDevice(blocks[i].device.code)) {
             return Error::UnsupportedDevice;
         }
         total_points += blocks[i].points;
@@ -191,7 +247,7 @@ inline Error summarizeBlockWriteList(const DeviceBlockWrite* blocks, size_t coun
         if (blocks[i].points == 0 || blocks[i].values == nullptr) {
             return Error::InvalidArgument;
         }
-        if (isUnsupportedDirectDevice(blocks[i].device.code)) {
+        if (isUnsupportedDirectDevice(blocks[i].device.code) || isLongCounterContactDevice(blocks[i].device.code)) {
             return Error::UnsupportedDevice;
         }
         total_points += blocks[i].points;
@@ -1197,8 +1253,9 @@ Error SlmpClient::beginReadWords(
         setError(Error::InvalidArgument);
         return last_error_;
     }
-    if (isUnsupportedDirectDevice(device.code)) {
-        setError(Error::UnsupportedDevice);
+    Error validate_error = validateDirectWordReadDevice(device, points);
+    if (validate_error != Error::Ok) {
+        setError(validate_error);
         return last_error_;
     }
     if (tx_capacity_ < 8) {
@@ -1287,8 +1344,9 @@ Error SlmpClient::beginReadBits(
         setError(Error::InvalidArgument);
         return last_error_;
     }
-    if (isUnsupportedDirectDevice(device.code)) {
-        setError(Error::UnsupportedDevice);
+    Error validate_error = validateDirectBitReadDevice(device);
+    if (validate_error != Error::Ok) {
+        setError(validate_error);
         return last_error_;
     }
     if (tx_capacity_ < 8) {
@@ -1379,8 +1437,9 @@ Error SlmpClient::beginReadDWords(
         setError(Error::InvalidArgument);
         return last_error_;
     }
-    if (isUnsupportedDirectDevice(device.code)) {
-        setError(Error::UnsupportedDevice);
+    Error validate_error = validateDirectDWordReadDevice(device);
+    if (validate_error != Error::Ok) {
+        setError(validate_error);
         return last_error_;
     }
     if (tx_capacity_ < 8) {
@@ -2342,6 +2401,18 @@ Error SlmpClient::beginReadRandom(
         setError(validate_error);
         return last_error_;
     }
+    for (size_t i = 0; i < word_count; ++i) {
+        if (isLongCounterContactDevice(word_devices[i].code)) {
+            setError(Error::UnsupportedDevice);
+            return last_error_;
+        }
+    }
+    for (size_t i = 0; i < dword_count; ++i) {
+        if (isLongCounterContactDevice(dword_devices[i].code)) {
+            setError(Error::UnsupportedDevice);
+            return last_error_;
+        }
+    }
 
     size_t spec_size = (compatibility_mode_ == CompatibilityMode::Legacy) ? 4U : 6U;
     size_t payload_length = 2U + ((word_count + dword_count) * spec_size);
@@ -3289,6 +3360,18 @@ Error SlmpClient::beginRegisterMonitorDevices(
     if (validate_error != Error::Ok) { setError(validate_error); return last_error_; }
     validate_error = validateDirectDeviceList(dword_devices, dword_count);
     if (validate_error != Error::Ok) { setError(validate_error); return last_error_; }
+    for (size_t i = 0; i < word_count; ++i) {
+        if (isLongCounterContactDevice(word_devices[i].code)) {
+            setError(Error::UnsupportedDevice);
+            return last_error_;
+        }
+    }
+    for (size_t i = 0; i < dword_count; ++i) {
+        if (isLongCounterContactDevice(dword_devices[i].code)) {
+            setError(Error::UnsupportedDevice);
+            return last_error_;
+        }
+    }
 
     size_t spec_size = (compatibility_mode_ == CompatibilityMode::Legacy) ? 4U : 6U;
     size_t payload_length = 2U + ((word_count + dword_count) * spec_size);
