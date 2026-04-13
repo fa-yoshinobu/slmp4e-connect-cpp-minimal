@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 0.4.3
+
+- regenerate `tests/generated_shared_spec.h` from `plc-comm-slmp-cross-verify/specs/shared` so host tests and release builds consume the same canonical parity vectors as the cross-library verification harness
+
 ## 0.4.2
 
 - add public `normalizeAddress()` and `formatAddressSpec()` helpers to the optional high-level facade so application code can canonicalize string device addresses without duplicating parser logic
@@ -93,4 +97,3 @@
 - mock PLC server with sample state file and fault injection for delay, forced PLC end code, disconnect, and malformed response
 - GitHub Actions for host tests, sanitizers, coverage, size regression, and representative PlatformIO builds
 - release automation, API policy, troubleshooting notes, and release checklist documents
-
