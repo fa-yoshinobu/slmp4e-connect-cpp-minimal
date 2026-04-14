@@ -41,21 +41,21 @@ The optional high-level layer is the recommended entry point for application cod
 ```cpp
 #include <slmp_high_level.h>
 
-plc.setFrameType(slmp::FrameType::Frame4E);
-plc.setCompatibilityMode(slmp::CompatibilityMode::iQR);
+constexpr auto family = slmp::highlevel::PlcFamily::IqR;
+slmp::highlevel::configureClientForPlcFamily(plc, family);
 
 slmp::TypeNameInfo info = {};
 if (plc.connect("192.168.250.100", 1025)) {
     plc.readTypeName(info);
 
     slmp::highlevel::Value word;
-    slmp::highlevel::readTyped(plc, "D100", word);
+    slmp::highlevel::readTyped(plc, family, "D100", word);
 
     slmp::highlevel::Value temperature;
-    slmp::highlevel::readTyped(plc, "D200:F", temperature);
+    slmp::highlevel::readTyped(plc, family, "D200:F", temperature);
 
     slmp::highlevel::Snapshot snapshot;
-    slmp::highlevel::readNamed(plc, {"SM400", "D100", "D200:F", "D50.3"}, snapshot);
+    slmp::highlevel::readNamed(plc, family, {"SM400", "D100", "D200:F", "D50.3"}, snapshot);
 }
 ```
 
@@ -74,6 +74,7 @@ Important notes:
 - the core client in `slmp_minimal.h` stays fixed-buffer and allocation-free
 - `parseAddressSpec()` is public when application code needs to validate or classify a user-facing address string before read/write
 - `normalizeAddress()` and `formatAddressSpec()` are public when application code wants one canonical uppercase spelling for storage, cache keys, or logs
+- choose one explicit `PlcFamily` first, then keep using the corresponding family-aware overloads
 - chunked helpers are explicit opt-in; typed and named helpers preserve one logical value or one logical address item by default instead of silently retrying with different semantics
 
 ### Address Syntax Cheat Sheet

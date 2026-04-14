@@ -18,7 +18,7 @@ The interactive console sketches were moved to the companion repository:
 | Use case | Folder | Board/transport | What it shows |
 |---|---|---|---|
 | ESP32 low-level size baseline | `esp32_devkitc_low_level` | ESP32-DevKitC + `WiFiClient` | smallest direct core example using `SlmpClient`, fixed buffers, and `DeviceAddress` helpers |
-| ESP32 high-level size sample | `esp32_devkitc_high_level` | ESP32-DevKitC + `WiFiClient` | same board and transport, but using explicit `setFrameType`, `setCompatibilityMode`, `connect`, plus `readTyped` and `Poller` so the binary size delta is easy to compare |
+| ESP32 high-level size sample | `esp32_devkitc_high_level` | ESP32-DevKitC + `WiFiClient` | same board and transport, but using explicit `PlcFamily`, `configureClientForPlcFamily(...)`, `connect`, plus family-aware `readTyped` and `Poller` so the binary size delta is easy to compare |
 | High-level snapshot sample | `high_level_snapshot` | host-side compile smoke | `readTyped`, `readNamed`, `writeNamed`, and `Poller` usage in one compile-checked sample |
 
 Suggested order:
@@ -42,8 +42,9 @@ Then compare the generated binaries:
 - `.pio/build/esp32-devkitc-high-level/firmware.bin`
 
 The low-level sample intentionally avoids `slmp_high_level.cpp`.
-The high-level sample intentionally includes it and uses explicit frame/mode selection,
-`connect`, `readTyped`, and `Poller`, so the size difference is easy to observe.
+The high-level sample intentionally includes it and uses explicit `PlcFamily`
+selection, `configureClientForPlcFamily(...)`, `connect`, `readTyped`, and
+`Poller`, so the size difference is easy to observe.
 Large contiguous reads stay behind explicit chunked helpers instead of appearing as hidden fallback behavior.
 
 Current reference build numbers:
@@ -93,8 +94,8 @@ Use this when you want the ESP32 equivalent of the user-facing Python and .NET h
 
 It demonstrates:
 
-- explicit `setFrameType`
-- explicit `setCompatibilityMode`
+- explicit `PlcFamily`
+- `configureClientForPlcFamily(...)`
 - explicit `connect`
 - `readTyped`
 - `Poller`
@@ -105,6 +106,5 @@ It demonstrates:
 
 - `README.md`: install, quick start, board-by-board overview, memory notes
 - `docsrc/user/TROUBLESHOOTING.md`: network, buffer, and frame-dump troubleshooting
-
 
 

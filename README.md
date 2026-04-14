@@ -100,7 +100,8 @@ uint8_t rx_buffer[128];
 slmp::SlmpClient plc(transport, tx_buffer, 128, rx_buffer, 128);
 
 void setup() {
-    slmp::highlevel::configureClientForPlcFamily(plc, slmp::highlevel::PlcFamily::IqR);
+    constexpr auto family = slmp::highlevel::PlcFamily::IqR;
+    slmp::highlevel::configureClientForPlcFamily(plc, family);
     slmp::TypeNameInfo info = {};
     if (!plc.connect("192.168.250.100", 1025)) {
         return;
@@ -110,7 +111,8 @@ void setup() {
 
 void loop() {
     slmp::highlevel::Snapshot snapshot;
-    if (slmp::highlevel::readNamed(plc, {"SM400", "D100", "D200:F", "D50.3"}, snapshot) ==
+    constexpr auto family = slmp::highlevel::PlcFamily::IqR;
+    if (slmp::highlevel::readNamed(plc, family, {"SM400", "D100", "D200:F", "D50.3"}, snapshot) ==
         slmp::Error::Ok) {
         // snapshot[0] -> SM400
         // snapshot[1] -> D100
@@ -155,7 +157,7 @@ For application code, the recommended order is:
 4. Use `readTyped`, `writeTyped`, `readNamed`, `writeNamed`, and `Poller`.
 5. Drop to `slmp_minimal.h` only when you need direct frame-level control, manual async state machines, or specialized embedded integration.
 
-Automatic profile probing is intentionally not part of the current API surface. The high-level helper layer derives fixed `frame` and `compatibility mode` defaults from one explicit `PlcFamily`. Use `parseAddressSpec()`, `normalizeAddress()`, or `formatAddressSpec()` with an explicit family whenever you need to handle string `X/Y` addresses.
+Automatic profile probing is intentionally not part of the current API surface. The high-level helper layer derives fixed `frame` and `compatibility mode` defaults from one explicit `PlcFamily`. Use the `PlcFamily` overloads of `readTyped`, `writeTyped`, `readNamed`, `writeNamed`, `Poller::compile`, `parseAddressSpec()`, `normalizeAddress()`, or `formatAddressSpec()` whenever you need deterministic string-address handling.
 
 ### High-Level Address Forms
 

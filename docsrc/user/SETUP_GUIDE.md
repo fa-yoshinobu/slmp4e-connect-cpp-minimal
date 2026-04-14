@@ -72,22 +72,23 @@ Minimal sequence:
 ```cpp
 #include <slmp_high_level.h>
 
-slmp::highlevel::configureClientForPlcFamily(plc, slmp::highlevel::PlcFamily::IqR);
+constexpr auto family = slmp::highlevel::PlcFamily::IqR;
+slmp::highlevel::configureClientForPlcFamily(plc, family);
 
 slmp::TypeNameInfo info = {};
 if (plc.connect("192.168.250.100", 1025)) {
     plc.readTypeName(info);
     slmp::highlevel::Value value;
-    slmp::highlevel::readTyped(plc, "D100", value);
+    slmp::highlevel::readTyped(plc, family, "D100", value);
 
     slmp::highlevel::Snapshot snapshot;
-    slmp::highlevel::readNamed(plc, {"SM400", "D100", "D200:F"}, snapshot);
+    slmp::highlevel::readNamed(plc, family, {"SM400", "D100", "D200:F"}, snapshot);
 }
 ```
 
 This confirms:
 
 - transport connectivity
-- explicit frame/compatibility selection
+- explicit `PlcFamily` selection and derived frame/compatibility defaults
 - typed decoding
 - mixed snapshot handling
