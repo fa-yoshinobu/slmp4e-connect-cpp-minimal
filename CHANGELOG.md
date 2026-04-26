@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 0.4.9
+
+- bump the library revision for the cross-library SLMP parity release; the C++ route guards from `0.4.8` remain aligned with the updated shared verification suite
+- keep `PlcFamilyDefaults` compatible with the PlatformIO ESP32 C++ mode used by the high-level sample build
+
 ## 0.4.8
 
 - tighten long-device route guards so `LTN/LSTN/LCN/LZ` avoid unsupported direct/raw word and dword paths, while supported random/named dword paths remain available

@@ -222,10 +222,10 @@ enum class DeviceRangeFamily : uint8_t;
  * @brief Resolved fixed defaults for one @ref PlcFamily.
  */
 struct PlcFamilyDefaults {
-    FrameType frame_type = FrameType::Frame4E;                     ///< Derived SLMP frame type.
-    CompatibilityMode compatibility_mode = CompatibilityMode::iQR; ///< Derived low-level compatibility mode.
-    PlcFamily address_family = PlcFamily::IqR;                     ///< String-address family used by the helper parser.
-    DeviceRangeFamily range_family;                                ///< Device-range family used for SD-range helpers.
+    FrameType frame_type;                     ///< Derived SLMP frame type.
+    CompatibilityMode compatibility_mode;     ///< Derived low-level compatibility mode.
+    PlcFamily address_family;                 ///< String-address family used by the helper parser.
+    DeviceRangeFamily range_family;           ///< Device-range family used for SD-range helpers.
 };
 
 /**
