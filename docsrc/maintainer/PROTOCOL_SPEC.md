@@ -63,6 +63,43 @@ Profile selection note:
 - **Special Cases**:
   - `F` device is mapped to `slmp::DeviceCode::FDevice` to avoid conflicts with Arduino's `F()` macro.
 
+### 3.1 iQ-R SD Device Range Maximums
+
+For iQ-R-series device range catalogs, the family-specific `SD` register value
+is the PLC-configured current point count. Treat the manual maximum below as a
+protocol-side cap and derive the displayed upper bound from the capped point
+count:
+
+1. read the configured point count from the row's `SD` register pair
+2. calculate `point_count = min(SD point count, max_point_count)`
+3. calculate `upper_bound = point_count - 1`
+
+The iQ-R `0002/0003` device access format uses a 4-byte device number, so all
+of these maximum addresses fit the iQ-R-series request payload. The minimal C++
+library does not currently auto-build a device range catalog from these SD
+values; this section is the reference for caller-side diagnostics and future
+catalog support.
+
+| Item | C++ device codes | Max address | max_point_count | Setting unit |
+| --- | --- | --- | --- | --- |
+| `X` | `X` | `X2FFF` | `12288` (`0x3000`) | n/a |
+| `Y` | `Y` | `Y2FFF` | `12288` (`0x3000`) | n/a |
+| `M` | `M` | `M94674943` | `94674944` (`0x5A4A000`) | 64 points |
+| `B` | `B` | `B5A49FFF` | `94674944` (`0x5A4A000`) | 64 points |
+| `F` | `FDevice` | `F32767` | `32768` | 64 points |
+| `SB` | `SB` | `SB5A49FFF` | `94674944` (`0x5A4A000`) | 64 points |
+| `V` | `V` | `V32767` | `32768` | 64 points |
+| `L` | `L` | `L32767` | `32768` | 64 points |
+| `T` | `TS`, `TC`, `TN` | `T5259711` | `5259712` | 32 points |
+| `ST` | `STS`, `STC`, `STN` | `ST5259711` | `5259712` | 32 points |
+| `LT` | `LTS`, `LTC`, `LTN` | `LT1479295` | `1479296` | 1 point |
+| `LST` | `LSTS`, `LSTC`, `LSTN` | `LST1479295` | `1479296` | 1 point |
+| `C` | `CS`, `CC`, `CN` | `C5259711` | `5259712` | 32 points |
+| `LC` | `LCS`, `LCC`, `LCN` | `LC2784543` | `2784544` | 32 points |
+| `D` | `D` | `D5917183` | `5917184` (`0x5A4A00`) | 4 points |
+| `W` | `W` | `W5A49FF` | `5917184` (`0x5A4A00`) | 4 points |
+| `SW` | `SW` | `SW5A49FF` | `5917184` (`0x5A4A00`) | 4 points |
+
 ## 4. Transport Abstraction
 
 The library uses the `Slmp4eTransport` abstract class to decouple protocol logic from the physical network stack (Wi-Fi, Ethernet, etc.).
