@@ -8,7 +8,6 @@
 
 ![Illustration](https://raw.githubusercontent.com/fa-yoshinobu/plc-comm-slmp-cpp-minimal/main/docsrc/assets/melsec_rpi.png)
 
-[![ci](https://github.com/fa-yoshinobu/plc-comm-slmp-cpp-minimal/actions/workflows/ci.yml/badge.svg)](https://github.com/fa-yoshinobu/plc-comm-slmp-cpp-minimal/actions/workflows/ci.yml)
 [![release](https://github.com/fa-yoshinobu/plc-comm-slmp-cpp-minimal/actions/workflows/release.yml/badge.svg)](https://github.com/fa-yoshinobu/plc-comm-slmp-cpp-minimal/actions/workflows/release.yml)
 
 [![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white)](https://www.python.org/)
