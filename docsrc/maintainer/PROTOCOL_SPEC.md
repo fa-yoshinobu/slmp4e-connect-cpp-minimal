@@ -42,7 +42,7 @@ Practical mixed block note:
 
 - synchronous `writeBlock()` also exposes `BlockWriteOptions`
 - `split_mixed_blocks=true` forces separate word-only and bit-only `1406` requests
-- `retry_mixed_on_error=true` retries a failed mixed request as separate writes only on `0xC056`, `0xC05B`, or `0xC061`
+- `retry_mixed_on_error=true` retries a failed mixed request as separate writes only on `0xC056` or `0xC061`; `0xC05B` is preserved as an observed PLC end code but is not a retry trigger
 - the async `beginWriteBlock(..., options, now_ms)` overload now mirrors the same split/retry behavior
 
 Remote command note:

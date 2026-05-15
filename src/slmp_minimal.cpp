@@ -460,7 +460,6 @@ inline Error encodeSelfTestPayload(
 inline bool isMixedWriteRetryEndCode(uint16_t end_code) {
     switch (end_code) {
         case 0xC056:
-        case 0xC05B:
         case 0xC061:
             return true;
         default:

@@ -1015,24 +1015,13 @@ void testWriteBlockOptions() {
         response_request[2] = 0x00;
         response_request[3] = 0x00;
         transport.queueResponse(makeResponse(response_request, 0xC05B, {}));
-        response_request[2] = 0x01;
-        response_request[3] = 0x00;
-        transport.queueResponse(makeResponse(response_request, 0x0000, {}));
-        response_request[2] = 0x02;
-        response_request[3] = 0x00;
-        transport.queueResponse(makeResponse(response_request, 0x0000, {}));
-
         slmp::BlockWriteOptions options = {};
         options.retry_mixed_on_error = true;
-        assert(plc.writeBlock(word_blocks, 1, bit_blocks, 1, options) == slmp::Error::Ok);
-        assert(plc.lastEndCode() == 0x0000U);
-        assert(transport.writeHistory().size() == 3U);
+        assert(plc.writeBlock(word_blocks, 1, bit_blocks, 1, options) == slmp::Error::PlcError);
+        assert(plc.lastEndCode() == 0xC05BU);
+        assert(transport.writeHistory().size() == 1U);
         assert(transport.writeHistory()[0][19] == 1U);
         assert(transport.writeHistory()[0][20] == 1U);
-        assert(transport.writeHistory()[1][19] == 1U);
-        assert(transport.writeHistory()[1][20] == 0U);
-        assert(transport.writeHistory()[2][19] == 0U);
-        assert(transport.writeHistory()[2][20] == 1U);
     }
 }
 
@@ -1083,26 +1072,15 @@ void testAsyncWriteBlockOptions() {
         response_request[2] = 0x00;
         response_request[3] = 0x00;
         transport.queueResponse(makeResponse(response_request, 0xC05B, {}));
-        response_request[2] = 0x01;
-        response_request[3] = 0x00;
-        transport.queueResponse(makeResponse(response_request, 0x0000, {}));
-        response_request[2] = 0x02;
-        response_request[3] = 0x00;
-        transport.queueResponse(makeResponse(response_request, 0x0000, {}));
-
         slmp::BlockWriteOptions options = {};
         options.retry_mixed_on_error = true;
         assert(plc.beginWriteBlock(word_blocks, 1, bit_blocks, 1, options, now) == slmp::Error::Ok);
         driveAsyncUntilIdle(plc, now);
-        assert(plc.lastError() == slmp::Error::Ok);
-        assert(plc.lastEndCode() == 0x0000U);
-        assert(transport.writeHistory().size() == 3U);
+        assert(plc.lastError() == slmp::Error::PlcError);
+        assert(plc.lastEndCode() == 0xC05BU);
+        assert(transport.writeHistory().size() == 1U);
         assert(transport.writeHistory()[0][19] == 1U);
         assert(transport.writeHistory()[0][20] == 1U);
-        assert(transport.writeHistory()[1][19] == 1U);
-        assert(transport.writeHistory()[1][20] == 0U);
-        assert(transport.writeHistory()[2][19] == 0U);
-        assert(transport.writeHistory()[2][20] == 1U);
     }
 }
 
