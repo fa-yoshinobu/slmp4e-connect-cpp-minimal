@@ -845,6 +845,7 @@ void testPlcErrorAndStrings() {
     assert(std::string(slmp::endCodeString(0xC056U)) == "slmp_end_code_c056");
     assert(std::string(slmp::endCodeString(0xC201U)) == "slmp_end_code_c201");
     assert(std::string(slmp::endCodeString(0xC810U)) == "slmp_end_code_c810");
+    assert(std::string(slmp::endCodeString(0xD913U)) == "slmp_end_code_d913");
     assert(std::string(slmp::endCodeString(0xDEADU)) == "unknown_plc_end_code");
     assert(slmp::isRemotePasswordEndCode(0xC201U));
     assert(slmp::isRemotePasswordEndCode(0xC810U));
@@ -857,6 +858,8 @@ void testPlcErrorAndStrings() {
     assert(std::string(slmp::endCodeMessageEnglish(0xC814U)).find("after 60 minutes") != std::string::npos);
     assert(std::string(slmp::endCodeMessageJapanese(0xC810U)).find("認証に失敗") != std::string::npos);
     assert(std::string(slmp::endCodeMessageJapanese(0xC812U)).find("5分後") != std::string::npos);
+    assert(std::string(slmp::endCodeMessageEnglish(0xD913U)).find("network module") != std::string::npos);
+    assert(std::string(slmp::endCodeMessageJapanese(0xD913U)).find("ネットワークユニット") != std::string::npos);
 }
 
 void testPasswordAndWriteBlock() {
